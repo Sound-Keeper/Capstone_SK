@@ -53,11 +53,16 @@ public class PlayerAnimator : MonoBehaviour
         //Test for interaction Systerm
         if (Keyboard.current.eKey.wasPressedThisFrame)
         { anim.SetTrigger("Interact"); }
-        
+
         // for Attack and interaction with puzzle
-        if (InputSystem.actions.FindAction("Attack").triggered)
+        if (InputSystem.actions.FindAction("Attack").IsPressed())
         {
-            anim.SetTrigger("Attack");
+            anim.SetBool("Attack", true);
         }
+        else
+        {
+            anim.SetBool("Attack", false);
+        }
+
     }
 }

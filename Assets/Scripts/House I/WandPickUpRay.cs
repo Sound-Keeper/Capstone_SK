@@ -5,38 +5,25 @@ public class WandPickUpRay : MonoBehaviour
 {
     public float range = 20f;
     public PlayerHold carry;
-    public Transform rayOrigin;
+    public Transform rayOrigin; // drag your wand tip (pointer) here
 
     void Update()
     {
-        #region
-        // Only allow interaction when ANY puzzle is active
-        // if (PuzzleManager.ActivePuzzle == null)
-        //     return;
-
-        // if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        // {
-        //     Interact();
-        // }
-        #endregion
-        
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        {Interact();}
+        {
+            Interact();
+        }
     }
 
     void Interact()
     {
-        Ray ray;
-
-        if (rayOrigin != null)
-            ray = new Ray(rayOrigin.position, rayOrigin.forward);
-        else
-            ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-
+        // always shoots from the wand tip forward
+        Ray ray = new Ray(rayOrigin.position, rayOrigin.forward);
         Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 2f);
 
         if (Physics.Raycast(ray, out RaycastHit hit, range))
         {
+            // not holding anything — try to pick up a letter
             if (!carry.IsHolding())
             {
                 LetterPickup letter = hit.collider.GetComponentInParent<LetterPickup>();
@@ -46,6 +33,7 @@ public class WandPickUpRay : MonoBehaviour
                     return;
                 }
             }
+            // already holding — try to place on a pillar
             else
             {
                 Pillar slot = hit.collider.GetComponentInParent<Pillar>();

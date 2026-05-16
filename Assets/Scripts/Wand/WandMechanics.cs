@@ -3,13 +3,19 @@ using UnityEngine.InputSystem;
 
 public class WandMechanics : MonoBehaviour
 {
-    [SerializeField] private ParticleSystem magicEffect; 
+    [SerializeField] private ParticleSystem magicEffect;
 
     void Update()
     {
-        if (InputSystem.actions.FindAction("Attack").triggered)
+        if (InputSystem.actions.FindAction("Attack").IsPressed())
         {
-            magicEffect.Play(); // Wand pointer
+            if (!magicEffect.isPlaying)
+                magicEffect.Play();
+        }
+        else
+        {
+            if (magicEffect.isPlaying)
+                magicEffect.Stop();
         }
     }
 }
