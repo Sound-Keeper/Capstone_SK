@@ -4674,25 +4674,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1873648346}
   m_CullTransparentMesh: 1
---- !u!1 &1880478141 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 158688096916574563, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-  m_PrefabInstance: {fileID: 8942727437566850014}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1880478145
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1880478141}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ab9c3440a93765469d513c8ddf2cede, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WandPickUpRay
-  range: 20
-  carry: {fileID: 95538263906725087}
 --- !u!1 &1899026447
 GameObject:
   m_ObjectHideFlags: 0
@@ -5810,38 +5791,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3895702572901210398, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: lengthInSec
-      value: 1.29
-      objectReference: {fileID: 0}
-    - target: {fileID: 3895702572901210398, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: LightsModule.enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3895702572901210398, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: NoiseModule.frequency
-      value: 0.78
-      objectReference: {fileID: 0}
-    - target: {fileID: 3895702572901210398, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: NoiseModule.strength.scalar
-      value: 1.79
-      objectReference: {fileID: 0}
-    - target: {fileID: 3895702572901210398, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 0.49
-      objectReference: {fileID: 0}
-    - target: {fileID: 3895702572901210398, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: InitialModule.startSpeed.scalar
-      value: 2.77
-      objectReference: {fileID: 0}
-    - target: {fileID: 3895702572901210398, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: EmissionModule.rateOverTime.scalar
-      value: 9.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 5561251942669296648, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.39
-      objectReference: {fileID: 0}
     - target: {fileID: 5851352604842549342, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
       propertyPath: m_Name
       value: PolyArtWizardStandardMat
@@ -5853,9 +5802,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5851352604842549342, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 95538263906725087}
-    - targetCorrespondingSourceObject: {fileID: 158688096916574563, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1880478145}
   m_SourcePrefab: {fileID: 100100000, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

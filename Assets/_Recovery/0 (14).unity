@@ -4693,6 +4693,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WandPickUpRay
   range: 20
   carry: {fileID: 95538263906725087}
+  rayOrigin: {fileID: 450387555}
 --- !u!1 &1899026447
 GameObject:
   m_ObjectHideFlags: 0
@@ -5837,10 +5838,6 @@ PrefabInstance:
     - target: {fileID: 3895702572901210398, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
       value: 9.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 5561251942669296648, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.39
       objectReference: {fileID: 0}
     - target: {fileID: 5851352604842549342, guid: 2ecad5683a432424ca4b537edbdae8d8, type: 3}
       propertyPath: m_Name

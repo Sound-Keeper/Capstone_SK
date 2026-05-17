@@ -3,12 +3,13 @@ using UnityEngine.InputSystem;
 
 public class WandPickUpRay : MonoBehaviour
 {
-    public float range = 20f;
+    public float range = 50f;
     public PlayerHold carry;
-    public Transform rayOrigin; // drag your wand tip (pointer) here
 
     void Update()
     {
+        if (carry == null) return;
+
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             Interact();
@@ -17,13 +18,16 @@ public class WandPickUpRay : MonoBehaviour
 
     void Interact()
     {
-        // always shoots from the wand tip forward
-        Ray ray = new Ray(rayOrigin.position, rayOrigin.forward);
+        Camera cam = Camera.main;
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+
+        // this shows in Scene view while playing
         Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 2f);
 
         if (Physics.Raycast(ray, out RaycastHit hit, range))
         {
-            // not holding anything — try to pick up a letter
+            Debug.Log("Ray hit: " + hit.collider.name);
+
             if (!carry.IsHolding())
             {
                 LetterPickup letter = hit.collider.GetComponentInParent<LetterPickup>();
@@ -33,7 +37,6 @@ public class WandPickUpRay : MonoBehaviour
                     return;
                 }
             }
-            // already holding — try to place on a pillar
             else
             {
                 Pillar slot = hit.collider.GetComponentInParent<Pillar>();

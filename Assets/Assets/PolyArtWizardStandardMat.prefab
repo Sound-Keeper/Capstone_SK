@@ -960,7 +960,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7382088140825803292}
   - component: {fileID: 3180592109163346954}
-  - component: {fileID: 1081034742965509113}
   m_Layer: 0
   m_Name: pointer (1)
   m_TagString: Untagged
@@ -998,21 +997,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   magicEffect: {fileID: 3895702572901210398}
---- !u!114 &1081034742965509113
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2836037684037032085}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ab9c3440a93765469d513c8ddf2cede, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WandPickUpRay
-  range: 20
-  carry: {fileID: 0}
-  rayOrigin: {fileID: 7382088140825803292}
 --- !u!1 &2880240136667399147
 GameObject:
   m_ObjectHideFlags: 0

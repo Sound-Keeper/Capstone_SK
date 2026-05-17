@@ -5757,7 +5757,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHold
   holdPoint: {fileID: 450387555}
   followSpeed: 10
-  held: {fileID: 0}
+  held: {fileID: 953252162}
 --- !u!1001 &8942727437566850014
 PrefabInstance:
   m_ObjectHideFlags: 0
