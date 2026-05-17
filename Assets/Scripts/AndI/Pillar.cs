@@ -30,15 +30,16 @@ public class Pillar : MonoBehaviour
             hold.ClearHeld();
             isFilled = true;
 
-            if (puzzleManager != null)
-                puzzleManager.LetterPlaced();
+            
+            Debug.Log("Correct piece placed!");
         }
         else
         {
-            Debug.Log("Wrong letter! Returning to original position.");
+            Debug.Log("Wrong piece!");
             hold.ClearHeld();
             carriedLetter.ReturnToStart();
         }
     }
 }
+
 

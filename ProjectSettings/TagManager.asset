@@ -14,6 +14,7 @@ TagManager:
   - D
   - PennyCil NPC
   - HP
+  - L1
   layers:
   - Default
   - TransparentFX
