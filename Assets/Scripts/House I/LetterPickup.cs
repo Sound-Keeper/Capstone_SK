@@ -12,15 +12,16 @@ public class LetterPickup : MonoBehaviour
     {
         startPosition = transform.position;
         startRotation = transform.rotation;
-        startScale = transform.localScale;
+        startScale = transform.lossyScale; 
+        // i change from scale to lossyscale since if the puzzle is wrong nag iisqueeze yung box or asset just wanna test this
     }
-
     public void ReturnToStart()
     {
         transform.SetParent(null);
+        transform.localScale = startScale;
+
         transform.position = startPosition;
         transform.rotation = startRotation;
-        transform.localScale = startScale;
 
         Collider col = GetComponent<Collider>();
         if (col != null)

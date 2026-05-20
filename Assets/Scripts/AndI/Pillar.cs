@@ -16,13 +16,11 @@ public class Pillar : MonoBehaviour
 
         LetterPickup carriedLetter = hold.held;
 
-        // Check if correct letter — if wrong, return to original position
         if (carriedLetter.letter == expectedLetter)
         {
             carriedLetter.transform.position = slotPoint.position;
             carriedLetter.transform.rotation = slotPoint.rotation;
-            carriedLetter.transform.localScale = Vector3.one;
-
+            carriedLetter.transform.localScale = carriedLetter.startScale;
             carriedLetter.transform.SetParent(slotPoint);
 
             Collider col = carriedLetter.GetComponent<Collider>();
@@ -32,16 +30,16 @@ public class Pillar : MonoBehaviour
             hold.ClearHeld();
             isFilled = true;
 
-            // Notify this pillar's puzzle manager
-            if (puzzleManager != null)
-                puzzleManager.LetterPlaced();
+            
+            Debug.Log("Correct piece placed!");
         }
         else
         {
-            Debug.Log("Wrong letter! Returning to original position.");
-
+            Debug.Log("Wrong piece!");
             hold.ClearHeld();
             carriedLetter.ReturnToStart();
         }
     }
 }
+
+
