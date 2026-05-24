@@ -12,11 +12,27 @@ public class InteractPrompt : MonoBehaviour
     public CanvasGroup promptCanvas;
     public Transform player;
 
-    bool playerInRange = false; 
+    [Header("Dialogue")]
+    public string npcName = "Penny Cil";
+    [TextArea(2, 5)]
+    public string[] dialogueLines = new string[]
+    {
+        "Hi! I forgot how to spell....",
+        "Can you help me put the letters back?",
+        "Are you ready?"
+    };
+    public Camera dialogueCamera;
+
+    [Header("Scene Transition")]
+    public string sceneToLoad;
+    public Vector3 spawnPoint;
+
+    bool playerInRange = false;
+    bool hasTriggered = false;
     void Start()
     {
         if (promptCanvas != null) 
-        { promptCanvas.alpha = 0f; }
+         promptCanvas.alpha = 0f; 
 
         if (player != null)
         {
@@ -44,8 +60,47 @@ public class InteractPrompt : MonoBehaviour
 
      void Interact()
     {
-        Debug.Log("Talking to " + gameObject.name);
+        Debug.Log("Talking to " + gameObject.name); // test if the player press e it talks to the npc
+
+        hasTriggered = true;
+        if (DialogueHouseI.Instance != null) 
+        {
+            DialogueHouseI.Instance.StartDialogue(
+                npcName,
+                dialogueLines,
+                dialogueCamera,
+                OnDialogueComplete
+                );
+        }
+        
     }
 
-    
+    private void OnDialogueComplete()
+    {
+        if (!string.IsNullOrEmpty(sceneToLoad))
+        {
+            if (player != null)
+            {
+                Charactercontroller cc = player.GetComponent<Charactercontroller>();
+                if (cc != null)
+                {
+                    cc.enabled = false;
+                    player.position = spawnPoint;
+                    cc.enabled = true;
+                }
+                else 
+                {
+                    player.position = spawnPoint;
+                }
+
+            }
+        }
+        SceneController.Instance
+            .NewTransition()
+            .Load(SceneDatabase.Slots.SessionContent, sceneToLoad, setActive: true);
+            .WithOverlay()
+            .WithClearUnusedAsset()
+            .Perform();
+
+    }
 }
