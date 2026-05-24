@@ -15,6 +15,7 @@ TagManager:
   - PennyCil NPC
   - HP
   - L1
+  - ISpawnPoint
   layers:
   - Default
   - TransparentFX
