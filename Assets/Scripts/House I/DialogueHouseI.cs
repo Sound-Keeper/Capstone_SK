@@ -1,8 +1,6 @@
-using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 
 public class DialogueHouseI : MonoBehaviour
 {
@@ -26,8 +24,9 @@ public class DialogueHouseI : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        if (dialoguePanel != null) dialoguePanel.SetActive(false);   
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
     }
+
     void Update()
     {
         if (!isTalking) return;
@@ -42,44 +41,61 @@ public class DialogueHouseI : MonoBehaviour
     public void StartDialogue(string speakerName, string[] lines, Camera npcDialogueCam,
         System.Action onFinish = null)
     {
+        Debug.Log("StartDialogue called for: " + speakerName);
+
         if (isTalking) return;
 
+        //test if refs are set
+        if (dialoguePanel == null) { Debug.LogError("dialoguePanel ref is NULL!"); return; }
+        if (nameText == null) { Debug.LogError("nameText ref is NULL!"); return; }
+        if (bodyText == null) { Debug.LogError("bodyText ref is NULL!"); return; }
+
+        //save dialogue state
         currentLines = lines;
         currentLine = 0;
         onFinished = onFinish;
         isTalking = true;
 
-        //pag switch ng camera - check if smooth if yes keep
-        if(mainCamera != null) mainCamera.enabled = false;
+        //show the UI
+        dialoguePanel.SetActive(true);
+        nameText.text = speakerName;
+        bodyText.text = lines[0];
+
+        //pag switch ng camera - main off, dialogue cam on
+        if (mainCamera != null) mainCamera.enabled = false;
         if (npcDialogueCam != null)
         {
             dialogueCamera = npcDialogueCam;
             dialogueCamera.enabled = true;
         }
-
-        //Test if mag show ang UI
-        if(dialoguePanel != null) mainCamera.enabled=true;
-        if(nameText != null) nameText.text = speakerName;
-        if(bodyText != null) bodyText.text =lines[0];
     }
 
     void NextLine()
     {
         currentLine++;
 
-        if (currentLine >= currentLines.Length) { EndDialogue();return; }
+        if (currentLine >= currentLines.Length)
+        {
+            EndDialogue();
+            return;
+        }
 
+        //update body text to next line
+        bodyText.text = currentLines[currentLine];
     }
+
     void EndDialogue()
     {
         isTalking = false;
 
-        if(dialogueCamera != null) dialoguePanel.SetActive(false);
-        if(dialogueCamera != null) dialogueCamera.enabled=false;
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
+        if (dialogueCamera != null) dialogueCamera.enabled = false;
         if (mainCamera != null) mainCamera.enabled = true;
 
         if (onFinished != null)
-        { onFinished.Invoke(); onFinished = null; }
+        {
+            onFinished.Invoke();
+            onFinished = null;
+        }
     }
-
 }
