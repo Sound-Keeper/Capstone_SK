@@ -2085,8 +2085,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6431036261669858048, guid: 99da11fb068226046a827ca195302307, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5765968721190497183}
   m_SourcePrefab: {fileID: 100100000, guid: 99da11fb068226046a827ca195302307, type: 3}
+--- !u!1 &5765968721190497182 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6431036261669858048, guid: 99da11fb068226046a827ca195302307, type: 3}
+  m_PrefabInstance: {fileID: 5765968721190497181}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5765968721190497183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5765968721190497182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a35bdfa08263d2f4faeea8f3559d750d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractPrompt
+  interactionRange: 3
+  fadeSpeed: 5
+  promptCanvas: {fileID: 0}
+  player: {fileID: 0}
 --- !u!1001 &8773351114070766163
 PrefabInstance:
   m_ObjectHideFlags: 0
