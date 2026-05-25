@@ -6,13 +6,7 @@ public class NPCPuzzleTrigger : MonoBehaviour
     [Header("NPC Info")]
     public string npcName = "Penny Cil";
 
-    [TextArea(2, 5)]
-    public string[] dialogueLines = new string[]
-    {
-        "Hi Penn! Can you help me and my citizens?",
-        "I need you to spell the word correctly.",
-        "Are you ready?"
-    };
+    
 
     [Header("References")]
     public DialogueManager dialogueManager;
