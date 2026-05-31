@@ -18,10 +18,15 @@ public class Pillar : MonoBehaviour
 
         if (carriedLetter.letter == expectedLetter)
         {
-            carriedLetter.transform.position = slotPoint.position;
-            carriedLetter.transform.rotation = slotPoint.rotation;
-            carriedLetter.transform.localScale = carriedLetter.startScale;
-            carriedLetter.transform.SetParent(slotPoint);
+            Transform t = carriedLetter.transform;
+
+            t.SetParent(slotPoint);
+            t.position = slotPoint.position;
+            t.rotation = slotPoint.rotation;
+
+            //keep the piece's ORIGINAL world size so a scaled pillar
+            //doesn't squeeze/stretch it
+            SetWorldScale(t, carriedLetter.startScale);
 
             Collider col = carriedLetter.GetComponent<Collider>();
             if (col != null)
@@ -30,8 +35,11 @@ public class Pillar : MonoBehaviour
             hold.ClearHeld();
             isFilled = true;
 
-            
             Debug.Log("Correct piece placed!");
+
+            //tell the puzzle manager so it can check for completion
+            if (puzzleManager != null)
+                puzzleManager.LetterPlaced();
         }
         else
         {
@@ -39,6 +47,18 @@ public class Pillar : MonoBehaviour
             hold.ClearHeld();
             carriedLetter.ReturnToStart();
         }
+    }
+
+    //sets an object's world (lossy) scale no matter how its parent is scaled
+    static void SetWorldScale(Transform t, Vector3 worldScale)
+    {
+        t.localScale = Vector3.one;
+        Vector3 lossy = t.lossyScale; //now equals the parent's effective scale
+        t.localScale = new Vector3(
+            lossy.x != 0f ? worldScale.x / lossy.x : worldScale.x,
+            lossy.y != 0f ? worldScale.y / lossy.y : worldScale.y,
+            lossy.z != 0f ? worldScale.z / lossy.z : worldScale.z
+        );
     }
 }
 

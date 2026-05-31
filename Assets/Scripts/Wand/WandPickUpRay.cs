@@ -5,7 +5,7 @@ public class WandPickUpRay : MonoBehaviour
 {
     public float range = 50f;
     public PlayerHold carry;
-    public PieceSlot pieceCarry; // PieceHolder not PieceSlot
+    public PieceHold pieceCarry; // the player's carrier for House A broken pieces
     public float crosshairSize = 10f;
     public Color crosshairColor = Color.white;
 

@@ -54,7 +54,7 @@ public class NPCPuzzleTrigger : MonoBehaviour
             };
 
             // Start the dialogue
-            dialogueManager.StartDialogue(npcName, dialogueLines);
+          //  dialogueManager.StartDialogue(npcName, dialogueLine);
         }
         else
         {
