@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,6 +6,9 @@ using UnityEngine.InputSystem;
 public class NpcInteraction : MonoBehaviour
 {
     //reusable npc interaction - works for any npc, just change the lines in Inspector
+
+    //which house's puzzle this NPC reacts to for its thank-you lines (Penny=House I, Sheriff=House A)
+    public enum PuzzleFlag { HouseI, HouseA }
 
     [Header("Interaction Range")]
     public float interactionRange = 3f;
@@ -31,6 +35,14 @@ public class NpcInteraction : MonoBehaviour
     public string sceneToLoad;
     public Vector3 spawnPoint;
 
+    [Header("Thank-You After Puzzle (Optional)")]
+    [Tooltip("Which house's puzzle, when solved, makes this NPC play its 'after solved' (thank-you) lines. Penny Cil = House I, Sheriff Sans = House A.")]
+    public PuzzleFlag solvedFlag = PuzzleFlag.HouseI;
+    [Tooltip("If ON and that puzzle is solved, this NPC starts its 'after solved' lines BY ITSELF shortly after the scene loads - no key press. Turn ON for the thank-you when you return to MainWorld.")]
+    public bool autoPlayWhenSolved = false;
+    [Tooltip("Seconds to wait after the scene loads before auto-playing, so the screen can fade in and the camera settles first.")]
+    public float autoPlayDelay = 1.5f;
+
     [Header("Gizmo (Editor Only)")]
     public Color gizmoColor = Color.yellow;
 
@@ -52,10 +64,59 @@ public class NpcInteraction : MonoBehaviour
             GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
+
+        //returning to MainWorld with the puzzle solved? play the thank-you on our own.
+        if (autoPlayWhenSolved && IsSolvedFlagSet() && dialogueLinesAfterSolved.Count > 0)
+        {
+            StartCoroutine(AutoPlayAfterSolved());
+        }
+    }
+
+    IEnumerator AutoPlayAfterSolved()
+    {
+        //wait for the scene-transition fade to finish so the camera handoff to the
+        //dialogue camera is clean (SceneController re-enables the player camera first).
+        yield return new WaitForSeconds(autoPlayDelay);
+
+        //Interact() picks the 'after solved' lines and clears the solved flag,
+        //so this only fires once.
+        if (IsSolvedFlagSet() && !hasTriggered)
+        {
+            Interact();
+        }
+    }
+
+    //read/clear this NPC's chosen house solved-flag, so the same script serves any house
+    bool IsSolvedFlagSet()
+    {
+        switch (solvedFlag)
+        {
+            case PuzzleFlag.HouseA: return PuzzleProgress.HouseASolved;
+            default:                return PuzzleProgress.HouseISolved;
+        }
+    }
+
+    void ClearSolvedFlag()
+    {
+        switch (solvedFlag)
+        {
+            case PuzzleFlag.HouseA: PuzzleProgress.HouseASolved = false; break;
+            default:                PuzzleProgress.HouseISolved = false; break;
+        }
     }
 
     void Update()
     {
+        //the serialized player ref points to the scene-baked wizard, which PersistPlayer's
+        //singleton guard destroys when we return to MainWorld from House I. Re-bind to the
+        //surviving (persistent) player by tag whenever we've lost it, so NPCs keep working
+        //(e.g. Penny's thank-you lines after the puzzle).
+        if (player == null)
+        {
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null) player = p.transform;
+        }
+
         if (player == null || promptCanvas == null) return;
 
         //check distance of player and npc
@@ -95,10 +156,10 @@ public class NpcInteraction : MonoBehaviour
 
         //if the puzzle was just solved, play the thank-you lines once
         List<DialogueLine> linesToPlay = dialogueLines;
-        if (PuzzleProgress.HouseISolved && dialogueLinesAfterSolved.Count > 0)
+        if (IsSolvedFlagSet() && dialogueLinesAfterSolved.Count > 0)
         {
             linesToPlay = dialogueLinesAfterSolved;
-            PuzzleProgress.HouseISolved = false;
+            ClearSolvedFlag();
         }
 
         DialogueHouseI.Instance.StartDialogue(
@@ -122,6 +183,14 @@ public class NpcInteraction : MonoBehaviour
         {
             if (player != null)
             {
+                //make sure the player's own camera is back on before we swap scenes.
+                //the dialogue camera switch (DialogueHouseI) disables it, and the scene we
+                //load (e.g. House I) has no camera of its own - so if it isn't re-enabled
+                //we transition into a scene with no active camera and the game looks frozen
+                //on a black "loading" screen even though the swap actually succeeded.
+                Camera playerCam = player.GetComponentInChildren<Camera>(true);
+                if (playerCam != null) playerCam.gameObject.SetActive(true);
+
                 Charactercontroller cc = player.GetComponent<Charactercontroller>();
                 if (cc != null)
                 {

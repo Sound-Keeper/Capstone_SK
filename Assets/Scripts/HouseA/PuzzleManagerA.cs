@@ -27,6 +27,8 @@ public class PuzzleManagerA : MonoBehaviour
     // Called by each PieceSlot when its correct piece is placed.
     public void PiecePlaced()
     {
+        if (PuzzleProgress.HouseAComplete) return; // already solved once - stays locked
+
         piecesPlaced++;
         Debug.Log(puzzleName + ": piece placed " + piecesPlaced + "/" + piecesNeeded);
 
@@ -36,9 +38,13 @@ public class PuzzleManagerA : MonoBehaviour
 
     void Complete()
     {
+        if (PuzzleProgress.HouseAComplete) return; // only ever complete once
+
+        PuzzleProgress.HouseAComplete = true;      // permanent lock - can't be redone
+
         Debug.Log(puzzleName + " complete!");
         if (winPanel != null) winPanel.SetActive(true);
-        PuzzleProgress.HouseASolved = true;
-        OnPuzzleComplete?.Invoke();
+        PuzzleProgress.HouseASolved = true;        // one-shot: triggers Sheriff's thank-you
+        OnPuzzleComplete?.Invoke();                // hook VowelStone.GiveReward here
     }
 }

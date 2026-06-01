@@ -38,6 +38,13 @@ public class PuzzleManager : MonoBehaviour
 
     public void ActivatePuzzle()
     {
+        // already solved once before? keep the puzzle locked so it can't be replayed.
+        if (PuzzleProgress.HouseIComplete)
+        {
+            Debug.Log($"{puzzleName} already solved - puzzle stays locked.");
+            return;
+        }
+
         if (ActivePuzzle == this) return; // Prevent double activation
 
         // Deactivate any other active puzzle first
@@ -65,10 +72,14 @@ public class PuzzleManager : MonoBehaviour
 
     void CompletePuzzle()
     {
+        if (PuzzleProgress.HouseIComplete) return; // only ever complete once
+
+        PuzzleProgress.HouseIComplete = true;      // permanent lock - can't be redone
+
         ShowWin();
 
         Debug.Log($"{puzzleName} puzzle complete!");
-        OnPuzzleComplete?.Invoke();
+        OnPuzzleComplete?.Invoke();   // hook the stone reward + return-to-MainWorld here
     }
 
     void ShowWin()

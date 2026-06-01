@@ -26,9 +26,11 @@ public class WandMechanics : MonoBehaviour
         bool isAttacking = InputSystem.actions.FindAction("Attack").IsPressed();
 
         //part na to susundan ng particles yung crosshair/camera-test1
-        if (isAttacking || isHolding)
+        // Camera.main can be null briefly during a scene swap (the old scene's
+        // MainCamera is destroyed) - skip aiming that frame instead of throwing.
+        Camera cam = Camera.main;
+        if ((isAttacking || isHolding) && cam != null && magicEffect != null && wandTip != null)
         {
-            Camera cam = Camera.main;
             Ray ray = new Ray(cam.transform.position, cam.transform.forward);
             Vector3 targetPoint;
 
@@ -51,7 +53,7 @@ public class WandMechanics : MonoBehaviour
         }
         else
         {
-            if (magicEffect.isPlaying)
+            if (magicEffect != null && magicEffect.isPlaying)
                 magicEffect.Stop();
         }
 
