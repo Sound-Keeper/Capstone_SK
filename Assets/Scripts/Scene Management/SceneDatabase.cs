@@ -10,6 +10,8 @@ public static class SceneDatabase
     }
     public class Scenes
     {
+        //for character selection thing - first menu that pops out before MainMenu
+        public const string FirstMenu = "FirstMenu";
         public const string MainMenu = "MainMenu";
         public const string MainWorld = "MainWorld";
         public const string Session = "Session";

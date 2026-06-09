@@ -16,4 +16,8 @@ public static class PuzzleProgress
     public static bool HasVowelEStone = false;
     public static bool HasVowelOStone = false;
     public static bool HasVowelUStone = false;
+
+    // true only when the player has earned all five - unlocks the ending ritual
+    public static bool HasAllVowelStones =>
+        HasVowelIStone && HasVowelAStone && HasVowelEStone && HasVowelOStone && HasVowelUStone;
 }

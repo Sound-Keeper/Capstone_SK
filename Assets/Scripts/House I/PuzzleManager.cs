@@ -54,6 +54,8 @@ public class PuzzleManager : MonoBehaviour
         ActivePuzzle = this;
         lettersPlaced = 0;
 
+        if (PuzzleHint.Instance != null) PuzzleHint.Instance.ResetHints();
+
         SetPuzzleObjectsActive(true);
 
         Debug.Log($"{puzzleName} puzzle activated!");

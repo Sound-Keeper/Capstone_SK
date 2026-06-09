@@ -14,6 +14,12 @@ public class PieceSlot : MonoBehaviour
     [Tooltip("The House A puzzle manager. Notified when a correct piece is placed.")]
     public PuzzleManagerA puzzle;
 
+    [Header("Hint (on wrong placement)")]
+    [Tooltip("Escalating hint lines shown upper-left on each wrong try.")]
+    public string[] wrongHints;
+    [Tooltip("Object that glows after enough wrong tries (e.g. the correct piece).")]
+    public HintGlow correctAnswerGlow;
+
     void Awake()
     {
         if (slotPoint == null) slotPoint = transform;
@@ -51,6 +57,9 @@ public class PieceSlot : MonoBehaviour
             Debug.Log("Wrong piece for slot: " + expectedPieceID);
             hold.ClearHeld();
             piece.VibrateAndReturn();
+
+            if (PuzzleHint.Instance != null)
+                PuzzleHint.Instance.WrongAnswer(wrongHints, correctAnswerGlow);
         }
     }
 }

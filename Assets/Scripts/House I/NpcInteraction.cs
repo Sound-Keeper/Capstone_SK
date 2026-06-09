@@ -175,11 +175,18 @@ public class NpcInteraction : MonoBehaviour
 
     void OnDialogueComplete()
     {
-        //pwedeng makausap ulit
-        hasTriggered = false;
+        //pwedeng makausap ulit - but wait one frame first. Advancing dialogue and
+        //starting it both read the E key, so the SAME E press that closed this
+        //conversation could be seen by Update() and instantly re-open it (Unity's
+        //update order between the two scripts is undefined). Deferring a frame lets
+        //that press clear before we listen for E again.
+        if (string.IsNullOrEmpty(sceneToLoad))
+        {
+            StartCoroutine(ReEnableInteractNextFrame());
+            return;
+        }
 
         //optional - teleport + scene swap kapag may sceneToLoad
-        if (!string.IsNullOrEmpty(sceneToLoad))
         {
             if (player != null)
             {
@@ -211,6 +218,14 @@ public class NpcInteraction : MonoBehaviour
                 .WithClearUnusedAssets()
                 .Perform();
         }
+    }
+
+    //let this NPC be talked to again, but only AFTER the frame that closed the
+    //dialogue - so the E press that ended it can't immediately restart it.
+    IEnumerator ReEnableInteractNextFrame()
+    {
+        yield return null;
+        hasTriggered = false;
     }
 
     //show interaction range in Scene view when selected (editor only, walang effect sa game)

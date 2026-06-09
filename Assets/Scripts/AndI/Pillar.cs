@@ -9,6 +9,12 @@ public class Pillar : MonoBehaviour
     [Header("Puzzle Reference")]
     public PuzzleManager puzzleManager;
 
+    [Header("Hint (on wrong placement)")]
+    [Tooltip("Escalating hint lines shown upper-left on each wrong try.")]
+    public string[] wrongHints;
+    [Tooltip("Object that glows after enough wrong tries (e.g. the correct letter).")]
+    public HintGlow correctAnswerGlow;
+
     public void PlaceLetter(PlayerHold hold)
     {
         if (hold == null || hold.held == null) return;
@@ -46,6 +52,9 @@ public class Pillar : MonoBehaviour
             Debug.Log("Wrong piece!");
             hold.ClearHeld();
             carriedLetter.ReturnToStart();
+
+            if (PuzzleHint.Instance != null)
+                PuzzleHint.Instance.WrongAnswer(wrongHints, correctAnswerGlow);
         }
     }
 
