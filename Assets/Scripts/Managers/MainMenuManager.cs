@@ -4,6 +4,8 @@ public class MainMenuManager : MonoBehaviour
 {
     public void StartSession()
     {
+
+
         SceneController.Instance
             .NewTransition()
             .Load(SceneDatabase.Slots.Session, SceneDatabase.Scenes.Session)
