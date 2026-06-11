@@ -7,6 +7,7 @@ public static class SceneDatabase
         public const string Menu = "Menu";
         public const string Session = "Session";
         public const string SessionContent = "SessionContent";
+        public const string House = "House";
     }
     public class Scenes
     {
@@ -20,5 +21,6 @@ public static class SceneDatabase
         //Iadd ko lang to for scene management for A & I
         public const string HouseA = "HouseA";
         public const string HouseI = "HouseI";
+        public const string HouseE = "HouseE";
     }
 }

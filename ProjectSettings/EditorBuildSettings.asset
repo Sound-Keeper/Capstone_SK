@@ -30,6 +30,9 @@ EditorBuildSettings:
     path: Assets/Scenes/HouseI.unity
     guid: 39ca316a8434be04792adf79e5335cf6
   - enabled: 1
+    path: Assets/Scenes/HouseE.unity
+    guid: 30663934ff7f2b2418fa74b2c3e56880
+  - enabled: 1
     path: Assets/IntroCutscene.unity
     guid: 0181995ae1a1e3648abb734554c38497
   m_configObjects:

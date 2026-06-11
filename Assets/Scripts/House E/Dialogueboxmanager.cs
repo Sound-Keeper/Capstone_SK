@@ -3,6 +3,7 @@ using TMPro;
 using System;
 using System.Collections;
 using BookCurlPro;
+using UnityEngine.UI;
 
 namespace BookChoice
 {
@@ -12,6 +13,7 @@ namespace BookChoice
         public TextMeshProUGUI dialogueText;
         public GameObject pip;
         public GameObject judge;
+        public Button continuebutton;
 
         [Header("Messages")]
         public string idleMessage = "Choose the correct verb.";
@@ -76,6 +78,14 @@ namespace BookChoice
                     }
                 }
             }
+            else
+            {
+                pip.gameObject.SetActive(true);
+
+                StartTyping(wrongMessage);
+
+                StartCoroutine(RevertToIdleAfterDelay(wrongDisplayDuration, onWrongFinished));
+            }
         }
 
         IEnumerator FinalSequence()
@@ -91,6 +101,7 @@ namespace BookChoice
 
             // Optional: return to idle or stay finished
             StartTyping("...");
+            continuebutton.gameObject.SetActive(true);
         }
         IEnumerator CorrectSequence()
         {

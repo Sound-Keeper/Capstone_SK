@@ -1,29 +1,27 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace BookChoice
 {
-    /// <summary>
-    /// Attach this to each choice button (1stOption, 2ndOption, 3rdOption, 4thOption).
-    /// </summary>
     public class ChoicePlacer : MonoBehaviour
     {
         [Header("References")]
-        [Tooltip("The blank/underline RectTransform on the left page where the answer snaps to.")]
         public RectTransform blankSlot;
-
-        [Tooltip("Is this the correct answer?")]
         public bool isCorrect = false;
-
-        [Tooltip("Dialogue box manager that shows feedback.")]
         public DialogueBoxManager dialogueBox;
 
-        // Shared across all ChoicePlacer instances to track if the slot is taken
-        private bool slotOccupied = false;
 
-        // ── internals ──────────────────────────────────────────────────────────
+    [Header("Page Settings")]
+        public int pageID = 0; // 👈 IMPORTANT: set this per page in Inspector
+
+        // Track all choices
+        private static List<ChoicePlacer> allChoices = new List<ChoicePlacer>();
+
+        // Per-page lock system
+        private static Dictionary<int, bool> pageLock = new Dictionary<int, bool>();
+
+        // ── internals ─────────────────────────────────────────────
         private RectTransform rectTransform;
         private Vector2 originalAnchoredPosition;
         private Transform originalParent;
@@ -41,12 +39,23 @@ namespace BookChoice
             originalParent = transform.parent;
 
             button.onClick.AddListener(OnClicked);
+
+            allChoices.Add(this);
+        }
+
+        void OnDestroy()
+        {
+            allChoices.Remove(this);
         }
 
         void OnClicked()
         {
             if (isPlaced) return;
-            if (slotOccupied) return;
+
+            if (pageLock.ContainsKey(pageID) && pageLock[pageID])
+                return;
+
+            pageLock[pageID] = true;
 
             PlaceOnBlank();
         }
@@ -54,14 +63,14 @@ namespace BookChoice
         void PlaceOnBlank()
         {
             isPlaced = true;
-            slotOccupied = true;
 
-            if (floatingChar != null) floatingChar.enabled = false;
+            if (floatingChar != null)
+                floatingChar.enabled = false;
 
             transform.SetParent(blankSlot.parent, true);
             rectTransform.anchoredPosition = blankSlot.anchoredPosition;
 
-            button.interactable = false;
+            DisablePageButtons();
 
             if (dialogueBox != null)
                 dialogueBox.ShowFeedback(isCorrect, OnWrongAnswerDialogueFinished);
@@ -70,14 +79,15 @@ namespace BookChoice
         public void OnWrongAnswerDialogueFinished()
         {
             if (isCorrect) return;
+
             ReturnToOriginalPlace();
         }
-
 
         void ReturnToOriginalPlace()
         {
             isPlaced = false;
-            slotOccupied = false;
+
+            pageLock[pageID] = false;
 
             transform.SetParent(originalParent, true);
             rectTransform.anchoredPosition = originalAnchoredPosition;
@@ -88,7 +98,27 @@ namespace BookChoice
                 floatingChar.ResetFloatOrigin();
             }
 
-            button.interactable = true;
+            EnablePageButtons();
+        }
+
+        void DisablePageButtons()
+        {
+            foreach (var choice in allChoices)
+            {
+                if (choice.pageID == pageID)
+                    choice.button.interactable = false;
+            }
+        }
+
+        void EnablePageButtons()
+        {
+            foreach (var choice in allChoices)
+            {
+                if (choice.pageID == pageID)
+                    choice.button.interactable = true;
+            }
         }
     }
+
+
 }
