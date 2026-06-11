@@ -8,7 +8,7 @@ public class CoreManager : MonoBehaviour
         //Load BgAudio, Save system
         SceneController.Instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu)
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.FirstMenu)
             .Perform();
     }
 

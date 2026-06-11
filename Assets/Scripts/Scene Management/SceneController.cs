@@ -63,11 +63,31 @@ public class SceneController : MonoBehaviour
             }
             yield return LoadAdditiveRoutine(kvp.Key, kvp.Value, plan.ActiveSceneName == kvp.Value);
         }
+
+        //The dialogue camera-swap (DialogueHouseI) disables the persistent player's camera,
+        //and the scene we just loaded (e.g. House I) has no camera of its own. If the player
+        //camera isn't back on by the time we reveal the new scene, there is NO active camera
+        //and the game looks frozen on a black "loading" screen even though the swap succeeded.
+        //Guarantee it here, at the end of every transition, so it can never be left off.
+        EnsurePlayerCameraActive();
+
         if (plan.Overlay)
         {
             yield return loadingOverlay.FadeOutBlack();
         }
         isBusy = false;
+    }
+
+    private void EnsurePlayerCameraActive()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj == null) return;
+        //include inactive children so we can find the camera even after it was disabled
+        Camera playerCam = playerObj.GetComponentInChildren<Camera>(true);
+        if (playerCam != null && !playerCam.gameObject.activeSelf)
+        {
+            playerCam.gameObject.SetActive(true);
+        }
     }
 
     private IEnumerator LoadAdditiveRoutine(string slotKey, string sceneName, bool setActive)

@@ -15,11 +15,18 @@ TagManager:
   - PennyCil NPC
   - HP
   - L1
+  - ISpawnPoint
+  - SheriffSans
+  - PIp
+  - ConnieSonant
+  - Phonics
+  - Judge
+  - Spawn
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - PostProcessing
   - Water
   - UI
   - 
