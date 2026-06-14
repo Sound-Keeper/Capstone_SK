@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Untitled design_0
+      name: StartButton
       rect:
         serializedVersion: 2
         x: 612
@@ -132,7 +132,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Untitled design_1
+      name: GameLogo
       rect:
         serializedVersion: 2
         x: 40
@@ -154,7 +154,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Untitled design_2
+      name: CharSelectButton
       rect:
         serializedVersion: 2
         x: 613
@@ -176,7 +176,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Untitled design_3
+      name: LoadButton
       rect:
         serializedVersion: 2
         x: 609
@@ -198,7 +198,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Untitled design_4
+      name: SettingsButton
       rect:
         serializedVersion: 2
         x: 611
@@ -220,7 +220,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Untitled design_5
+      name: QuitButton
       rect:
         serializedVersion: 2
         x: 610
@@ -242,7 +242,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Untitled design_6
+      name: ResumeButton
       rect:
         serializedVersion: 2
         x: 610
@@ -264,7 +264,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Untitled design_7
+      name: SaveButton
       rect:
         serializedVersion: 2
         x: 607
@@ -321,14 +321,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Untitled design_0: 933765496
-      Untitled design_1: 10663584
-      Untitled design_2: -1208626342
-      Untitled design_3: -619853663
-      Untitled design_4: -280917914
-      Untitled design_5: 776439763
-      Untitled design_6: 1939633956
-      Untitled design_7: -1605738546
+      CharSelectButton: -1208626342
+      GameLogo: 10663584
+      LoadButton: -619853663
+      QuitButton: 776439763
+      ResumeButton: 1939633956
+      SaveButton: -1605738546
+      SettingsButton: -280917914
+      StartButton: 933765496
       Untitled design_8: 1461831012
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
