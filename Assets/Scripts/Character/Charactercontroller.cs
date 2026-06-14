@@ -19,9 +19,23 @@ public class Charactercontroller : MonoBehaviour
     void Start()
     {
         player = GetComponent<CharacterController>();
-
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (CoreManager.Instance != null && CoreManager.Instance.HasSavedPosition)
+        {
+            Debug.Log("Restoring position: " + CoreManager.Instance.SavedPlayerPosition);
+            player.enabled = false;
+            transform.position = CoreManager.Instance.SavedPlayerPosition;
+            transform.rotation = CoreManager.Instance.SavedPlayerRotation;
+            player.enabled = true;
+        }
+        else
+        {
+            Debug.Log("No saved position found. HasSavedPosition: " +
+                (CoreManager.Instance != null ? CoreManager.Instance.HasSavedPosition.ToString() : "CoreManager is NULL"));
+        }
     }
+
 
     void Update()
     {

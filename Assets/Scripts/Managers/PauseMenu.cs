@@ -44,12 +44,22 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadMenu()
     {
+        Charactercontroller character = FindFirstObjectByType<Charactercontroller>();
+        if (character != null && CoreManager.Instance != null)
+        {
+            CoreManager.Instance.SavePlayerPosition(
+                character.transform.position,
+                character.transform.rotation
+            );
+            Debug.Log("Position saved: " + character.transform.position);
+        }
+
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1.0f;
         GameisPaused = false;
         SceneController.Instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu)
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.FirstMenu)
             .Unload(SceneDatabase.Slots.Session)
             .Unload(SceneDatabase.Slots.SessionContent)
             .WithClearUnusedAssets()
