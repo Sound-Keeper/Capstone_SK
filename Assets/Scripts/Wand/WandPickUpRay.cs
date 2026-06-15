@@ -32,7 +32,6 @@ public class WandPickUpRay : MonoBehaviour
         // Draw the laser beam every frame so you can see where you are aiming
         DrawLaserBeam();
 
-        //if (carry == null && pieceCarry == null) return;
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             Interact();
@@ -71,11 +70,26 @@ public class WandPickUpRay : MonoBehaviour
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 2f);
 
+        // 🎯 FIXED: Re-added 'RaycastHit' right here before 'hit'
         if (Physics.Raycast(ray, out RaycastHit hit, range, interactableLayer))
         {
             Debug.Log("Ray hit: " + hit.collider.name);
 
+            // =============================================================
+            // HOUSE U (VOWEL CHALLENGE CHOSEN PIECE)
+            // =============================================================
+            // Check this first! If the player clicks a piece of vowel paper, 
+            // process the click immediately and exit the interaction.
+            VowelPaper paper = hit.collider.GetComponentInParent<VowelPaper>();
+            if (paper != null)
+            {
+                paper.OnPaperClicked();
+                return;
+            }
+
+            // =============================================================
             // HOUSE I
+            // =============================================================
             if (carry != null)
             {
                 if (!carry.IsHolding())
@@ -98,7 +112,9 @@ public class WandPickUpRay : MonoBehaviour
                 }
             }
 
+            // =============================================================
             // HOUSE A
+            // =============================================================
             if (pieceCarry != null)
             {
                 if (!pieceCarry.IsHolding())
