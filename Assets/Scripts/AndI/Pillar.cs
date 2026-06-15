@@ -36,10 +36,11 @@ public class Pillar : MonoBehaviour
 
             Collider col = carriedLetter.GetComponent<Collider>();
             if (col != null)
-                col.enabled = true;
+                col.enabled = false;
 
             hold.ClearHeld();
             isFilled = true;
+
 
             Debug.Log("Correct piece placed!");
 
