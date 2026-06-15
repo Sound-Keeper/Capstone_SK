@@ -1,6 +1,5 @@
 fileFormatVersion: 2
-guid: 37e332b463ad044468c752a0f9b8ce86
-guid: e31c51d8049160648879306b3371fad2
+guid: dce12af736e0a4a1ba35d6424f897dc9
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -95,7 +94,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Android
+    buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -121,8 +120,6 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    spriteCustomMetadata:
-      entries: []
     nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
