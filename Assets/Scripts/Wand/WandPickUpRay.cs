@@ -5,14 +5,20 @@ public class WandPickUpRay : MonoBehaviour
 {
     public float range = 50f;
     public PlayerHold carry;
-    public PieceHold pieceCarry; // the player's carrier for House A broken pieces
+    public PieceHold pieceCarry;
     public float crosshairSize = 10f;
     public Color crosshairColor = Color.white;
 
+    [Header("Raycast Masking")]
+    public LayerMask interactableLayer;
+
+    // ADDED: References for the visual laser line
+    [Header("Visual Laser Settings")]
+    public LineRenderer laserLine;
+    public Transform laserOrigin; // Optional: Drag your Wand Tip here. If empty, it shoots from the camera center.
+
     void OnGUI()
     {
-        // I added a crosshair since na duduling na ako HAHAHAHAHH
-        //reference YT
         float cx = Screen.width / 2f;
         float cy = Screen.height / 2f;
         GUI.color = crosshairColor;
@@ -23,10 +29,39 @@ public class WandPickUpRay : MonoBehaviour
 
     void Update()
     {
-        if (carry == null && pieceCarry == null) return;
+        // Draw the laser beam every frame so you can see where you are aiming
+        DrawLaserBeam();
+
+        //if (carry == null && pieceCarry == null) return;
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             Interact();
+        }
+    }
+
+    void DrawLaserBeam()
+    {
+        if (laserLine == null) return;
+
+        Camera cam = Camera.main;
+
+        // Determine where the laser starts (Wand tip or Camera)
+        Vector3 startPoint = laserOrigin != null ? laserOrigin.position : cam.transform.position;
+        Vector3 direction = cam.transform.forward;
+
+        laserLine.SetPosition(0, startPoint);
+
+        // Perform a constant passive raycast to find where the laser should stop
+        Ray passiveRay = new Ray(cam.transform.position, direction);
+        if (Physics.Raycast(passiveRay, out RaycastHit hit, range, interactableLayer))
+        {
+            // If it hits an interactable target, snap the laser end point to that target
+            laserLine.SetPosition(1, hit.point);
+        }
+        else
+        {
+            // If it hits nothing, extend the laser out to its maximum range
+            laserLine.SetPosition(1, cam.transform.position + (direction * range));
         }
     }
 
@@ -36,7 +71,7 @@ public class WandPickUpRay : MonoBehaviour
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 2f);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, range))
+        if (Physics.Raycast(ray, out RaycastHit hit, range, interactableLayer))
         {
             Debug.Log("Ray hit: " + hit.collider.name);
 
