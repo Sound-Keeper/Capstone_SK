@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f775029c02fae2746bf158d4003370c9
+guid: af5ee86a57727bc40bd96fe8d6517ae2
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -93,30 +93,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: StartButton
+      name: ConfirmButton
       rect:
         serializedVersion: 2
-        x: 613
-        y: 962
-        width: 236
-        height: 73
+        x: 526
+        y: 885
+        width: 178
+        height: 66
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,42 +112,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cce0d34d32f14c540a8e59c0fc04ae7e
-      internalID: 933765496
+      spriteID: 271e2e4de2912ce46942c409c548530c
+      internalID: 1341555782
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GameLogo
+      name: WoodedInteractUI
       rect:
         serializedVersion: 2
-        x: 40
-        y: 705
-        width: 551
-        height: 329
-      alignment: 9
-      pivot: {x: 0.5121364, y: 0.5050815}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2e2891d40c405504eb0e660dcfe6422a
-      internalID: 10663584
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CharSelectButton
-      rect:
-        serializedVersion: 2
-        x: 614
-        y: 891
-        width: 234
-        height: 59
+        x: 130
+        y: 775
+        width: 301
+        height: 94
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -169,20 +134,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 870053ef7d4feda45b45316a46275a2c
-      internalID: -1208626342
+      spriteID: 8652aeca5c556c84599ff6f23d6549dc
+      internalID: -1034993697
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: LoadButton
+      name: MagicalInteractUI
       rect:
         serializedVersion: 2
-        x: 613
-        y: 822
-        width: 235
-        height: 58
+        x: 137
+        y: 665
+        width: 277
+        height: 97
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -191,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d24d98dec7743cb46a915969a060c3f6
-      internalID: -619853663
+      spriteID: b6bf56991deabcc40af163b91616434d
+      internalID: -1164637777
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SettingsButton
+      name: BackButton
       rect:
         serializedVersion: 2
-        x: 612
-        y: 753
-        width: 234
-        height: 57
+        x: 339
+        y: 887
+        width: 178
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -213,96 +178,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d4e7c5e4f566b8247bafd38639d12d60
-      internalID: -280917914
+      spriteID: 528783c235c111b4787655d50a6498e7
+      internalID: 1016756105
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: QuitButton
+      name: CharSelectUI
       rect:
         serializedVersion: 2
-        x: 613
-        y: 681
-        width: 233
-        height: 59
+        x: 97
+        y: 1033
+        width: 1221
+        height: 875
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7cd34fbc37fd46240b2bfa8cbc64c610
-      internalID: 776439763
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ResumeButton
-      rect:
-        serializedVersion: 2
-        x: 613
-        y: 612
-        width: 233
-        height: 57
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 24ba3c68bd12a064698b2c93b734e8ff
-      internalID: 1939633956
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SaveButton
-      rect:
-        serializedVersion: 2
-        x: 614
-        y: 544
-        width: 234
-        height: 56
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 47f1bcd0db3191d4b9aee6598cda0ae9
-      internalID: -1605738546
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Untitled design_8
-      rect:
-        serializedVersion: 2
-        x: 614
-        y: 473
-        width: 233
-        height: 57
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 23785e848ec0ac043b8e60db15dd4b67
-      internalID: 1461831012
+      spriteID: a88876d49134c904e8dadf901b3e79cf
+      internalID: 465666628
       vertices: []
       indices: 
       edges: []
@@ -311,7 +210,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: cf986d04c694db14b96ff07a9d4f1aa5
+    spriteID: edc86a7080bab1547afa720d869af01a
     internalID: 0
     vertices: []
     indices: 
@@ -319,17 +218,17 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceOnImport
+        value: False
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      CharSelectButton: -1208626342
-      GameLogo: 10663584
-      LoadButton: -619853663
-      QuitButton: 776439763
-      ResumeButton: 1939633956
-      SaveButton: -1605738546
-      SettingsButton: -280917914
-      StartButton: 933765496
-      Untitled design_8: 1461831012
+      BackButton: 1016756105
+      CharSelectUI: 465666628
+      ConfirmButton: 1341555782
+      MagicalInteractUI: -1164637777
+      WoodedInteractUI: -1034993697
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -5,19 +5,19 @@ using UnityEngine.InputSystem;
 
 public class PipHint : MonoBehaviour
 {
-    //pip the guide - leads the player through the houses in order (A,E,I,O,U) so they never get lost.
-    //each objective fires onReached ONCE when the player arrives (hook the house's forced dialogue there).
-
     [System.Serializable]
     public class HintObjective
     {
         [Tooltip("Where Pip leads the player (the house NPC / entrance).")]
         public Transform location;
-        [Tooltip("The vowel stone earned here - this objective is 'done' once the player has it.")]
-        public VowelStone.StoneType stone = VowelStone.StoneType.None;
+
+        [Tooltip("Which house completion flag is this objective waiting for?")]
+        public string houseLetter = "A"; // Set to A, E, I, O, or U
+
         [Tooltip("Particle clue at the location (optional).")]
         public ParticleSystem clue;
-        [Tooltip("Fires ONCE when the player first reaches this objective (hook the forced house dialogue).")]
+
+        [Tooltip("Fires ONCE when the player first reaches this objective.")]
         public UnityEvent onReached;
         [HideInInspector] public bool reached;
     }
@@ -48,7 +48,7 @@ public class PipHint : MonoBehaviour
 
     void Update()
     {
-        //press H to (re)summon Pip to the current objective
+        // Press H to (re)summon Pip to the current objective[cite: 7]
         if (Keyboard.current != null && Keyboard.current.hKey.wasPressedThisFrame)
             LeadToCurrent();
 
@@ -56,7 +56,7 @@ public class PipHint : MonoBehaviour
 
         HintObjective next = NextObjective();
 
-        //objective changed (player finished one, or first run) -> Pip leads to the new one
+        // Objective changed (player finished one) -> Pip leads to the new one[cite: 7]
         if (next != current)
         {
             StopClue(current);
@@ -65,12 +65,12 @@ public class PipHint : MonoBehaviour
             if (current != null)
                 LeadToCurrent();
             else if (pip != null && player != null)
-                pip.FollowPlayerStart(player);   //all houses done -> Pip just follows
+                pip.FollowPlayerStart(player); // All houses done -> Pip just follows[cite: 7]
         }
 
         if (current == null) return;
 
-        //player reached the current house -> fire its forced dialogue once
+        // Player reached the current house -> fire its forced behavior once[cite: 7]
         if (!current.reached && current.location != null && player != null &&
             Vector3.Distance(player.position, current.location.position) <= arriveDistance)
         {
@@ -89,29 +89,20 @@ public class PipHint : MonoBehaviour
         pip.MoveToTarget(current.location);
     }
 
-    //first house (in list order) whose stone the player still doesn't have
+    // Finds the first house objective in the list that isn't fully completed yet
     HintObjective NextObjective()
     {
         foreach (HintObjective o in objectives)
-            if (!HasStone(o.stone)) return o;
+        {
+            // If the house is NOT complete yet, this is our next target!
+            if (!PuzzleProgress.IsHouseComplete(o.houseLetter))
+                return o;
+        }
         return null;
     }
 
     void StopClue(HintObjective o)
     {
         if (o != null && o.clue != null) o.clue.Stop();
-    }
-
-    bool HasStone(VowelStone.StoneType s)
-    {
-        switch (s)
-        {
-            case VowelStone.StoneType.VowelI: return PuzzleProgress.HasVowelIStone;
-            case VowelStone.StoneType.VowelA: return PuzzleProgress.HasVowelAStone;
-            case VowelStone.StoneType.VowelE: return PuzzleProgress.HasVowelEStone;
-            case VowelStone.StoneType.VowelO: return PuzzleProgress.HasVowelOStone;
-            case VowelStone.StoneType.VowelU: return PuzzleProgress.HasVowelUStone;
-            default: return false;
-        }
     }
 }

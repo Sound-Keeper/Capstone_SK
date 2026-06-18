@@ -3,7 +3,97 @@ guid: 831588cdd291e8c4b90972f180a98b6b
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: eyebrows_penn_texture
+    second: {fileID: 2100000, guid: aff8a7e83e0a32a41ac7be80e0dbdd9d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_black_shoes
+    second: {fileID: 2100000, guid: c9b2056e8e7405c4bb14a97f65d3b49d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_body_lambert
+    second: {fileID: 2100000, guid: 18907148bf8cd7d4494ec9a2d296d250, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_coat_penn
+    second: {fileID: 2100000, guid: c33bf8a229240d142a70217b7db9c5f0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye1
+    second: {fileID: 2100000, guid: 44f6fb6f632912742bff594f36e45dd1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye2
+    second: {fileID: 2100000, guid: 165dad397678dae40a09644a0f178dd9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye_white
+    second: {fileID: 2100000, guid: 45847ab35c212a940825a46720eb5a2b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_hair_penn
+    second: {fileID: 2100000, guid: d0e9a32631691694db0675ff1ad81748, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_left_horn
+    second: {fileID: 2100000, guid: 862bcf0d321b54d4da3ca393fff0b951, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_left_socks
+    second: {fileID: 2100000, guid: a57240cb370697145bc0d9b3165632ba, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_mage_pants
+    second: {fileID: 2100000, guid: 8629d0ed86cd8f14db50889d34f3f658, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_mage_penn_vest
+    second: {fileID: 2100000, guid: 22830eabaa5bb004d96d039bd21f6dc0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_necktie_mage
+    second: {fileID: 2100000, guid: 180fec71ba171a54caf9474cc33b7035, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_orb
+    second: {fileID: 2100000, guid: 7e255a111ac7df04381b974c5705ad24, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_right_horn
+    second: {fileID: 2100000, guid: 49c2473bda052064ca7691b261b66c35, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_right_socks
+    second: {fileID: -8754580782591365834, guid: 3d1b6c555d23d7b4d96c640056435120, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_shaft
+    second: {fileID: 2100000, guid: f0921795882de324ab71b1e9835b96a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_swirl1
+    second: {fileID: 2100000, guid: 0fbd9e793a7ac58439012e00907e2c27, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -22,7 +112,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -33,7 +123,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 30
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -82,8 +172,459 @@ ModelImporter:
   importAnimation: 1
   humanDescription:
     serializedVersion: 3
-    human: []
-    skeleton: []
+    human:
+    - boneName: hip_joint
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: left_thigh_joint
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: right_thigh_joint
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: knee_left_joint
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: knee_right_joint
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: heel_left_joint
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: heel_right_joint
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: stomach_joint
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: neck_joint
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: head_joint
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: shoulder_left_joint
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: shoulder_right_joint
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: elbow_left_joint
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: elbow_right_joint
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: wrist_left_joint
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: wrist_right_joint
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: toe_left_joint
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: toe_right_joint
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: orb
+      humanName: Right Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: point_2
+      humanName: Right Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: swirl
+      humanName: Right Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: joint25
+      humanName: Right Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: paige w animation (1)(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: main_body
+      parentName: paige w animation (1)(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Mage_Paige
+      parentName: paige w animation (1)(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: hair_paige_mage
+      parentName: Mage_Paige
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: right_eyebrow
+      parentName: Mage_Paige
+      position: {x: 4.3298702e-16, y: 1.3322676e-15, z: -2.2648554e-15}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: left_eyebrow
+      parentName: Mage_Paige
+      position: {x: 2.6645354e-16, y: 2.9309896e-15, z: -2.5313086e-15}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: left_boots_paige
+      parentName: Mage_Paige
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: right_boots_paige
+      parentName: Mage_Paige
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: corset
+      parentName: Mage_Paige
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: skirt_mage
+      parentName: Mage_Paige
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: cape_paige
+      parentName: Mage_Paige
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: globalCTRL
+      parentName: paige w animation (1)(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: nurbsCircle1
+      parentName: globalCTRL
+      position: {x: -0, y: 0.44432467, z: -0.2540717}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.64660776, y: 0.64660776, z: 0.64660776}
+    - name: nurbsCircle3
+      parentName: nurbsCircle1
+      position: {x: 1.9775849e-17, y: 0.036249377, z: 0.40728578}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1.5465326, y: 1.5465326, z: 1.5465326}
+    - name: nurbsCircle4
+      parentName: nurbsCircle3
+      position: {x: -7.2051576e-18, y: 0.14318828, z: 0.0024687634}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: nurbsCircle5
+      parentName: nurbsCircle4
+      position: {x: -8.326673e-18, y: 0.13907364, z: -0.0123438155}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: nurbsCircle6
+      parentName: nurbsCircle5
+      position: {x: 2.9976022e-16, y: 0.19914688, z: 0.0074062897}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: mCTRL
+      parentName: nurbsCircle6
+      position: {x: 3.9525502e-18, y: 0.023446457, z: 0.6736335}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: eCTRL
+      parentName: nurbsCircle6
+      position: {x: 3.9525502e-18, y: 0.5411483, z: 0.6736335}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: left_eye_paige_penn
+      parentName: nurbsCircle6
+      position: {x: -0.14960065, y: 0.28390253, z: 0.25722796}
+      rotation: {x: -4.1633363e-17, y: -9.1921895e-12, z: 4.4550363e-10, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: right_eye_paige_penn
+      parentName: nurbsCircle6
+      position: {x: 0.14746447, y: 0.2829025, z: 0.24924555}
+      rotation: {x: -1.8592766e-13, y: 2.407742e-16, z: 1.7347235e-18, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: lower_lashes_left
+      parentName: nurbsCircle6
+      position: {x: -0.20041971, y: 0.20465375, z: 0.31283557}
+      rotation: {x: -0.024057955, y: 0, z: -0, w: 0.9997106}
+      scale: {x: 1, y: 1, z: 1}
+    - name: lower_lashes_right
+      parentName: nurbsCircle6
+      position: {x: 0.20412038, y: 0.20465375, z: 0.31283557}
+      rotation: {x: -0.024057955, y: 0, z: -0, w: 0.9997106}
+      scale: {x: 1, y: 1, z: 1}
+    - name: ROOTgrp
+      parentName: paige w animation (1)(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: root_joint
+      parentName: ROOTgrp
+      position: {x: -0, y: 0.44432467, z: -0.2540717}
+      rotation: {x: 0.47732282, y: 0.47732282, z: -0.5216924, w: 0.5216924}
+      scale: {x: 1.0000005, y: 1.0000002, z: 1.0000005}
+    - name: hip_joint
+      parentName: root_joint
+      position: {x: -0.26439518, y: 1.2787218e-17, z: -1.6653345e-15}
+      rotation: {x: -0, y: -0.65056944, z: 0.000000004656613, w: 0.75944686}
+      scale: {x: 1, y: 1.0000002, z: 1}
+    - name: stomach_joint
+      parentName: hip_joint
+      position: {x: -0.14320955, y: -7.2051576e-18, z: 1.3791055e-17}
+      rotation: {x: -0.000000012212897, y: -0.05285784, z: 0.000000031931126, w: 0.99860203}
+      scale: {x: 1.0000005, y: 1.0000006, z: 0.9999994}
+    - name: chest_joint
+      parentName: stomach_joint
+      position: {x: -0.1396204, y: -8.326673e-18, z: 2.8310692e-16}
+      rotation: {x: 0.0000000042901753, y: 0.057472974, z: 0.0000000028283553, w: 0.9983471}
+      scale: {x: 1.0000004, y: 1.0000004, z: 1.0000004}
+    - name: neck_joint
+      parentName: chest_joint
+      position: {x: -0.12430467, y: 2.4913176e-33, z: -1.6761573e-17}
+      rotation: {x: -0.000000002051774, y: 0.0142024625, z: -0.00000004900314, w: 0.9998992}
+      scale: {x: 1.0000008, y: 1.0000005, z: 1}
+    - name: head_joint
+      parentName: neck_joint
+      position: {x: -0.074998766, y: 2.9976022e-16, z: -9.1593425e-17}
+      rotation: {x: -0.9999891, y: -0.00000004774604, z: 0.0046814107, w: 6.505804e-10}
+      scale: {x: 1.000001, y: 1.0000006, z: 1.0000013}
+    - name: scalp_joint
+      parentName: head_joint
+      position: {x: -0.7734997, y: 8.004515e-34, z: -1.4461245e-15}
+      rotation: {x: -5.5511138e-17, y: 4.6566118e-10, z: -0, w: 1}
+      scale: {x: 1.0000005, y: 1.0000005, z: 1.0000008}
+    - name: shoulder_left_joint
+      parentName: chest_joint
+      position: {x: -0.051902723, y: -0.10681027, z: -0.0053167245}
+      rotation: {x: -0.49722385, y: -0.51575154, z: 0.50276065, w: 0.4837361}
+      scale: {x: 1.0000008, y: 1.0000008, z: 1.0000013}
+    - name: elbow_left_joint
+      parentName: shoulder_left_joint
+      position: {x: -0.18377756, y: -3.5752655e-16, z: -1.5787374e-14}
+      rotation: {x: 0.00000013411042, y: -0.022201607, z: 0.00000005960463, w: 0.9997536}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000004}
+    - name: wrist_left_joint
+      parentName: elbow_left_joint
+      position: {x: -0.17003787, y: -2.6905565e-16, z: -3.9968033e-16}
+      rotation: {x: 0.000000057391304, y: -0.00527856, z: 0.00000004309567, w: 0.99998605}
+      scale: {x: 0.9999997, y: 0.99999946, z: 0.99999994}
+    - name: joint21
+      parentName: wrist_left_joint
+      position: {x: -0.08355058, y: 3.2521502e-10, z: -0.000000017090871}
+      rotation: {x: -0.00000008551703, y: 0.016769882, z: -0.0000000135218805, w: 0.99985945}
+      scale: {x: 1.0000005, y: 1.0000007, z: 1.0000005}
+    - name: shoulder_right_joint
+      parentName: chest_joint
+      position: {x: -0.051901888, y: 0.10681023, z: -0.005316703}
+      rotation: {x: 0.5027612, y: 0.48373547, z: 0.49722335, w: 0.51575196}
+      scale: {x: 1.0000005, y: 1.0000005, z: 1.0000005}
+    - name: elbow_right_joint
+      parentName: shoulder_right_joint
+      position: {x: 0.18377723, y: -5.2041706e-19, z: -0.00000036229048}
+      rotation: {x: 0.00000023841852, y: -0.022202486, z: 0.000000089406946, w: 0.9997535}
+      scale: {x: 1, y: 1.0000002, z: 1.0000006}
+    - name: wrist_right_joint
+      parentName: elbow_right_joint
+      position: {x: 0.1700365, y: -1.8625727e-15, z: -0.0000006673063}
+      rotation: {x: -0.00004801417, y: 0.18309504, z: -0.009067045, w: 0.9830534}
+      scale: {x: 1.0000006, y: 1.0000001, z: 1.0000006}
+    - name: wand_paige
+      parentName: wrist_right_joint
+      position: {x: 0.04024194, y: 0.091732636, z: 0.030945083}
+      rotation: {x: -0.60770476, y: 0.36151755, z: 0.36151755, w: 0.60770476}
+      scale: {x: 1, y: 1, z: 1}
+    - name: point
+      parentName: wand_paige
+      position: {x: 0.037923556, y: 0.07355546, z: 0.16354339}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: point_2
+      parentName: wand_paige
+      position: {x: -0.038154483, y: -0.092525855, z: 0.15767759}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: orb
+      parentName: wand_paige
+      position: {x: -0.0006837755, y: -0.011076529, z: 0.16666746}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: swirl
+      parentName: wand_paige
+      position: {x: 0.0054815537, y: 0.01117938, z: -0.1338672}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: joint25
+      parentName: wrist_right_joint
+      position: {x: 0.08355232, y: -2.9703612e-10, z: 0.0000011804566}
+      rotation: {x: 7.1054257e-15, y: -0, z: -8.937293e-15, w: 1}
+      scale: {x: 1.0000002, y: 1.0000004, z: 1.0000001}
+    - name: left_thigh_joint
+      parentName: hip_joint
+      position: {x: 0.036174607, y: -0.083843365, z: -0.0008291561}
+      rotation: {x: -0.05559843, y: 0.000000007765559, z: 0.9984532, w: 0.000000008667221}
+      scale: {x: 1.0000005, y: 1.0000012, z: 0.9999994}
+    - name: knee_left_joint
+      parentName: left_thigh_joint
+      position: {x: -0.19303948, y: -2.2863061e-18, z: -8.698461e-17}
+      rotation: {x: -0.000000006857802, y: -0.10411242, z: 0.000000008209526, w: 0.9945656}
+      scale: {x: 1, y: 1, z: 0.9999998}
+    - name: heel_left_joint
+      parentName: knee_left_joint
+      position: {x: -0.2170647, y: -1.3348599e-16, z: 8.326673e-18}
+      rotation: {x: 0.6372848, y: -0.000000015973207, z: -0.77062845, w: -0.00000012916583}
+      scale: {x: 1.0000007, y: 1.0000005, z: 1.0000006}
+    - name: bone_left_joint
+      parentName: heel_left_joint
+      position: {x: -0.05209404, y: -1.3202909e-16, z: 1.5681662e-15}
+      rotation: {x: -0.000000028790588, y: 0.039680835, z: -0.000000030780825, w: 0.9992125}
+      scale: {x: 1.0000005, y: 1.0000005, z: 1.0000002}
+    - name: toe_left_joint
+      parentName: bone_left_joint
+      position: {x: -0.049874336, y: 6.67318e-19, z: 2.9507745e-18}
+      rotation: {x: -0.000000099034025, y: 0.0020869626, z: 0.00000007889206, w: 0.9999978}
+      scale: {x: 1.0000006, y: 1.0000006, z: 1.0000004}
+    - name: right_thigh_joint
+      parentName: hip_joint
+      position: {x: 0.03617332, y: 0.083843425, z: -0.00082917465}
+      rotation: {x: -0.99845326, y: 0.000015206357, z: -0.05559831, w: 0.00027811082}
+      scale: {x: 1.0000005, y: 1.0000006, z: 1.0000017}
+    - name: knee_right_joint
+      parentName: right_thigh_joint
+      position: {x: 0.19304088, y: 3.3306692e-17, z: 0.00000007044369}
+      rotation: {x: -0.000000019295834, y: 0.10411242, z: -0.0000001116359, w: -0.99456555}
+      scale: {x: 1.0000005, y: 1.0000004, z: 1.0000012}
+    - name: heel_right_joint
+      parentName: knee_right_joint
+      position: {x: 0.21706456, y: 1.6653345e-16, z: 0.00000002570735}
+      rotation: {x: 0.6372847, y: -0.000000056110604, z: -0.7706285, w: 0.000000007784813}
+      scale: {x: 0.9999998, y: 0.99999994, z: 1.0000008}
+    - name: bone_right_joint
+      parentName: heel_right_joint
+      position: {x: 0.052094206, y: 0.000029012332, z: -0.00000003645651}
+      rotation: {x: -0.0000143517955, y: -0.039680775, z: -0.00027925195, w: -0.9992124}
+      scale: {x: 1.0000006, y: 1.000001, z: 1.0000005}
+    - name: toe_right_joint
+      parentName: bone_right_joint
+      position: {x: 0.04987437, y: 6.6613384e-17, z: 0.000000010672046}
+      rotation: {x: -0.00000005748459, y: 0.0020870783, z: -0.0000010986076, w: 0.99999785}
+      scale: {x: 1, y: 1, z: 1}
+    - name: blendshapes_body
+      parentName: paige w animation (1)(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -91,16 +632,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
-    rootMotionBoneName: 
+    globalScale: 30
+    rootMotionBoneName: ROOTgrp
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 6faf1938844272842b5b5ab3279150d7, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
