@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
 {
+    private static bool hasPlayedPipIntro = false;
     public static DialogueManager Instance;
 
     [Header("UI References")]
@@ -45,6 +46,9 @@ public class DialogueManager : MonoBehaviour
     Camera previousCamera;
     Camera dialogueCamera;
 
+    // Safety timer to prevent the "E" interaction keyframe from immediately skipping the typing effect
+    private float inputCooldownTimer = 0f;
+
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -55,41 +59,46 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
-        // 1. Find Pip and her scripts
         PipFly pipFly = FindFirstObjectByType<PipFly>();
         PipHint pipHint = FindFirstObjectByType<PipHint>();
         GameObject player = GameObject.FindWithTag("Player");
 
-        if (pipFly != null && fountainTarget != null)
+        if (!hasPlayedPipIntro && pipFly != null && fountainTarget != null)
         {
-            // Keep her automatic radar brain asleep while you two are chatting
+            hasPlayedPipIntro = true;
+
             if (pipHint != null) pipHint.autoGuide = false;
 
-            // 2. Open the text box instantly so she talks first while standing still
             string[] introLines = new string[] {
-            "Wake up, {player}! The valley is in trouble!",
-            "The sacred vowel stones have been scattered to the five houses.",
-            "Follow me! Let's head over to House A first."
-        };
-            StartDialogue("Pip", introLines);
+                "Wake up, {player}! The valley is in trouble!",
+                "The sacred vowel stones have been scattered to the five houses.",
+                "Follow me! Let's head over to House A first."
+            };
+            StartDialogue("Pip", introLines, npcPortrait);
 
-            // 3. THIS RUNS ONLY AFTER THE PLAYER CLOSES THE ENTIRE DIALOGUE PANEL!
             OnDialogueEnd = () => {
-
-                // First, command her to physically fly out to the fountain target!
                 pipFly.MoveToTarget(fountainTarget, () => {
-
-                    // This microsecond callback runs ONLY after she finishes her flight and lands at the fountain:
                     if (pipHint != null)
                     {
-                        pipHint.autoGuide = true; // Turn her automatic house-tracking brain on!
+                        pipHint.autoGuide = true;
                     }
                     else if (player != null)
                     {
-                        pipFly.FollowPlayerStart(player.transform); // Fallback: hover on shoulder
+                        pipFly.FollowPlayerStart(player.transform);
                     }
                 });
             };
+        }
+        else
+        {
+            if (pipFly != null && player != null)
+            {
+                pipFly.FollowPlayerStart(player.transform);
+            }
+            if (pipHint != null)
+            {
+                pipHint.autoGuide = true;
+            }
         }
     }
 
@@ -97,15 +106,19 @@ public class DialogueManager : MonoBehaviour
     {
         if (dialoguePanel == null || !dialoguePanel.activeSelf) return;
 
+        if (inputCooldownTimer > 0)
+        {
+            inputCooldownTimer -= Time.deltaTime;
+        }
+
         bool advance =
             (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame) ||
             (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame);
 
-        if (!advance) return;
+        if (!advance || inputCooldownTimer > 0) return;
 
         if (isTyping)
         {
-            // Skip the typing animation and show the whole line instantly
             StopAllCoroutines();
             dialogueText.text = currentFullLine;
             isTyping = false;
@@ -116,19 +129,15 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    // Overload Function: Allows Pip's automated intro sequences and the Altar script 
-    // to play plain text strings without throwing an error.
-    public void StartDialogue(string speaker, string[] newLines)
+    public void StartDialogue(string speaker, string[] newLines, Sprite speakerPortrait = null)
     {
         if (newLines == null || newLines.Length == 0) return;
 
-        // 1. Force the physical UI panel to wake up and appear on screen immediately!
         if (dialoguePanel != null)
         {
             dialoguePanel.SetActive(true);
         }
 
-        // Convert raw text strings into proper DialogueLine structural formats
         DialogueLine[] convertedLines = new DialogueLine[newLines.Length];
         for (int i = 0; i < newLines.Length; i++)
         {
@@ -139,11 +148,10 @@ public class DialogueManager : MonoBehaviour
             };
         }
 
-        // Send to master method with portraits set safely to empty/null
-        StartDialogue(convertedLines, speaker, null, null, dialogueCamera, null);
+        StartDialogue(convertedLines, speaker, speakerPortrait, null, dialogueCamera, OnDialogueEnd);
     }
 
-    // Call this to trigger ANY complex dialogue conversation across the game
+    // Single Master implementation for structured node script logic
     public void StartDialogue(DialogueLine[] lines, string npcName, Sprite npcPortrait,
         Sprite playerPortrait, Camera cam, Action onComplete = null)
     {
@@ -152,15 +160,20 @@ public class DialogueManager : MonoBehaviour
         this.npcName = npcName;
         this.npcPortrait = npcPortrait;
         this.playerPortrait = playerPortrait;
-        this.OnDialogueEnd = onComplete;
 
-        previousCamera = Camera.main;
-        dialogueCamera = cam;
-
-        if (dialogueCamera != null)
+        if (onComplete != null)
         {
-            if (previousCamera != null) previousCamera.gameObject.SetActive(false);
+            this.OnDialogueEnd = onComplete;
+        }
+
+        // 🎥 FIX: Safely store the main rendering camera and switch to the assigned NPC dialogue camera
+        if (cam != null)
+        {
+            previousCamera = Camera.main;
+            dialogueCamera = cam;
+
             dialogueCamera.gameObject.SetActive(true);
+            if (previousCamera != null) previousCamera.gameObject.SetActive(false);
         }
 
         SetupPortrait(leftPortrait, npcPortrait);
@@ -180,11 +193,12 @@ public class DialogueManager : MonoBehaviour
         DialogueLine line = currentLines[currentLineIndex];
         bool isPlayer = (line.speaker == Speaker.Player);
 
-        // Switches names automatically based on character selection choice
         nameText.text = isPlayer ? CharacterSelection.SelectedName : npcName;
 
-        Highlight(leftPortrait, !isPlayer);
-        Highlight(rightPortrait, isPlayer);
+        Sprite activePortrait = isPlayer ? playerPortrait : npcPortrait;
+        SetupPortrait(leftPortrait, activePortrait);
+
+        inputCooldownTimer = 0.2f;
 
         StopAllCoroutines();
         StartCoroutine(TypeLine(FormatString(line.text)));
@@ -193,13 +207,28 @@ public class DialogueManager : MonoBehaviour
     void SetupPortrait(Image img, Sprite face)
     {
         if (img == null) return;
-        img.sprite = face;
-        img.enabled = (face != null);
+
+        if (face != null)
+        {
+            img.gameObject.SetActive(true);
+            img.enabled = true;
+            img.sprite = face;
+
+            Color c = img.color;
+            c.a = 1f;
+            img.color = c;
+        }
+        else
+        {
+            img.sprite = null;
+            img.enabled = false;
+            img.gameObject.SetActive(false);
+        }
     }
 
     void Highlight(Image img, bool isSpeaking)
     {
-        if (img == null || !img.enabled) return;
+        if (img == null || !img.gameObject.activeSelf) return;
         img.color = isSpeaking ? activeTint : inactiveTint;
     }
 
@@ -236,13 +265,13 @@ public class DialogueManager : MonoBehaviour
     {
         dialoguePanel.SetActive(false);
 
+        // 🎥 FIX: Disable dialogue camera and return controls/rendering back to normal main scene camera view
         if (dialogueCamera != null)
         {
             dialogueCamera.gameObject.SetActive(false);
             if (previousCamera != null) previousCamera.gameObject.SetActive(true);
         }
 
-        // Fire any logic that is waiting for the text box to finish closing
         Action cb = OnDialogueEnd;
         OnDialogueEnd = null;
         cb?.Invoke();

@@ -42,6 +42,8 @@ namespace BookChoice
 
         void Start()
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             judge.gameObject.SetActive(true);
             StartTyping(idleMessage);
         }

@@ -41,8 +41,13 @@ public class NpcInteraction : MonoBehaviour
     public bool autoPlayWhenSolved = false;
     public float autoPlayDelay = 1.5f;
 
+    [Header("Solved Settings")]
+    [Tooltip("Check if this specific house is solved (e.g., 'A', 'E', 'I')")]
+    public string houseLetter = "A";
+
     bool playerInRange = false;
     bool hasTriggered = false;
+    private bool waitingForSolvedExit = false;
 
     void Start()
     {
@@ -54,9 +59,22 @@ public class NpcInteraction : MonoBehaviour
 
         FindPlayerFallback();
 
+        // 🌟 Fix: Only auto-play if THIS specific house is the one that was solved!
         if (autoPlayWhenSolved && IsHouseSolved() && dialogueLinesAfterSolved.Count > 0)
         {
             StartCoroutine(AutoPlayAfterSolved());
+        }
+
+        // Check if THIS specific house's puzzle has been solved
+        if (PuzzleProgress.IsHouseComplete(houseLetter))
+        {
+            if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
+            {
+                dialogueLines = dialogueLinesAfterSolved;
+            }
+
+            // Point this specific NPC's target back to MainWorld since it's already cleared
+            sceneToLoad = "MainWorld";
         }
     }
 
@@ -79,18 +97,6 @@ public class NpcInteraction : MonoBehaviour
             case PuzzleFlag.HouseO: return PuzzleProgress.HouseOSolved;
             case PuzzleFlag.HouseU: return PuzzleProgress.HouseUSolved;
             default: return false;
-        }
-    }
-
-    void ClearSolvedFlag()
-    {
-        switch (associatedHouse)
-        {
-            case PuzzleFlag.HouseA: PuzzleProgress.HouseASolved = false; break;
-            case PuzzleFlag.HouseE: PuzzleProgress.HouseESolved = false; break;
-            case PuzzleFlag.HouseI: PuzzleProgress.HouseISolved = false; break;
-            case PuzzleFlag.HouseO: PuzzleProgress.HouseOSolved = false; break;
-            case PuzzleFlag.HouseU: PuzzleProgress.HouseUSolved = false; break;
         }
     }
 
@@ -125,52 +131,88 @@ public class NpcInteraction : MonoBehaviour
         }
     }
 
-    void Interact()
+    public void Interact()
     {
-        hasTriggered = true;
-
-        if (DialogueManager.Instance == null)
+        if (PuzzleProgress.IsHouseComplete(houseLetter))
         {
-            Debug.LogError("DialogueManager.Instance is missing from your scene!");
-            return;
+            if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
+            {
+                dialogueLines = dialogueLinesAfterSolved;
+            }
+
+            waitingForSolvedExit = true;
         }
 
-        List<DialogueLine> linesToPlay = dialogueLines;
-
-        if (IsHouseSolved() && dialogueLinesAfterSolved.Count > 0)
+        if (DialogueManager.Instance != null)
         {
-            linesToPlay = dialogueLinesAfterSolved;
-            ClearSolvedFlag();
+            DialogueManager.Instance.StartDialogue(
+                dialogueLines.ToArray(),
+                npcName,
+                npcPortrait,
+                playerPortrait,
+                dialogueCamera,
+                OnDialogueComplete
+            );
         }
-
-        DialogueManager.Instance.StartDialogue(
-            linesToPlay.ToArray(),
-            npcName,
-            npcPortrait,
-            playerPortrait,
-            dialogueCamera,
-            OnDialogueComplete
-        );
     }
 
     void OnDialogueComplete()
     {
-        if (string.IsNullOrEmpty(sceneToLoad))
+        // 🌟 THE FIX: Only hardcode "MainWorld" if THIS SPECIFIC house is actually complete!
+        // We check IsHouseSolved() or IsHouseComplete(houseLetter) directly here.
+        if (IsHouseSolved() || PuzzleProgress.IsHouseComplete(houseLetter) || (waitingForSolvedExit && IsHouseSolved()))
         {
-            StartCoroutine(ReEnableInteractNextFrame());
+            StartCoroutine(WaitAndWarpRoutine());
             return;
         }
 
+        // 🌟 If THIS house is NOT complete, behave normally! 
+        // Go to the puzzle scene (e.g., House E) if it's set in the inspector.
+        if (!string.IsNullOrEmpty(sceneToLoad) && sceneToLoad != "MainWorld")
+        {
+            ExecuteSceneWarp(sceneToLoad);
+            return;
+        }
+
+        // Default fallback if inside a house room
+        StartCoroutine(ReEnableInteractNextFrame());
+    }
+
+    private System.Collections.IEnumerator WaitAndWarpRoutine()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        if (DialogueManager.Instance != null && DialogueManager.Instance.dialoguePanel != null)
+        {
+            while (DialogueManager.Instance.dialoguePanel.activeSelf)
+            {
+                yield return null;
+            }
+        }
+
+        waitingForSolvedExit = false;
+        ExecuteSceneWarp("MainWorld");
+    }
+
+    private void ExecuteSceneWarp(string destinationScene)
+    {
         if (player != null)
         {
+            // 💾 FIX: Check destinationScene! If we are going ANYWHERE except MainWorld, save the location.
+            if (destinationScene != "MainWorld" && CoreManager.Instance != null)
+            {
+                CoreManager.Instance.SavePlayerPosition(player.position, player.rotation);
+            }
+            // 🧹 If we are actually returning back to MainWorld, do NOT clear the data here.
+            // Let your player prefab script read the data, use it, and have the player script clear it!
+
             Camera playerCam = player.GetComponentInChildren<Camera>(true);
             if (playerCam != null) playerCam.gameObject.SetActive(true);
         }
 
-        // Trigger your custom scene transition framework
         SceneController.Instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.SessionContent, sceneToLoad, setActive: true)
+            .Load(SceneDatabase.Slots.SessionContent, destinationScene, setActive: true)
             .WithOverlay()
             .WithClearUnusedAssets()
             .Perform();
