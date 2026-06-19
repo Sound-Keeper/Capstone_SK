@@ -3,58 +3,54 @@ using UnityEngine.InputSystem;
 
 public class PlayerAnimator : MonoBehaviour
 {
-    // Sample Animation for the character using this wizard as beta char
-    Animator anim;
+    private Animator anim;
+    private CharacterController controller;
+
     void Start()
     {
-        anim  = GetComponent<Animator>();
+        anim = GetComponent<Animator>();
+
+        // Find the CharacterController on the parent "Player" object
+        controller = GetComponentInParent<CharacterController>();
     }
+
     void Update()
     {
-        Vector2 move = InputSystem.actions.FindAction("Move").ReadValue<Vector2>();
+        if (anim == null) return;
 
-        //check lang if moving in diff directions
-        //testing lang
-        bool isMoving = false;
-        if (move.x != 0 || move.y != 0)
+        // 1. DYNAMIC MOVEMENT & SPRINT CHECK
+        if (controller != null)
         {
-            isMoving = true;
+            // Calculate how fast the player is physically sliding on the X and Z axes
+            Vector3 horizontalVelocity = new Vector3(controller.velocity.x, 0, controller.velocity.z);
+            float physicalSpeed = horizontalVelocity.magnitude;
+
+            // If moving at all, set the "Walk" float parameter to 1, otherwise 0
+            anim.SetFloat("Walk", physicalSpeed > 0.1f ? 1f : 0f);
+
+            // Set Sprint parameter based on actual movement speed threshold (e.g., greater than walk speed)
+            bool isSprinting = physicalSpeed > 2.5f;
+            anim.SetBool("Sprint", isSprinting);
         }
 
-        //test if tatakbo
-        bool isSprinting = Keyboard.current.leftShiftKey.isPressed;
-
-        //walk animation
-        if (isMoving)
-        {
-            { anim.SetFloat("Walk", 1f); }
-        }
-        else
-        {
-            { anim.SetFloat("Walk", 0); }
-        }
-
-        //takbo
-        if (isSprinting & isMoving)
-        {
-            anim.SetBool("Sprint", true);
-        }
-        else
-        {
-            anim.SetBool("Sprint", false);
-        }
-
-        //jump animation
+        // 2. JUMP TRIGGER
+        // We still use input actions for immediate triggers like jumps
         if (InputSystem.actions.FindAction("Jump").triggered)
         {
             anim.SetTrigger("Jump");
         }
 
-        //Test for interaction Systerm
-        if (Keyboard.current.eKey.wasPressedThisFrame)
-        { anim.SetTrigger("Interact"); }
+        // 3. INTERACT TRIGGER
+        if (InputSystem.actions.FindAction("Interact") != null && InputSystem.actions.FindAction("Interact").triggered)
+        {
+            anim.SetTrigger("Interact");
+        }
+        else if (Input.GetKeyDown(KeyCode.E)) // Fallback if action isn't bound yet
+        {
+            anim.SetTrigger("Interact");
+        }
 
-        // for Attack and interaction with puzzle
+        // 4. ATTACK STATE
         if (InputSystem.actions.FindAction("Attack").IsPressed())
         {
             anim.SetBool("Attack", true);
@@ -63,6 +59,5 @@ public class PlayerAnimator : MonoBehaviour
         {
             anim.SetBool("Attack", false);
         }
-
     }
 }

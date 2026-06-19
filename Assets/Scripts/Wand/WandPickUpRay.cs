@@ -12,10 +12,18 @@ public class WandPickUpRay : MonoBehaviour
     [Header("Raycast Masking")]
     public LayerMask interactableLayer;
 
-    // ADDED: References for the visual laser line
     [Header("Visual Laser Settings")]
     public LineRenderer laserLine;
-    public Transform laserOrigin; // Optional: Drag your Wand Tip here. If empty, it shoots from the camera center.
+    public Transform laserOrigin;
+
+    private Camera cachedCam;
+
+    void Start()
+    {
+        // Cache the camera component to prevent Camera.main null crashes
+        cachedCam = GetComponent<Camera>();
+        if (cachedCam == null) cachedCam = Camera.main;
+    }
 
     void OnGUI()
     {
@@ -29,94 +37,138 @@ public class WandPickUpRay : MonoBehaviour
 
     void Update()
     {
-        // Draw the laser beam every frame so you can see where you are aiming
+        if (cachedCam == null) return; // Ultimate safety guard
+
         DrawLaserBeam();
 
-        //if (carry == null && pieceCarry == null) return;
+        // 1. E KEY PRESS: Pop out the 3D Book asset
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            PerformInteraction(true);
+        }
+
+        // 2. LEFT CLICK: Select vowel cubes / pick up objects
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Interact();
+            PerformInteraction(false);
         }
     }
 
     void DrawLaserBeam()
     {
-        if (laserLine == null) return;
+        if (laserLine == null || cachedCam == null) return;
 
-        Camera cam = Camera.main;
-
-        // Determine where the laser starts (Wand tip or Camera)
-        Vector3 startPoint = laserOrigin != null ? laserOrigin.position : cam.transform.position;
-        Vector3 direction = cam.transform.forward;
+        Vector3 startPoint = laserOrigin != null ? laserOrigin.position : cachedCam.transform.position;
+        Vector3 direction = cachedCam.transform.forward;
 
         laserLine.SetPosition(0, startPoint);
 
-        // Perform a constant passive raycast to find where the laser should stop
-        Ray passiveRay = new Ray(cam.transform.position, direction);
-        if (Physics.Raycast(passiveRay, out RaycastHit hit, range, interactableLayer))
+        Ray passiveRay = new Ray(cachedCam.transform.position, direction);
+
+        // If your interactable layer is set to 'Nothing', we check everything so the laser still hits surfaces
+        int mask = interactableLayer.value == 0 ? ~0 : interactableLayer.value;
+
+        if (Physics.Raycast(passiveRay, out RaycastHit hit, range, mask))
         {
-            // If it hits an interactable target, snap the laser end point to that target
             laserLine.SetPosition(1, hit.point);
         }
         else
         {
-            // If it hits nothing, extend the laser out to its maximum range
-            laserLine.SetPosition(1, cam.transform.position + (direction * range));
+            laserLine.SetPosition(1, cachedCam.transform.position + (direction * range));
         }
     }
 
-    void Interact()
+    void PerformInteraction(bool isPressingE)
     {
-        Camera cam = Camera.main;
-        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        if (cachedCam == null) return;
+
+        Ray ray = new Ray(cachedCam.transform.position, cachedCam.transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 2f);
 
+        // We use the specified layout mask here for precise selections
         if (Physics.Raycast(ray, out RaycastHit hit, range, interactableLayer))
         {
             Debug.Log("Ray hit: " + hit.collider.name);
 
-            // HOUSE I
-            if (carry != null)
+            if (isPressingE)
             {
-                if (!carry.IsHolding())
+                // =============================================================
+                // 3D BOOK POP OUT ACTION (E KEY)
+                // =============================================================
+                Uhouse3DManager bookManager = hit.collider.GetComponentInParent<Uhouse3DManager>();
+                if (bookManager != null)
                 {
-                    LetterPickup letter = hit.collider.GetComponentInParent<LetterPickup>();
-                    if (letter != null)
-                    {
-                        carry.PickUp(letter);
-                        return;
-                    }
-                }
-                else
-                {
-                    Pillar slot = hit.collider.GetComponentInParent<Pillar>();
-                    if (slot != null)
-                    {
-                        slot.PlaceLetter(carry);
-                        return;
-                    }
+                    bookManager.InteractWithBook();
+                    return;
                 }
             }
-
-            // HOUSE A
-            if (pieceCarry != null)
+            else
             {
-                if (!pieceCarry.IsHolding())
+                // =============================================================
+                // HOUSE U (3D CUBE CLICK)
+                // =============================================================
+                VowelCube3D cube3D = hit.collider.GetComponentInParent<VowelCube3D>();
+                if (cube3D != null)
                 {
-                    BrokenPiece piece = hit.collider.GetComponentInParent<BrokenPiece>();
-                    if (piece != null)
+                    cube3D.OnCubeClicked();
+                    return;
+                }
+
+                // BACKWARDS COMPATIBILITY (If you still have 2D paper objects active)
+                VowelPaper paper = hit.collider.GetComponentInParent<VowelPaper>();
+                if (paper != null)
+                {
+                    paper.OnPaperClicked();
+                    return;
+                }
+
+                // =============================================================
+                // HOUSE I
+                // =============================================================
+                if (carry != null)
+                {
+                    if (!carry.IsHolding())
                     {
-                        pieceCarry.PickUp(piece);
-                        return;
+                        LetterPickup letter = hit.collider.GetComponentInParent<LetterPickup>();
+                        if (letter != null)
+                        {
+                            carry.PickUp(letter);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Pillar slot = hit.collider.GetComponentInParent<Pillar>();
+                        if (slot != null)
+                        {
+                            slot.PlaceLetter(carry);
+                            return;
+                        }
                     }
                 }
-                else
+
+                // =============================================================
+                // HOUSE A
+                // =============================================================
+                if (pieceCarry != null)
                 {
-                    PieceSlot slot = hit.collider.GetComponentInParent<PieceSlot>();
-                    if (slot != null)
+                    if (!pieceCarry.IsHolding())
                     {
-                        slot.PlacePiece(pieceCarry);
-                        return;
+                        BrokenPiece piece = hit.collider.GetComponentInParent<BrokenPiece>();
+                        if (piece != null)
+                        {
+                            pieceCarry.PickUp(piece);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        PieceSlot slot = hit.collider.GetComponentInParent<PieceSlot>();
+                        if (slot != null)
+                        {
+                            slot.PlacePiece(pieceCarry);
+                            return;
+                        }
                     }
                 }
             }
