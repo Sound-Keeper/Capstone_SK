@@ -16,10 +16,17 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI dialogueText;
 
     [Header("Portraits")]
-    [Tooltip("Left-side face (NPC). Optional.")]
+    [Tooltip("Left-side face (NPC UI slot).")]
     public Image leftPortrait;
-    [Tooltip("Right-side face (Player). Optional.")]
+    [Tooltip("Right-side face (Player UI slot).")]
     public Image rightPortrait;
+
+    [Header("Global Character Portrait Assignments")]
+    [Tooltip("Global Portrait for Paige (Character 0)")]
+    public Sprite paigePortrait;
+    [Tooltip("Global Portrait for Penn (Character 1)")]
+    public Sprite pennPortrait;
+
     [Tooltip("Tint for the speaker who is currently talking.")]
     public Color activeTint = Color.white;
     [Tooltip("Tint for the speaker who is NOT talking (dimmed).")]
@@ -39,14 +46,13 @@ public class DialogueManager : MonoBehaviour
     DialogueLine[] currentLines;
     string npcName = "NPC";
     Sprite npcPortrait;
-    Sprite playerPortrait;
+    Sprite runtimePlayerPortrait; // Kept internally to assign dynamically via CharacterSelection
     int currentLineIndex = 0;
     bool isTyping = false;
     string currentFullLine = "";
     Camera previousCamera;
     Camera dialogueCamera;
 
-    // Safety timer to prevent the "E" interaction keyframe from immediately skipping the typing effect
     private float inputCooldownTimer = 0f;
 
     void Awake()
@@ -151,22 +157,22 @@ public class DialogueManager : MonoBehaviour
         StartDialogue(convertedLines, speaker, speakerPortrait, null, dialogueCamera, OnDialogueEnd);
     }
 
-    // Single Master implementation for structured node script logic
     public void StartDialogue(DialogueLine[] lines, string npcName, Sprite npcPortrait,
-        Sprite playerPortrait, Camera cam, Action onComplete = null)
+        Sprite ignoredPlayerPortrait, Camera cam, Action onComplete = null)
     {
         if (lines == null || lines.Length == 0) return;
 
+        // Freeze player movement/look controls immediately when talking
+        SetPlayerControlState(false);
+
         this.npcName = npcName;
         this.npcPortrait = npcPortrait;
-        this.playerPortrait = playerPortrait;
 
         if (onComplete != null)
         {
             this.OnDialogueEnd = onComplete;
         }
 
-        // 🎥 FIX: Safely store the main rendering camera and switch to the assigned NPC dialogue camera
         if (cam != null)
         {
             previousCamera = Camera.main;
@@ -175,9 +181,6 @@ public class DialogueManager : MonoBehaviour
             dialogueCamera.gameObject.SetActive(true);
             if (previousCamera != null) previousCamera.gameObject.SetActive(false);
         }
-
-        SetupPortrait(leftPortrait, npcPortrait);
-        SetupPortrait(rightPortrait, playerPortrait);
 
         currentLines = lines;
         currentLineIndex = 0;
@@ -195,8 +198,23 @@ public class DialogueManager : MonoBehaviour
 
         nameText.text = isPlayer ? CharacterSelection.SelectedName : npcName;
 
-        Sprite activePortrait = isPlayer ? playerPortrait : npcPortrait;
-        SetupPortrait(leftPortrait, activePortrait);
+        // Auto-select player portrait configuration based on active parameter
+        if (CharacterSelection.Selected == 1) // 1 = Penn
+        {
+            runtimePlayerPortrait = pennPortrait;
+        }
+        else // 0 = Paige (or default selection)
+        {
+            runtimePlayerPortrait = paigePortrait;
+        }
+
+        // Keep both sprites visible side-by-side in their clean lanes
+        SetupPortrait(leftPortrait, npcPortrait);
+        SetupPortrait(rightPortrait, runtimePlayerPortrait);
+
+        // Highlight/dim portraits based on who is speaking
+        Highlight(leftPortrait, !isPlayer); // Bright if NPC
+        Highlight(rightPortrait, isPlayer); // Bright if Player
 
         inputCooldownTimer = 0.2f;
 
@@ -228,7 +246,7 @@ public class DialogueManager : MonoBehaviour
 
     void Highlight(Image img, bool isSpeaking)
     {
-        if (img == null || !img.gameObject.activeSelf) return;
+        if (img == null || !img.gameObject.activeSelf || img.sprite == null) return;
         img.color = isSpeaking ? activeTint : inactiveTint;
     }
 
@@ -265,16 +283,31 @@ public class DialogueManager : MonoBehaviour
     {
         dialoguePanel.SetActive(false);
 
-        // 🎥 FIX: Disable dialogue camera and return controls/rendering back to normal main scene camera view
         if (dialogueCamera != null)
         {
             dialogueCamera.gameObject.SetActive(false);
             if (previousCamera != null) previousCamera.gameObject.SetActive(true);
         }
 
+        // Unfreeze player movement controls and lock cursor back into place
+        SetPlayerControlState(true);
+
         Action cb = OnDialogueEnd;
         OnDialogueEnd = null;
         cb?.Invoke();
+    }
+
+    private void SetPlayerControlState(bool enable)
+    {
+        Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+        if (activePlayer != null)
+        {
+            activePlayer.canControl = enable;
+
+            // Release mouse cursor lock when chatting so player can manually navigate UI if needed
+            Cursor.lockState = enable ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !enable;
+        }
     }
 
     string FormatString(string s)

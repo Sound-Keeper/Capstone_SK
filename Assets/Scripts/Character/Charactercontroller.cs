@@ -7,6 +7,9 @@ public class Charactercontroller : MonoBehaviour
 
     public Transform charModel;
 
+    // --- Control switch toggled by DialogueManager ---
+    [HideInInspector] public bool canControl = true;
+
     float moveSpeed = 2f;
     float sprintSpeed = 5f;
     float rotationSpeed = 100f;
@@ -36,9 +39,21 @@ public class Charactercontroller : MonoBehaviour
         }
     }
 
-
     void Update()
     {
+        // Guard check: Stop movement and rotation tracking if player is in a conversation
+        if (!canControl)
+        {
+            // Still apply default physics/gravity so they fall smoothly if talking mid-air
+            if (player.isGrounded && yVelocity < 0)
+            {
+                yVelocity = -2f;
+            }
+            yVelocity += gravity * Time.deltaTime;
+            player.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
+            return;
+        }
+
         Vector2 move = InputSystem.actions.FindAction("Move").ReadValue<Vector2>();
         Vector2 look = InputSystem.actions.FindAction("Look").ReadValue<Vector2>();
 
@@ -75,7 +90,7 @@ public class Charactercontroller : MonoBehaviour
 
         // UP / DOWN LOOK
         rot -= look.y * rotationSpeed * Time.deltaTime;
-        rot = Mathf.Clamp(rot, -80f, 80f);
+        rot = Mathf.Clamp(rot, -80f, 37f);
 
         // Apply Camera Rotation
         if (charModel != null)

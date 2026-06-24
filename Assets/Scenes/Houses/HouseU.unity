@@ -511,7 +511,7 @@ Transform:
   m_GameObject: {fileID: 212290761}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 49.421, y: 1.4, z: 77.04}
+  m_LocalPosition: {x: 49.8, y: 1.4, z: 72.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1266,7 +1266,7 @@ Transform:
   m_GameObject: {fileID: 538161631}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 49.421, y: 1.4, z: 78.59}
+  m_LocalPosition: {x: 49.421, y: 1.4, z: 75.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1565,7 +1565,7 @@ Transform:
   m_GameObject: {fileID: 896532799}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 49.421, y: 1.4, z: 80.24}
+  m_LocalPosition: {x: 49.421, y: 1.4, z: 78.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2419,8 +2419,8 @@ Transform:
   m_GameObject: {fileID: 1676474547}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 49.421, y: 1.4, z: 75.36951}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 44.64, y: 3.59, z: 75.36951}
+  m_LocalScale: {x: 6.3458, y: 6.3458, z: 6.3458}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2473,6 +2473,7 @@ MonoBehaviour:
   associatedHouse: 0
   autoPlayWhenSolved: 1
   autoPlayDelay: 1.5
+  houseLetter: A
 --- !u!136 &1931993524
 CapsuleCollider:
   m_ObjectHideFlags: 0

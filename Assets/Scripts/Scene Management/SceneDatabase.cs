@@ -22,5 +22,7 @@ public static class SceneDatabase
         public const string HouseA = "HouseA";
         public const string HouseI = "HouseI";
         public const string HouseE = "HouseE";
+        public const string HouseO = "HouseO";
+        public const string HouseU = "HouseU";
     }
 }

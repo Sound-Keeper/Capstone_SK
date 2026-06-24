@@ -72,15 +72,23 @@ public class PuzzleManager : MonoBehaviour
         }
     }
 
-    void CompletePuzzle()
+    public void CompletePuzzle()
     {
         if (PuzzleProgress.HouseIComplete) return; // only ever complete once
 
+        PuzzleProgress.HouseISolved = true;
         PuzzleProgress.HouseIComplete = true;      // permanent lock - can't be redone
 
         ShowWin();
 
         Debug.Log($"{puzzleName} puzzle complete!");
+
+        // Matches House A's execution pattern perfectly
+        TriggerVowelStoneReward();
+    }
+
+    public void TriggerVowelStoneReward()
+    {
         OnPuzzleComplete?.Invoke();   // hook the stone reward + return-to-MainWorld here
     }
 
@@ -92,7 +100,10 @@ public class PuzzleManager : MonoBehaviour
 
     public void ClosePuzzle()
     {
-        ActivePuzzle = null;
+        if (ActivePuzzle == this)
+        {
+            ActivePuzzle = null;
+        }
 
         if (winPanel != null)
             winPanel.SetActive(false);

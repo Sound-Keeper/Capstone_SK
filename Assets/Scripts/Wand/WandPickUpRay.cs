@@ -12,9 +12,7 @@ public class WandPickUpRay : MonoBehaviour
     [Header("Raycast Masking")]
     public LayerMask interactableLayer;
 
-    [Header("Visual Laser Settings")]
-    public LineRenderer laserLine;
-    public Transform laserOrigin;
+    // --- LASER VARIABLES REMOVED FROM HERE ---
 
     private Camera cachedCam;
 
@@ -39,7 +37,7 @@ public class WandPickUpRay : MonoBehaviour
     {
         if (cachedCam == null) return; // Ultimate safety guard
 
-        DrawLaserBeam();
+        // --- DRAW LASER CALL REMOVED FROM HERE ---
 
         // 1. E KEY PRESS: Pop out the 3D Book asset
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
@@ -54,29 +52,7 @@ public class WandPickUpRay : MonoBehaviour
         }
     }
 
-    void DrawLaserBeam()
-    {
-        if (laserLine == null || cachedCam == null) return;
-
-        Vector3 startPoint = laserOrigin != null ? laserOrigin.position : cachedCam.transform.position;
-        Vector3 direction = cachedCam.transform.forward;
-
-        laserLine.SetPosition(0, startPoint);
-
-        Ray passiveRay = new Ray(cachedCam.transform.position, direction);
-
-        // If your interactable layer is set to 'Nothing', we check everything so the laser still hits surfaces
-        int mask = interactableLayer.value == 0 ? ~0 : interactableLayer.value;
-
-        if (Physics.Raycast(passiveRay, out RaycastHit hit, range, mask))
-        {
-            laserLine.SetPosition(1, hit.point);
-        }
-        else
-        {
-            laserLine.SetPosition(1, cachedCam.transform.position + (direction * range));
-        }
-    }
+    // --- DRAWLASERBEAM() FUNCTION ENTIRELY REMOVED FROM HERE ---
 
     void PerformInteraction(bool isPressingE)
     {
