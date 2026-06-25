@@ -1350,7 +1350,7 @@ GameObject:
   - component: {fileID: 317179975}
   - component: {fileID: 317179977}
   - component: {fileID: 317179976}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1426,7 +1426,7 @@ GameObject:
   - component: {fileID: 376465911}
   - component: {fileID: 376465912}
   - component: {fileID: 376465914}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DCSheriffSan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1637,6 +1637,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e2627b5579a68f4439b82fc25d4aef45, type: 3}
       propertyPath: m_Name
       value: Penny Cil
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e2627b5579a68f4439b82fc25d4aef45, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2539,9 +2543,10 @@ MonoBehaviour:
   inactiveTint: {r: 0.45, g: 0.45, b: 0.45, a: 1}
   typingSpeed: 0.03
   pipFly: {fileID: 0}
+  pipIntroPortrait: {fileID: 0}
   fountainTarget: {fileID: 0}
-  houseATarget: {fileID: 0}
   arriveDistance: 0.1
+  pipCutsceneCamera: {fileID: 0}
 --- !u!114 &1055950324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3873,7 +3878,7 @@ GameObject:
   - component: {fileID: 1781908065}
   - component: {fileID: 1781908068}
   - component: {fileID: 1781908069}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: InteractPrompt (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9905,7 +9910,7 @@ GameObject:
   - component: {fileID: 2026762501}
   - component: {fileID: 2026762497}
   - component: {fileID: 2026762502}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PennyCil
   m_TagString: PennyCil NPC
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
@@ -10197,13 +10202,13 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 203844589}
-  - {fileID: 1948176055}
-  - {fileID: 2026762501}
   - {fileID: 1907886927}
-  - {fileID: 1370444372}
-  - {fileID: 1681540023}
-  - {fileID: 1595804533993222751}
-  - {fileID: 1835868666}
+  - {fileID: 2026762501}
   - {fileID: 299667047}
   - {fileID: 576175570}
   - {fileID: 1055950327}
+  - {fileID: 1835868666}
+  - {fileID: 1681540023}
+  - {fileID: 1595804533993222751}
+  - {fileID: 1948176055}
+  - {fileID: 1370444372}

@@ -307,6 +307,116 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: MainMenuUI
+      rect:
+        serializedVersion: 2
+        x: 889
+        y: 699
+        width: 320
+        height: 330
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ee04c05f5449d5408eef08df69c39b2
+      internalID: 172451574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PauseMenu
+      rect:
+        serializedVersion: 2
+        x: 1220
+        y: 699
+        width: 272
+        height: 324
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba2df8796393a494988eaa153df52ec6
+      internalID: -969446897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PauseSettingsUI
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 433
+        width: 376
+        height: 229
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02bfdc39d3f38fc428fdaf63b48ee89c
+      internalID: -478121356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HomeButton
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 330
+        width: 92
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc5fc2e797cc6944197cdf6dcec09084
+      internalID: 384113707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Settings
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 228
+        width: 82
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19b004fe3b3cc064981f6f6586bf1735
+      internalID: -154984325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -323,10 +433,15 @@ TextureImporter:
     nameFileIdTable:
       CharSelectButton: -1208626342
       GameLogo: 10663584
+      HomeButton: 384113707
       LoadButton: -619853663
+      MainMenuUI: 172451574
+      PauseMenu: -969446897
+      PauseSettingsUI: -478121356
       QuitButton: 776439763
       ResumeButton: 1939633956
       SaveButton: -1605738546
+      Settings: -154984325
       SettingsButton: -280917914
       StartButton: 933765496
       Untitled design_8: 1461831012

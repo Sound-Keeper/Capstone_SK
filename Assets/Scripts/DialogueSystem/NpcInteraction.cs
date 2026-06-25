@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class NpcInteraction : MonoBehaviour
+// 1. ADDED THE INTERFACE REGISTRATION HERE
+public class NpcInteraction : MonoBehaviour, IInteractable
 {
     public enum PuzzleFlag { HouseA, HouseE, HouseI, HouseO, HouseU }
 
@@ -45,8 +46,8 @@ public class NpcInteraction : MonoBehaviour
     [Tooltip("Check if this specific house is solved (e.g., 'A', 'E', 'I')")]
     public string houseLetter = "A";
 
-    bool playerInRange = false;
     bool hasTriggered = false;
+    bool playerInRange = false;
     private bool waitingForSolvedExit = false;
 
     void Start()
@@ -59,13 +60,11 @@ public class NpcInteraction : MonoBehaviour
 
         FindPlayerFallback();
 
-        // 🌟 Fix: Only auto-play if THIS specific house is the one that was solved!
         if (autoPlayWhenSolved && IsHouseSolved() && dialogueLinesAfterSolved.Count > 0)
         {
             StartCoroutine(AutoPlayAfterSolved());
         }
 
-        // Check if THIS specific house's puzzle has been solved
         if (PuzzleProgress.IsHouseComplete(houseLetter))
         {
             if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
@@ -73,7 +72,6 @@ public class NpcInteraction : MonoBehaviour
                 dialogueLines = dialogueLinesAfterSolved;
             }
 
-            // Point this specific NPC's target back to MainWorld since it's already cleared
             sceneToLoad = "MainWorld";
         }
     }
@@ -104,22 +102,29 @@ public class NpcInteraction : MonoBehaviour
     {
         FindPlayerFallback();
 
-        if (player == null || promptCanvas == null) return;
-
-        float distance = Vector3.Distance(transform.position, player.position);
-        playerInRange = distance <= interactionRange;
-
-        float targetAlpha = (playerInRange && !hasTriggered) ? 1f : 0f;
-        promptCanvas.alpha = Mathf.MoveTowards(promptCanvas.alpha, targetAlpha, fadeSpeed * Time.deltaTime);
-
-        bool visible = promptCanvas.alpha > 0.001f;
-        promptCanvas.interactable = visible;
-        promptCanvas.blocksRaycasts = visible;
-
-        if (playerInRange && !hasTriggered && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        if (player != null)
         {
-            Interact();
+            float distance = Vector3.Distance(transform.position, player.position);
+            playerInRange = distance <= interactionRange;
         }
+        else
+        {
+            playerInRange = false;
+        }
+
+        if (promptCanvas != null)
+        {
+            // Only illuminate UI hover indicator badge if within proximity parameters
+            float targetAlpha = (playerInRange && !hasTriggered) ? 1f : 0f;
+            promptCanvas.alpha = Mathf.MoveTowards(promptCanvas.alpha, targetAlpha, fadeSpeed * Time.deltaTime);
+
+            bool visible = promptCanvas.alpha > 0.001f;
+            promptCanvas.interactable = visible;
+            promptCanvas.blocksRaycasts = visible;
+        }
+
+        // 2. KEYPRESS REMOVED FROM HERE COMPLETELY. 
+        // No more auto-triggering dialogue without looking!
     }
 
     void FindPlayerFallback()
@@ -131,8 +136,15 @@ public class NpcInteraction : MonoBehaviour
         }
     }
 
+    // 3. RENAMED INTERACT FUNCTION TO SATISFY IINTERACTABLE REQUIREMENT
     public void Interact()
     {
+        // Safety lock: Don't interact if we already triggered it or if the player isn't close enough
+        if (hasTriggered || !playerInRange) return;
+        hasTriggered = true;
+
+        if (promptCanvas != null) promptCanvas.alpha = 0f;
+
         if (PuzzleProgress.IsHouseComplete(houseLetter))
         {
             if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
@@ -158,23 +170,18 @@ public class NpcInteraction : MonoBehaviour
 
     void OnDialogueComplete()
     {
-        // 🌟 THE FIX: Only hardcode "MainWorld" if THIS SPECIFIC house is actually complete!
-        // We check IsHouseSolved() or IsHouseComplete(houseLetter) directly here.
         if (IsHouseSolved() || PuzzleProgress.IsHouseComplete(houseLetter) || (waitingForSolvedExit && IsHouseSolved()))
         {
             StartCoroutine(WaitAndWarpRoutine());
             return;
         }
 
-        // 🌟 If THIS house is NOT complete, behave normally! 
-        // Go to the puzzle scene (e.g., House E) if it's set in the inspector.
         if (!string.IsNullOrEmpty(sceneToLoad) && sceneToLoad != "MainWorld")
         {
             ExecuteSceneWarp(sceneToLoad);
             return;
         }
 
-        // Default fallback if inside a house room
         StartCoroutine(ReEnableInteractNextFrame());
     }
 
@@ -198,13 +205,10 @@ public class NpcInteraction : MonoBehaviour
     {
         if (player != null)
         {
-            // 💾 FIX: Check destinationScene! If we are going ANYWHERE except MainWorld, save the location.
             if (destinationScene != "MainWorld" && CoreManager.Instance != null)
             {
                 CoreManager.Instance.SavePlayerPosition(player.position, player.rotation);
             }
-            // 🧹 If we are actually returning back to MainWorld, do NOT clear the data here.
-            // Let your player prefab script read the data, use it, and have the player script clear it!
 
             Camera playerCam = player.GetComponentInChildren<Camera>(true);
             if (playerCam != null) playerCam.gameObject.SetActive(true);
@@ -222,5 +226,15 @@ public class NpcInteraction : MonoBehaviour
     {
         yield return null;
         hasTriggered = false;
+
+        Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+        if (activePlayer != null)
+        {
+            activePlayer.canControl = true;
+        }
+
+        // Lock the cursor to the center and hide it!
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }

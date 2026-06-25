@@ -171,6 +171,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6443409013273582217, guid: 25ec1165cea3ffc4a9e86883dec89ba2, type: 3}
+      propertyPath: interactableLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -262,7 +266,7 @@ GameObject:
   - component: {fileID: 98227476}
   - component: {fileID: 98227480}
   - component: {fileID: 98227481}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Connie
   m_TagString: SheriffSans
   m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
@@ -649,7 +653,7 @@ GameObject:
   - component: {fileID: 132214714}
   - component: {fileID: 132214713}
   - component: {fileID: 132214717}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PromptE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -795,6 +799,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1531226904}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &164023086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 164023087}
+  m_Layer: 6
+  m_Name: HouseALoc
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &164023087
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164023086}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.3613805, z: -0, w: 0.93241847}
+  m_LocalPosition: {x: 90.24, y: 0.9599998, z: 56.12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &185256027
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -846,6 +881,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e2627b5579a68f4439b82fc25d4aef45, type: 3}
       propertyPath: m_Name
       value: Penny Cil
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e2627b5579a68f4439b82fc25d4aef45, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1256,7 +1295,7 @@ GameObject:
   - component: {fileID: 395165893}
   - component: {fileID: 395165897}
   - component: {fileID: 395165898}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: JudgeMental
   m_TagString: Judge
   m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
@@ -1295,7 +1334,7 @@ Transform:
   m_GameObject: {fileID: 395165892}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.99999535, z: -0, w: 0.0030506942}
-  m_LocalPosition: {x: 20.58, y: 0.83, z: -2.3}
+  m_LocalPosition: {x: 17.46, y: 0.83, z: 2.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1405,7 +1444,7 @@ GameObject:
   - component: {fileID: 537764444}
   - component: {fileID: 537764446}
   - component: {fileID: 537764445}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1469,6 +1508,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537764443}
   m_CullTransparentMesh: 1
+--- !u!1 &547393102
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 547393103}
+  m_Layer: 6
+  m_Name: HouseULoc
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &547393103
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547393102}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.6637836, z: -0, w: 0.74792475}
+  m_LocalPosition: {x: 57.74, y: 0.9279998, z: 73.18796}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &552602898
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1520,6 +1590,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: bf945e8e8667d1641bafc117c608c61e, type: 3}
       propertyPath: m_Name
       value: Connie Sonant
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bf945e8e8667d1641bafc117c608c61e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729286952493308268, guid: bf945e8e8667d1641bafc117c608c61e, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1709,7 +1787,7 @@ GameObject:
   - component: {fileID: 658393610}
   - component: {fileID: 658393609}
   - component: {fileID: 658393608}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DCconniesonatt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1801,7 +1879,7 @@ GameObject:
   - component: {fileID: 672035825}
   - component: {fileID: 672035827}
   - component: {fileID: 672035826}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2006,7 +2084,7 @@ GameObject:
   - component: {fileID: 722412294}
   - component: {fileID: 722412293}
   - component: {fileID: 722412297}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PromptU
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2152,6 +2230,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1949731191}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &758178360
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 758178361}
+  m_Layer: 6
+  m_Name: HouseELoc
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &758178361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 758178360}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.99999535, z: -0, w: 0.0030506942}
+  m_LocalPosition: {x: 102.45, y: 0.92999977, z: 68.37}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &788858586
 GameObject:
   m_ObjectHideFlags: 0
@@ -2164,7 +2273,7 @@ GameObject:
   - component: {fileID: 788858589}
   - component: {fileID: 788858588}
   - component: {fileID: 788858590}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DCJudgemental
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2438,7 +2547,7 @@ GameObject:
   - component: {fileID: 847512318}
   - component: {fileID: 847512322}
   - component: {fileID: 847512323}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GrandmaPhonics
   m_TagString: Phonics
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -2555,7 +2664,7 @@ GameObject:
   - component: {fileID: 900081081}
   - component: {fileID: 900081080}
   - component: {fileID: 900081084}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PromptA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2717,9 +2826,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2629324061695931092, guid: 86a3640cadb283d4a85905f82c9007ae, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 86a3640cadb283d4a85905f82c9007ae, type: 3}
       propertyPath: m_Name
       value: Sheriff Sans
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 86a3640cadb283d4a85905f82c9007ae, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1806455235375228090, guid: 86a3640cadb283d4a85905f82c9007ae, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2743,7 +2864,7 @@ GameObject:
   - component: {fileID: 968385385}
   - component: {fileID: 968385389}
   - component: {fileID: 968385390}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SherrifSans
   m_TagString: SheriffSans
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -2933,7 +3054,7 @@ GameObject:
   - component: {fileID: 1088599353}
   - component: {fileID: 1088599352}
   - component: {fileID: 1088599351}
-  m_Layer: 2
+  m_Layer: 6
   m_Name: eyes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3043,7 +3164,7 @@ GameObject:
   - component: {fileID: 1131366077}
   - component: {fileID: 1131366079}
   - component: {fileID: 1131366078}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3121,7 +3242,7 @@ GameObject:
   - component: {fileID: 1166788090}
   - component: {fileID: 1166788089}
   - component: {fileID: 1166788093}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PromptO
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4029,10 +4150,11 @@ MonoBehaviour:
   activeTint: {r: 1, g: 1, b: 1, a: 1}
   inactiveTint: {r: 0.45, g: 0.45, b: 0.45, a: 1}
   typingSpeed: 0.03
-  pipFly: {fileID: 1690735048}
+  pipFly: {fileID: 1690735055}
+  pipIntroPortrait: {fileID: -1317407216, guid: 2756c0eb56219d040bc307504f8da482, type: 3}
   fountainTarget: {fileID: 1599016948}
-  houseATarget: {fileID: 645719550}
   arriveDistance: 0.1
+  pipCutsceneCamera: {fileID: 1568728790}
 --- !u!1 &1461870275
 GameObject:
   m_ObjectHideFlags: 0
@@ -4345,6 +4467,143 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1531226903}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1568728786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1568728787}
+  - component: {fileID: 1568728790}
+  - component: {fileID: 1568728789}
+  - component: {fileID: 1568728788}
+  m_Layer: 6
+  m_Name: Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1568728787
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568728786}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.2659711, y: -0.648039, z: 0.2724326, w: 0.65961003}
+  m_LocalPosition: {x: 3.84, y: 3.84, z: -0.26}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1690735052}
+  m_LocalEulerAnglesHint: {x: 44.746, y: -88.499, z: 1.184}
+--- !u!114 &1568728788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568728786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
+--- !u!81 &1568728789
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568728786}
+  m_Enabled: 1
+--- !u!20 &1568728790
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568728786}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
 --- !u!1 &1587610894
 GameObject:
   m_ObjectHideFlags: 0
@@ -4359,7 +4618,7 @@ GameObject:
   - component: {fileID: 1587610897}
   - component: {fileID: 1587610896}
   - component: {fileID: 1587610900}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PromptI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4617,6 +4876,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1493056241}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1619825117
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1619825118}
+  m_Layer: 6
+  m_Name: HouseOLoc
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1619825118
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619825117}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.94020444, z: -0, w: 0.34061068}
+  m_LocalPosition: {x: 56.17, y: 0.9279998, z: 95.12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1650517889
 GameObject:
   m_ObjectHideFlags: 0
@@ -4741,9 +5031,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7623317967249352116, guid: 376e7d15e15110244b40bdcf881351c9, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 376e7d15e15110244b40bdcf881351c9, type: 3}
       propertyPath: m_Name
       value: Judge Mental
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 376e7d15e15110244b40bdcf881351c9, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6829485909940997511, guid: 376e7d15e15110244b40bdcf881351c9, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4794,30 +5096,16 @@ GameObject:
   - component: {fileID: 1690735051}
   - component: {fileID: 1690735050}
   - component: {fileID: 1690735049}
-  - component: {fileID: 1690735048}
+  - component: {fileID: 1690735055}
+  - component: {fileID: 1690735054}
   - component: {fileID: 1690735053}
-  m_Layer: 2
+  m_Layer: 6
   m_Name: Pip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1690735048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1690735047}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 245a9f6bd2201604cb66a3b5491c4169, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PipFly
-  moveSpeed: 5
-  followOffset: {x: 1.2, y: 1.8, z: 0}
-  followSmooth: 5
 --- !u!135 &1690735049
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4909,6 +5197,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1088599350}
+  - {fileID: 1568728787}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -225.39, z: 0}
 --- !u!114 &1690735053
@@ -4920,21 +5209,65 @@ MonoBehaviour:
   m_GameObject: {fileID: 1690735047}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea2e17cf3127634d9f2fb99cfb23977, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PipInteraction
+  pipName: Pip
+  pipPortrait: {fileID: -1317407216, guid: 2756c0eb56219d040bc307504f8da482, type: 3}
+--- !u!114 &1690735054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1690735047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5319a4572259014db9a16b49f655344, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PipHint
-  pip: {fileID: 1690735048}
-  player: {fileID: 0}
+  fountainIntroDialogue:
+  - Lets go to House A first!.
+  pip: {fileID: 1690735055}
   objectives:
-  - location: {fileID: 645719550}
-    houseLetter: 
-    clue: {fileID: 0}
-    onReached:
-      m_PersistentCalls:
-        m_Calls: []
-    reached: 0
-  autoGuide: 0
-  arriveDistance: 3
+  - houseLetter: A
+    hoverLocation: {fileID: 164023087}
+    dialogueHints:
+    - This is House A
+    completionDialogue: Great job! Let's move to the next house.
+  - houseLetter: E
+    hoverLocation: {fileID: 758178361}
+    dialogueHints:
+    - This is House E
+    completionDialogue: Great job! Let's move to the next house.
+  - houseLetter: I
+    hoverLocation: {fileID: 1956384379}
+    dialogueHints:
+    - This is House I
+    completionDialogue: Great job! Let's move to the next house.
+  - houseLetter: O
+    hoverLocation: {fileID: 1619825118}
+    dialogueHints:
+    - This is House O
+    completionDialogue: Great job! Let's move to the next house.
+  - houseLetter: U
+    hoverLocation: {fileID: 547393103}
+    dialogueHints:
+    - This is House U
+    completionDialogue: Great job! Let's move to the next house.
+--- !u!114 &1690735055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1690735047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 245a9f6bd2201604cb66a3b5491c4169, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PipFly
+  moveSpeed: 5
 --- !u!1001 &1713686723
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5047,7 +5380,7 @@ GameObject:
   - component: {fileID: 1741727808}
   - component: {fileID: 1741727810}
   - component: {fileID: 1741727809}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DCPenny
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5144,7 +5477,7 @@ GameObject:
   - component: {fileID: 1745637839}
   - component: {fileID: 1745637842}
   - component: {fileID: 1745637843}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PennyCil
   m_TagString: PennyCil NPC
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
@@ -5336,7 +5669,7 @@ GameObject:
   - component: {fileID: 1912233024}
   - component: {fileID: 1912233026}
   - component: {fileID: 1912233025}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5579,6 +5912,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1949731190}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1956384378
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1956384379}
+  m_Layer: 6
+  m_Name: HouseILoc
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1956384379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956384378}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.88498765, z: -0, w: 0.4656145}
+  m_LocalPosition: {x: 84.96, y: 0.9279998, z: 94.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1964717336
 GameObject:
   m_ObjectHideFlags: 0
@@ -5590,7 +5954,7 @@ GameObject:
   - component: {fileID: 1964717337}
   - component: {fileID: 1964717339}
   - component: {fileID: 1964717338}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5952,9 +6316,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3957782524123411102, guid: ad25bf64517eac542b66db5cc2d963ca, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -1200746498621580712, guid: ad25bf64517eac542b66db5cc2d963ca, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ad25bf64517eac542b66db5cc2d963ca, type: 3}
       propertyPath: m_Name
       value: Grandma Phonic
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ad25bf64517eac542b66db5cc2d963ca, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6018,10 +6394,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Paige_Prefab
       objectReference: {fileID: 0}
-    - target: {fileID: 6128571197267527217, guid: dc80f651ba550e742bc27980a41bb79e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6034,6 +6406,11 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 205963320}
   - {fileID: 1392143025}
+  - {fileID: 164023087}
+  - {fileID: 758178361}
+  - {fileID: 1956384379}
+  - {fileID: 1619825118}
+  - {fileID: 547393103}
   - {fileID: 6776833968192672777}
   - {fileID: 237789}
   - {fileID: 1935515664}

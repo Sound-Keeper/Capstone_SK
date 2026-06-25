@@ -8400,9 +8400,10 @@ MonoBehaviour:
   inactiveTint: {r: 0.45, g: 0.45, b: 0.45, a: 1}
   typingSpeed: 0.03
   pipFly: {fileID: 0}
+  pipIntroPortrait: {fileID: 0}
   fountainTarget: {fileID: 0}
-  houseATarget: {fileID: 0}
   arriveDistance: 0.1
+  pipCutsceneCamera: {fileID: 0}
 --- !u!114 &933291906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8498,7 +8499,7 @@ GameObject:
   - component: {fileID: 977020707}
   - component: {fileID: 977020708}
   - component: {fileID: 977020710}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DCSheriffSan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8675,9 +8676,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2629324061695931092, guid: 86a3640cadb283d4a85905f82c9007ae, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 86a3640cadb283d4a85905f82c9007ae, type: 3}
       propertyPath: m_Name
       value: Sheriff Sans
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 86a3640cadb283d4a85905f82c9007ae, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1806455235375228090, guid: 86a3640cadb283d4a85905f82c9007ae, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8703,7 +8716,7 @@ GameObject:
   - component: {fileID: 1061325194}
   - component: {fileID: 1061325197}
   - component: {fileID: 1061325193}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PromptA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9220,7 +9233,7 @@ GameObject:
   - component: {fileID: 1155355567}
   - component: {fileID: 1155355566}
   - component: {fileID: 1155355565}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SherrifSans (1)
   m_TagString: SheriffSans
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -9689,7 +9702,7 @@ GameObject:
   - component: {fileID: 1329776061}
   - component: {fileID: 1329776063}
   - component: {fileID: 1329776062}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10986,14 +10999,14 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1080624614}
-  - {fileID: 530109378}
-  - {fileID: 1191508621}
   - {fileID: 270091702}
-  - {fileID: 362985972}
   - {fileID: 1155355568}
-  - {fileID: 811899724}
+  - {fileID: 362985972}
+  - {fileID: 893350748}
+  - {fileID: 933291909}
+  - {fileID: 1503523902}
   - {fileID: 382242459}
   - {fileID: 462370182}
-  - {fileID: 1503523902}
-  - {fileID: 933291909}
-  - {fileID: 893350748}
+  - {fileID: 530109378}
+  - {fileID: 1191508621}
+  - {fileID: 811899724}

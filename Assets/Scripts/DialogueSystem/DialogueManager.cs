@@ -7,7 +7,10 @@ using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
 {
-    private static bool hasPlayedPipIntro = false;
+    public static bool hasPlayedPipIntro = false;
+    public static bool HasPlayedPipIntro => hasPlayedPipIntro;
+    public static bool hasPlayedPipIntroFinished = false;
+    public static bool HasPlayedPipIntroFinished => hasPlayedPipIntroFinished;
     public static DialogueManager Instance;
 
     [Header("UI References")]
@@ -37,16 +40,21 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Pip Intro Sequence Setup")]
     public PipFly pipFly;
+    [Tooltip("Assign the Pip portrait here for the opening cinematic sequence!")]
+    public Sprite pipIntroPortrait;
     public Transform fountainTarget;
-    public Transform houseATarget;
     public float arriveDistance = 3f;
+
+    [Header("Cinematic Cutscene Setup")]
+    [Tooltip("A camera that points at or follows Pip while he flies to the fountain.")]
+    public Camera pipCutsceneCamera; // <--- ADDED THIS FIELD FOR THE CUTSCENE
 
     [HideInInspector] public Action OnDialogueEnd;
 
     DialogueLine[] currentLines;
     string npcName = "NPC";
     Sprite npcPortrait;
-    Sprite runtimePlayerPortrait; // Kept internally to assign dynamically via CharacterSelection
+    Sprite runtimePlayerPortrait;
     int currentLineIndex = 0;
     bool isTyping = false;
     string currentFullLine = "";
@@ -61,50 +69,73 @@ public class DialogueManager : MonoBehaviour
         else { Destroy(gameObject); return; }
 
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
+        if (pipCutsceneCamera != null) pipCutsceneCamera.gameObject.SetActive(false);
     }
 
     void Start()
     {
-        PipFly pipFly = FindFirstObjectByType<PipFly>();
-        PipHint pipHint = FindFirstObjectByType<PipHint>();
+        if (pipFly == null) pipFly = FindFirstObjectByType<PipFly>();
+        PipHint pipHintSystem = FindFirstObjectByType<PipHint>();
         GameObject player = GameObject.FindWithTag("Player");
+
+        bool anyHouseSolved = PuzzleProgress.HouseASolved || PuzzleProgress.HouseESolved ||
+                              PuzzleProgress.HouseISolved || PuzzleProgress.HouseOSolved ||
+                              PuzzleProgress.HouseUSolved;
+
+        if (anyHouseSolved)
+        {
+            hasPlayedPipIntro = true;
+            hasPlayedPipIntroFinished = true;
+        }
+
+        if (pipIntroPortrait == null && pipFly != null)
+        {
+            PipInteraction pipInteraction = pipFly.GetComponent<PipInteraction>();
+            if (pipInteraction != null)
+            {
+                pipIntroPortrait = pipInteraction.pipPortrait;
+            }
+        }
 
         if (!hasPlayedPipIntro && pipFly != null && fountainTarget != null)
         {
             hasPlayedPipIntro = true;
 
-            if (pipHint != null) pipHint.autoGuide = false;
 
             string[] introLines = new string[] {
                 "Wake up, {player}! The valley is in trouble!",
                 "The sacred vowel stones have been scattered to the five houses.",
                 "Follow me! Let's head over to House A first."
             };
-            StartDialogue("Pip", introLines, npcPortrait);
+
+            StartDialogue("Pip", introLines, pipIntroPortrait);
 
             OnDialogueEnd = () => {
+                // 1. CUTSCENE START: Keep player controls locked explicitly
+                SetPlayerControlState(false);
+
+                // 2. CAMERA SWITCH: Activate the cutscene tracking camera
+                Camera mainCam = Camera.main;
+                if (pipCutsceneCamera != null)
+                {
+                    if (mainCam != null) mainCam.gameObject.SetActive(false);
+                    pipCutsceneCamera.gameObject.SetActive(true);
+                }
+
+                // 3. START FLIGHT
                 pipFly.MoveToTarget(fountainTarget, () => {
-                    if (pipHint != null)
+                    // 4. CUTSCENE END: Switch back to standard player camera view
+                    if (pipCutsceneCamera != null)
                     {
-                        pipHint.autoGuide = true;
+                        pipCutsceneCamera.gameObject.SetActive(false);
+                        if (mainCam != null) mainCam.gameObject.SetActive(true);
                     }
-                    else if (player != null)
-                    {
-                        pipFly.FollowPlayerStart(player.transform);
-                    }
+
+                    // 5. Release player movement controls
+                    SetPlayerControlState(true);
+
                 });
             };
-        }
-        else
-        {
-            if (pipFly != null && player != null)
-            {
-                pipFly.FollowPlayerStart(player.transform);
-            }
-            if (pipHint != null)
-            {
-                pipHint.autoGuide = true;
-            }
         }
     }
 
@@ -162,7 +193,6 @@ public class DialogueManager : MonoBehaviour
     {
         if (lines == null || lines.Length == 0) return;
 
-        // Freeze player movement/look controls immediately when talking
         SetPlayerControlState(false);
 
         this.npcName = npcName;
@@ -198,23 +228,20 @@ public class DialogueManager : MonoBehaviour
 
         nameText.text = isPlayer ? CharacterSelection.SelectedName : npcName;
 
-        // Auto-select player portrait configuration based on active parameter
-        if (CharacterSelection.Selected == 1) // 1 = Penn
+        if (CharacterSelection.Selected == 1)
         {
             runtimePlayerPortrait = pennPortrait;
         }
-        else // 0 = Paige (or default selection)
+        else
         {
             runtimePlayerPortrait = paigePortrait;
         }
 
-        // Keep both sprites visible side-by-side in their clean lanes
         SetupPortrait(leftPortrait, npcPortrait);
         SetupPortrait(rightPortrait, runtimePlayerPortrait);
 
-        // Highlight/dim portraits based on who is speaking
-        Highlight(leftPortrait, !isPlayer); // Bright if NPC
-        Highlight(rightPortrait, isPlayer); // Bright if Player
+        Highlight(leftPortrait, !isPlayer);
+        Highlight(rightPortrait, isPlayer);
 
         inputCooldownTimer = 0.2f;
 
@@ -289,8 +316,11 @@ public class DialogueManager : MonoBehaviour
             if (previousCamera != null) previousCamera.gameObject.SetActive(true);
         }
 
-        // Unfreeze player movement controls and lock cursor back into place
-        SetPlayerControlState(true);
+        // If a cutscene callback is assigned to OnDialogueEnd, let it handle re-enabling control!
+        if (OnDialogueEnd == null)
+        {
+            SetPlayerControlState(true);
+        }
 
         Action cb = OnDialogueEnd;
         OnDialogueEnd = null;
@@ -304,7 +334,6 @@ public class DialogueManager : MonoBehaviour
         {
             activePlayer.canControl = enable;
 
-            // Release mouse cursor lock when chatting so player can manually navigate UI if needed
             Cursor.lockState = enable ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !enable;
         }
