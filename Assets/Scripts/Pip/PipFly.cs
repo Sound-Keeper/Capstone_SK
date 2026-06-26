@@ -1,7 +1,10 @@
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PipFly : MonoBehaviour
 {
+    [SerializeField] private GameObject minimapUI;
+    private bool hasSnappedToFountain = false;
     public float moveSpeed = 5f;
     [Tooltip("How fast Pip snaps or smooths his rotation towards his path.")]
     public float rotationSpeed = 10f;
@@ -25,6 +28,7 @@ public class PipFly : MonoBehaviour
     {
         startPos = transform.position;
         homeRotation = transform.rotation; // Default to spawn rotation
+
 
         PipHint hint = FindFirstObjectByType<PipHint>();
         if (hint != null && hint.objectives != null && hint.objectives.Count > 0)
@@ -57,12 +61,31 @@ public class PipFly : MonoBehaviour
         if (target != null)
         {
             homeRotation = target.rotation; // Cache the destination's home rotation orientation
+            if (minimapUI != null)
+            {
+                minimapUI.SetActive(false);
+            }
         }
         onArriveCallback = onArrive;
     }
 
     void Update()
     {
+        if (!hasSnappedToFountain && DialogueManager.hasPlayedPipIntroFinished)
+        {
+            DialogueManager dialogueMgr = FindFirstObjectByType<DialogueManager>();
+            if (dialogueMgr != null && dialogueMgr.fountainTarget != null)
+            {
+                // Snap Pip directly to the fountain!
+                transform.position = dialogueMgr.fountainTarget.position;
+                transform.rotation = dialogueMgr.fountainTarget.rotation;
+                homeRotation = dialogueMgr.fountainTarget.rotation;
+                startPos = transform.position;
+
+                hasSnappedToFountain = true; // Ensure this only happens once!
+            }
+        }
+
         Vector3 targetPos = transform.position;
 
         if (currentTarget != null)
@@ -88,6 +111,12 @@ public class PipFly : MonoBehaviour
             {
                 startPos = currentTarget.position;
                 currentTarget = null;
+
+                if (minimapUI != null)
+                {
+                    minimapUI.SetActive(true);
+                }
+
                 onArriveCallback?.Invoke();
                 onArriveCallback = null;
             }

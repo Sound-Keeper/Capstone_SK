@@ -4,6 +4,7 @@ using UnityEngine.Events;
 
 public class MagicWandReward : MonoBehaviour
 {
+    [SerializeField] private GameObject minimapUI;
     [Header("Player Tracking")]
     public Transform player;
 
@@ -45,11 +46,13 @@ public class MagicWandReward : MonoBehaviour
 
         if (player != null) cc = player.GetComponent<Charactercontroller>();
 
+
         StartCoroutine(CutsceneRoutine(onSequenceFinished));
     }
 
     IEnumerator CutsceneRoutine(System.Action onSequenceFinished)
     {
+        minimapUI.SetActive(false);
         // 1. Setup Camera and Freeze Player
         if (rewardCamera != null)
         {
@@ -109,6 +112,7 @@ public class MagicWandReward : MonoBehaviour
 
         OnWandCollected?.Invoke();
         onSequenceFinished?.Invoke(); // Resumes dialogue manager flow execution
+        minimapUI.SetActive(true);
     }
 
     void SpinObject()

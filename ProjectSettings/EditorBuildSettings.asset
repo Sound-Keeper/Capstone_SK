@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Menus/SecondMenu.unity
     guid: 68d34891a5629ad4d87aab42258fa1de
   - enabled: 1
+    path: Assets/Scenes/Menus/Settings.unity
+    guid: dcc957cc99f185e4d99506872fefe36a
+  - enabled: 1
     path: Assets/Scenes/Menus/CharacterSelection.unity
     guid: 8644414581fc37746a826a6d58255abb
   - enabled: 0

@@ -22,6 +22,7 @@ TagManager:
   - Phonics
   - Judge
   - Spawn
+  - Minimap
   layers:
   - Default
   - TransparentFX

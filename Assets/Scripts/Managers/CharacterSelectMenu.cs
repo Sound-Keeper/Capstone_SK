@@ -55,4 +55,14 @@ public class CharacterSelectMenu : MonoBehaviour
             .WithOverlay()
             .Perform();
     }
+
+    public void GoBack()
+    {
+        SceneController.Instance
+            .NewTransition()
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.SecondMenu)
+            .Unload(SceneDatabase.Scenes.CharSelect)
+            .WithOverlay()
+            .Perform();
+    }
 }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: af5ee86a57727bc40bd96fe8d6517ae2
+guid: 471c7865453bee647a24671d27c98930
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ConfirmButton
+      name: MasterVolSlider
       rect:
         serializedVersion: 2
-        x: 526
-        y: 885
-        width: 178
-        height: 66
+        x: 26
+        y: 267
+        width: 682
+        height: 83
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,20 +112,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 271e2e4de2912ce46942c409c548530c
-      internalID: 1341555782
+      spriteID: 0432af758487a2a49a82865fc444f98c
+      internalID: 203322625
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: WoodedInteractUI
+      name: MusicVolSlider
       rect:
         serializedVersion: 2
-        x: 130
-        y: 775
-        width: 301
-        height: 94
+        x: 26
+        y: 172
+        width: 678
+        height: 76
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,20 +134,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8652aeca5c556c84599ff6f23d6549dc
-      internalID: -1034993697
+      spriteID: 58124c91681f4b946a31f064f94c044a
+      internalID: 1864956678
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MagicalInteractUI
+      name: SFXVolSlider
       rect:
         serializedVersion: 2
-        x: 137
-        y: 665
-        width: 277
-        height: 97
+        x: 25
+        y: 83
+        width: 679
+        height: 68
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b6bf56991deabcc40af163b91616434d
-      internalID: -1164637777
+      spriteID: 83024e0f5d4b67f4084c0e935a4bde7a
+      internalID: -1880351568
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BackButton
+      name: DialSlider
       rect:
         serializedVersion: 2
-        x: 339
-        y: 887
-        width: 178
-        height: 64
+        x: 321
+        y: 5
+        width: 76
+        height: 78
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,52 +178,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 528783c235c111b4787655d50a6498e7
-      internalID: 1016756105
+      spriteID: be91f6e90c6817847a74592f80a3b0ae
+      internalID: -1906797828
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CharSelectUI
+      name: backgroundslider
       rect:
         serializedVersion: 2
-        x: 97
-        y: 1033
-        width: 1221
-        height: 875
+        x: 146
+        y: 276
+        width: 539
+        height: 26
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a88876d49134c904e8dadf901b3e79cf
-      internalID: 465666628
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SettingsTopBar
-      rect:
-        serializedVersion: 2
-        x: 845
-        y: 838
-        width: 442
-        height: 104
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a82c6e592467f1a4896bac771e4ea470
-      internalID: 905186585
+      spriteID: 2cdb273f57f4bd143bf867e53662b276
+      internalID: 735047411
       vertices: []
       indices: 
       edges: []
@@ -232,7 +210,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: edc86a7080bab1547afa720d869af01a
+    spriteID: 872cc172d55ea6747b43902399fd9ff2
     internalID: 0
     vertices: []
     indices: 
@@ -240,19 +218,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceOnImport
-        value: False
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      BackButton: 1016756105
-      CharSelectUI: 465666628
-      ConfirmButton: 1341555782
-      MagicalInteractUI: -1164637777
-      SettingsTopBar: 905186585
-      T: 905186585
-      WoodedInteractUI: -1034993697
+      DialSlider: -1906797828
+      MasterVolSlider: 203322625
+      MusicVolSlider: 1864956678
+      SFXVolSlider: -1880351568
+      backgroundslider: 735047411
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

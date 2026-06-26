@@ -6,7 +6,9 @@ using UnityEngine.SceneManagement; // 🌟 Required to check current scene names
 public class PauseMenu : MonoBehaviour
 {
     public static bool GameisPaused = false;
+    public GameObject pauseMenu;
     public GameObject pauseMenuUI;
+    public GameObject settingsMenuUI;
 
     void Update()
     {
@@ -25,7 +27,9 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
-        pauseMenuUI.SetActive(false);
+        pauseMenuUI.SetActive(true);
+        pauseMenu.SetActive(false);
+        settingsMenuUI.SetActive(false);
         Time.timeScale = 1.0f;
         GameisPaused = false;
 
@@ -46,7 +50,7 @@ public class PauseMenu : MonoBehaviour
 
     private void Pause()
     {
-        pauseMenuUI.SetActive(true);
+        pauseMenu.SetActive(true);
         Time.timeScale = 0;
         GameisPaused = true;
         Cursor.lockState = CursorLockMode.None;
@@ -79,7 +83,7 @@ public class PauseMenu : MonoBehaviour
         GameisPaused = false;
         SceneController.Instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.FirstMenu)
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu)
             .Unload(SceneDatabase.Slots.Session)
             .Unload(SceneDatabase.Slots.SessionContent)
             .WithClearUnusedAssets()

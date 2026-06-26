@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
 {
+
     public static bool hasPlayedPipIntro = false;
     public static bool HasPlayedPipIntro => hasPlayedPipIntro;
     public static bool hasPlayedPipIntroFinished = false;
@@ -82,7 +83,7 @@ public class DialogueManager : MonoBehaviour
                               PuzzleProgress.HouseISolved || PuzzleProgress.HouseOSolved ||
                               PuzzleProgress.HouseUSolved;
 
-        if (anyHouseSolved)
+        if (anyHouseSolved || PlayerPrefs.GetInt("IntroFinished", 0) == 1)
         {
             hasPlayedPipIntro = true;
             hasPlayedPipIntroFinished = true;
@@ -123,12 +124,17 @@ public class DialogueManager : MonoBehaviour
                     pipCutsceneCamera.gameObject.SetActive(true);
                 }
 
-                pipFly.MoveToTarget(fountainTarget, () => {
+                pipFly.MoveToTarget(fountainTarget, () =>
+                {
                     if (pipCutsceneCamera != null)
                     {
                         pipCutsceneCamera.gameObject.SetActive(false);
                         if (mainCam != null) mainCam.gameObject.SetActive(true);
                     }
+
+                    PlayerPrefs.SetInt("IntroFinished", 1);
+                    PlayerPrefs.Save();
+
                     SetPlayerControlState(true);
                 });
             };
