@@ -70,8 +70,18 @@ namespace BookChoice
         {
             isProcessing = true;
 
-            // Ask the HouseUPuzzleManager where the letter placeholder is on the active sign
-            Transform targetSignSlot = HouseUPuzzleManager.Instance.GetActiveSignTargetSlot();
+            // --- CHANGED: Get the target slot directly from the parent book script component ---
+            Transform targetSignSlot = null;
+            if (parentBook != null)
+            {
+                targetSignSlot = parentBook.customSignTargetSlot;
+            }
+
+            // Fallback safety safety net: if forgot to assign in inspector, check manager index
+            if (targetSignSlot == null)
+            {
+                targetSignSlot = HouseUPuzzleManager.Instance.GetActiveSignTargetSlot();
+            }
 
             Vector3 startWorldPos = transform.position;
             Quaternion startWorldRot = transform.rotation;

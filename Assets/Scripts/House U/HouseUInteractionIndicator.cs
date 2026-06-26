@@ -13,11 +13,8 @@ namespace BookChoice
 
         void Start()
         {
-            // Find the player automatically
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null) playerTransform = playerObj.transform;
+            FindPlayer();
 
-            // Cache the actual visual/image child so we don't deactivate the script itself
             if (transform.childCount > 0)
             {
                 visualChild = transform.GetChild(0).gameObject;
@@ -27,16 +24,29 @@ namespace BookChoice
 
         void Update()
         {
-            if (forceHidden || playerTransform == null || visualChild == null) return;
+            if (forceHidden || visualChild == null) return;
+
+            // NEW: If we lost or missed the player, keep searching until we find them
+            if (playerTransform == null)
+            {
+                FindPlayer();
+                if (playerTransform == null) return; // Skip this frame if still null
+            }
 
             // Turn on if player is close, turn off if they walk away
             float distance = Vector3.Distance(transform.position, playerTransform.position);
             visualChild.SetActive(distance <= lookRadius);
         }
 
-        /// <summary>
-        /// Turns off the popup permanently once the book is flying/inspected.
-        /// </summary>
+        private void FindPlayer()
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                playerTransform = playerObj.transform;
+            }
+        }
+
         public void DisablePermanently()
         {
             forceHidden = true;

@@ -11,11 +11,9 @@ namespace BookChoice
         [Tooltip("The VowelStone instance in the scene.")]
         public VowelStone vowelStone;
 
-        [Header("Bookshelf Configuration")]
-        [Tooltip("Drag the letter target transform placeholders on the active world spaces/signs here in order (1, 2, 3).")]
-        public Transform[] signTargetSlots;
+        // --- REMOVED: public Transform[] signTargetSlots; array is no longer needed here! ---
 
-        private int currentShelfIndex = 0;
+        private int completedShelvesCount = 0; // Changed tracking to a simple counter
 
         void Awake()
         {
@@ -23,20 +21,17 @@ namespace BookChoice
             else { Destroy(gameObject); return; }
         }
 
+        // Keep this method here as a backup safety fallback method so old button scripts don't break!
         public Transform GetActiveSignTargetSlot()
         {
-            if (currentShelfIndex < signTargetSlots.Length)
-            {
-                return signTargetSlots[currentShelfIndex];
-            }
             return null;
         }
 
         public void OnShelfCompleted()
         {
-            currentShelfIndex++;
+            completedShelvesCount++; // Safely increments whenever ANY book finishes, regardless of order!
 
-            if (currentShelfIndex >= 3)
+            if (completedShelvesCount >= 3)
             {
                 TriggerPuzzleCompletionSequence();
             }
@@ -48,7 +43,6 @@ namespace BookChoice
 
             if (vowelStone != null)
             {
-                // Set up what happens right after the VowelStone flies into the player and hides
                 vowelStone.OnRewardFinished.AddListener(OnVowelStoneCutsceneFinished);
                 vowelStone.GiveReward();
             }
@@ -63,14 +57,10 @@ namespace BookChoice
             if (vowelStone != null)
                 vowelStone.OnRewardFinished.RemoveListener(OnVowelStoneCutsceneFinished);
 
-            // --- STEP 1: SET GLOBAL FLAGS ---
             PuzzleProgress.HouseUSolved = true;
             PuzzleProgress.HouseUComplete = true;
             PuzzleProgress.HasVowelUStone = true;
 
-            // --- STEP 2: FINISH UP ---
-            // We do nothing else here! Control naturally unlocks back to the player,
-            // allowing them to walk up to the NPC and interact with them to leave.
             Debug.Log("[HouseUPuzzleManager] Flags set successfully. Waiting for player to talk to the NPC.");
         }
     }

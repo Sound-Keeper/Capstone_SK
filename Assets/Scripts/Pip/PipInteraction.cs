@@ -17,44 +17,69 @@ public class PipInteraction : MonoBehaviour, IInteractable
     {
         if (DialogueManager.Instance == null || pipHintSystem == null) return;
 
-        PipHint.HintObjective activeObjective = pipHintSystem.GetActiveObjective();
+        // 1. Get the current active uncompleted house (e.g., if A is done, this returns E)
+        PipHint.HintObjective nextObjective = pipHintSystem.GetActiveObjective();
         string[] lines;
+        bool shouldTriggerFlight = false;
 
-        // 1. Determine what Pip says
         if (!DialogueManager.HasPlayedPipIntroFinished)
         {
             // Pip is waiting at the fountain for the first time
             lines = pipHintSystem.fountainIntroDialogue.ToArray();
+            shouldTriggerFlight = true;
         }
-        else if (activeObjective != null)
+        else if (nextObjective != null)
         {
-            // Pip is at a house. Use the hint dialogue list
-            lines = activeObjective.dialogueHints.ToArray();
+            // Check if Pip has already physically flown to this house's hover location
+            float distanceToObjective = Vector3.Distance(transform.position, nextObjective.hoverLocation.position);
+
+            if (distanceToObjective > 2.0f)
+            {
+                // Pip is still physically standing at the old house, meaning a puzzle was JUST completed!
+                lines = new string[] {
+                    $"Fantastic work solving that puzzle!",
+                    $"Let's head over to House {nextObjective.houseLetter} next!"
+                };
+                shouldTriggerFlight = true;
+            }
+            else
+            {
+                // Pip is already at the house waiting for you to solve it. Just show hints!
+                lines = nextObjective.dialogueHints.ToArray();
+                shouldTriggerFlight = false;
+            }
         }
         else
         {
             // All houses complete!
             lines = new string[] { "Amazing work! Every single valley house is saved!" };
+            shouldTriggerFlight = false;
         }
 
-        // 2. Start the dialogue
+        // --- PUT THE FIX HERE: Setup the Cutscene Trigger BEFORE starting the dialogue ---
+        if (shouldTriggerFlight)
+        {
+            DialogueManager.Instance.OnDialogueEnd = () => {
+
+                if (!DialogueManager.HasPlayedPipIntroFinished)
+                {
+                    DialogueManager.hasPlayedPipIntroFinished = true;
+                    TriggerFlightSequence(nextObjective);
+                }
+                else
+                {
+                    TriggerFlightSequence(nextObjective);
+                }
+            };
+        }
+        else
+        {
+            // If he's just giving hints, clear any leftover callbacks so the player unlocks normally
+            DialogueManager.Instance.OnDialogueEnd = null;
+        }
+
+        // --- PUT THE FIX HERE: Start the dialogue AFTER the callback layout is secured ---
         DialogueManager.Instance.StartDialogue(pipName, lines, pipPortrait);
-
-        // 3. Setup the Cutscene Trigger
-        DialogueManager.Instance.OnDialogueEnd = () => {
-
-            // If this was the intro, mark it as finished
-            if (!DialogueManager.HasPlayedPipIntroFinished)
-                DialogueManager.hasPlayedPipIntroFinished = true;
-
-            // --- CHECK FOR COMPLETION ---
-            // If we are at a house but the puzzle is already solved, 
-            // trigger flight to the NEXT objective.
-            if (activeObjective != null && PuzzleProgress.IsHouseComplete(activeObjective.houseLetter))
-            {
-                TriggerFlightSequence(pipHintSystem.GetActiveObjective());
-            }
-        };
     }
 
     private void TriggerFlightSequence(PipHint.HintObjective nextObjective)

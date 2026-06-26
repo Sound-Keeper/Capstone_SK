@@ -22,6 +22,8 @@ namespace BookChoice
         public GameObject choicesContainer;
         [Tooltip("The correct character string needed for this shelf (e.g., 'U').")]
         public string correctLetter = "U";
+        [Tooltip("Drag the specific sign/mesh target slot where THIS book's letter should fly to.")]
+        public Transform customSignTargetSlot;
 
         private Vector3 originalPosition;
         private Quaternion originalRotation;

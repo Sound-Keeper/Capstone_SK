@@ -1550,7 +1550,7 @@ MonoBehaviour:
   crosshairColor: {r: 1, g: 1, b: 1, a: 1}
   interactableLayer:
     serializedVersion: 2
-    m_Bits: 123
+    m_Bits: 64
 --- !u!1 &3866128995490864145
 GameObject:
   m_ObjectHideFlags: 0

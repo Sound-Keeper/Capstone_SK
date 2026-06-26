@@ -100,21 +100,22 @@ public class DialogueManager : MonoBehaviour
         if (!hasPlayedPipIntro && pipFly != null && fountainTarget != null)
         {
             hasPlayedPipIntro = true;
-
-
             string[] introLines = new string[] {
-                "Wake up, {player}! The valley is in trouble!",
-                "The sacred vowel stones have been scattered to the five houses.",
-                "Follow me! Let's head over to House A first."
+                "Hoo! Oh, thank goodness — you're finally here, little one!",
+                "Don't be afraid. My name is Pip. Welcome to Word Valley.",
+                "This valley lives inside The Sound Book. It used to be the brightest, happiest place — full of singing letters and laughing words.",
+                "But a witch named Miss Spell grew jealous of our magic. She cast the mush-mush curse over the whole valley.",
+                "Worst of all, she sealed our five Vowel Stones —<b>A, E, I, O, and U</b>. They hold the magic that keeps Word Valley alive.",
+                "I searched a long, long time for someone with a kind heart and a brave spirit... and The Sound Book chose <b>you</b>.",
+                "You are our <b>Sound Keeper</b>. Only you can wake the Vowel Stones and bring the valley back to life.",
+                "I know reading can feel hard sometimes. I saw how you felt back in your classroom. But trust me — here, every word you fix makes *you* stronger too.",
+                "Take this magic wand. Point it, click it, and it will help you move, place, and choose. That's all you need!",
+                "Keep up, Sound Keeper!"
             };
 
-            StartDialogue("Pip", introLines, pipIntroPortrait);
-
+            // --- FIXED: Define the callback BEFORE starting the dialogue ---
             OnDialogueEnd = () => {
-                // 1. CUTSCENE START: Keep player controls locked explicitly
                 SetPlayerControlState(false);
-
-                // 2. CAMERA SWITCH: Activate the cutscene tracking camera
                 Camera mainCam = Camera.main;
                 if (pipCutsceneCamera != null)
                 {
@@ -122,20 +123,18 @@ public class DialogueManager : MonoBehaviour
                     pipCutsceneCamera.gameObject.SetActive(true);
                 }
 
-                // 3. START FLIGHT
                 pipFly.MoveToTarget(fountainTarget, () => {
-                    // 4. CUTSCENE END: Switch back to standard player camera view
                     if (pipCutsceneCamera != null)
                     {
                         pipCutsceneCamera.gameObject.SetActive(false);
                         if (mainCam != null) mainCam.gameObject.SetActive(true);
                     }
-
-                    // 5. Release player movement controls
                     SetPlayerControlState(true);
-
                 });
             };
+
+            // Now start the dialogue with the callback fully registered
+            StartDialogue("Pip", introLines, pipIntroPortrait);
         }
     }
 
@@ -294,6 +293,38 @@ public class DialogueManager : MonoBehaviour
 
     void NextLine()
     {
+        // --- UPDATED INTERCEPTION TO FIND DEACTIVATED OBJECTS ---
+        if (currentLines != null && currentLineIndex == 8)
+        {
+            // FindObjectsOfTypeAll will successfully locate deactivated objects in the scene
+            MagicWandReward[] wands = Resources.FindObjectsOfTypeAll<MagicWandReward>();
+            MagicWandReward wandScript = wands.Length > 0 ? wands[0] : null;
+
+            if (wandScript != null)
+            {
+                if (dialoguePanel != null) dialoguePanel.SetActive(false);
+
+                wandScript.GiveWand(() => {
+                    currentLineIndex++;
+                    if (dialoguePanel != null) dialoguePanel.SetActive(true);
+
+                    if (currentLines != null && currentLineIndex < currentLines.Length)
+                    {
+                        ShowLine();
+                    }
+                    else
+                    {
+                        EndDialogue();
+                    }
+                });
+                return;
+            }
+            else
+            {
+                Debug.LogWarning("Could not find MagicWandReward anywhere in the scene assets!");
+            }
+        }
+
         currentLineIndex++;
 
         if (currentLines != null && currentLineIndex < currentLines.Length)
@@ -327,7 +358,7 @@ public class DialogueManager : MonoBehaviour
         cb?.Invoke();
     }
 
-    private void SetPlayerControlState(bool enable)
+    public void SetPlayerControlState(bool enable)
     {
         Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
         if (activePlayer != null)
