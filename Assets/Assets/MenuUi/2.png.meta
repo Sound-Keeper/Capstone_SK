@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -193,7 +193,7 @@ TextureImporter:
         width: 1221
         height: 875
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -202,6 +202,28 @@ TextureImporter:
       bones: []
       spriteID: a88876d49134c904e8dadf901b3e79cf
       internalID: 465666628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SettingsTopBar
+      rect:
+        serializedVersion: 2
+        x: 845
+        y: 838
+        width: 442
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a82c6e592467f1a4896bac771e4ea470
+      internalID: 905186585
       vertices: []
       indices: 
       edges: []
@@ -228,6 +250,8 @@ TextureImporter:
       CharSelectUI: 465666628
       ConfirmButton: 1341555782
       MagicalInteractUI: -1164637777
+      SettingsTopBar: 905186585
+      T: 905186585
       WoodedInteractUI: -1034993697
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

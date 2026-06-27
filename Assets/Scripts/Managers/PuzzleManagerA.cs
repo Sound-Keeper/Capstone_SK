@@ -12,6 +12,10 @@ public class PuzzleManagerA : MonoBehaviour
     public int piecesNeeded = 3;
     int piecesPlaced = 0;
 
+    [Header("References")]
+    [Tooltip("Drag your VowelStone GameObject here.")]
+    public VowelStone vowelStone;
+
     [Header("UI (optional)")]
     public GameObject winPanel;
 
@@ -46,5 +50,17 @@ public class PuzzleManagerA : MonoBehaviour
         if (winPanel != null) winPanel.SetActive(true);
         PuzzleProgress.HouseASolved = true;        // one-shot: triggers Sheriff's thank-you
         OnPuzzleComplete?.Invoke();                // hook VowelStone.GiveReward here
+    }
+    public void TriggerVowelStoneReward()
+    {
+        if (vowelStone != null)
+        {
+            Debug.Log("[PuzzleAComplete] Puzzle solved! Triggering Vowel Stone cutscene.");
+            vowelStone.GiveReward();
+        }
+        else
+        {
+            Debug.LogError("[PuzzleAComplete] VowelStone reference is missing in the Inspector!");
+        }
     }
 }

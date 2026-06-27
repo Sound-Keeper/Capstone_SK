@@ -27,7 +27,7 @@ public class CoreManager : MonoBehaviour
     {
         SceneController.Instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.FirstMenu)
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu)
             .Perform();
     }
 

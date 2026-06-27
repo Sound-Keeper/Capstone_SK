@@ -7,6 +7,11 @@ using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
 {
+
+    public static bool hasPlayedPipIntro = false;
+    public static bool HasPlayedPipIntro => hasPlayedPipIntro;
+    public static bool hasPlayedPipIntroFinished = false;
+    public static bool HasPlayedPipIntroFinished => hasPlayedPipIntroFinished;
     public static DialogueManager Instance;
 
     [Header("UI References")]
@@ -15,10 +20,17 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI dialogueText;
 
     [Header("Portraits")]
-    [Tooltip("Left-side face (NPC). Optional.")]
+    [Tooltip("Left-side face (NPC UI slot).")]
     public Image leftPortrait;
-    [Tooltip("Right-side face (Player). Optional.")]
+    [Tooltip("Right-side face (Player UI slot).")]
     public Image rightPortrait;
+
+    [Header("Global Character Portrait Assignments")]
+    [Tooltip("Global Portrait for Paige (Character 0)")]
+    public Sprite paigePortrait;
+    [Tooltip("Global Portrait for Penn (Character 1)")]
+    public Sprite pennPortrait;
+
     [Tooltip("Tint for the speaker who is currently talking.")]
     public Color activeTint = Color.white;
     [Tooltip("Tint for the speaker who is NOT talking (dimmed).")]
@@ -29,21 +41,28 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Pip Intro Sequence Setup")]
     public PipFly pipFly;
+    [Tooltip("Assign the Pip portrait here for the opening cinematic sequence!")]
+    public Sprite pipIntroPortrait;
     public Transform fountainTarget;
-    public Transform houseATarget;
     public float arriveDistance = 3f;
+
+    [Header("Cinematic Cutscene Setup")]
+    [Tooltip("A camera that points at or follows Pip while he flies to the fountain.")]
+    public Camera pipCutsceneCamera; // <--- ADDED THIS FIELD FOR THE CUTSCENE
 
     [HideInInspector] public Action OnDialogueEnd;
 
     DialogueLine[] currentLines;
     string npcName = "NPC";
     Sprite npcPortrait;
-    Sprite playerPortrait;
+    Sprite runtimePlayerPortrait;
     int currentLineIndex = 0;
     bool isTyping = false;
     string currentFullLine = "";
     Camera previousCamera;
     Camera dialogueCamera;
+
+    private float inputCooldownTimer = 0f;
 
     void Awake()
     {
@@ -51,45 +70,77 @@ public class DialogueManager : MonoBehaviour
         else { Destroy(gameObject); return; }
 
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
+        if (pipCutsceneCamera != null) pipCutsceneCamera.gameObject.SetActive(false);
     }
 
     void Start()
     {
-        // 1. Find Pip and her scripts
-        PipFly pipFly = FindFirstObjectByType<PipFly>();
-        PipHint pipHint = FindFirstObjectByType<PipHint>();
+        if (pipFly == null) pipFly = FindFirstObjectByType<PipFly>();
+        PipHint pipHintSystem = FindFirstObjectByType<PipHint>();
         GameObject player = GameObject.FindWithTag("Player");
 
-        if (pipFly != null && fountainTarget != null)
+        bool anyHouseSolved = PuzzleProgress.HouseASolved || PuzzleProgress.HouseESolved ||
+                              PuzzleProgress.HouseISolved || PuzzleProgress.HouseOSolved ||
+                              PuzzleProgress.HouseUSolved;
+
+        if (anyHouseSolved || PlayerPrefs.GetInt("IntroFinished", 0) == 1)
         {
-            // Keep her automatic radar brain asleep while you two are chatting
-            if (pipHint != null) pipHint.autoGuide = false;
+            hasPlayedPipIntro = true;
+            hasPlayedPipIntroFinished = true;
+        }
 
-            // 2. Open the text box instantly so she talks first while standing still
+        if (pipIntroPortrait == null && pipFly != null)
+        {
+            PipInteraction pipInteraction = pipFly.GetComponent<PipInteraction>();
+            if (pipInteraction != null)
+            {
+                pipIntroPortrait = pipInteraction.pipPortrait;
+            }
+        }
+
+        if (!hasPlayedPipIntro && pipFly != null && fountainTarget != null)
+        {
+            hasPlayedPipIntro = true;
             string[] introLines = new string[] {
-            "Wake up, {player}! The valley is in trouble!",
-            "The sacred vowel stones have been scattered to the five houses.",
-            "Follow me! Let's head over to House A first."
-        };
-            StartDialogue("Pip", introLines);
+                "Hoo! Oh, thank goodness — you're finally here, little one!",
+                "Don't be afraid. My name is Pip. Welcome to Word Valley.",
+                "This valley lives inside The Sound Book. It used to be the brightest, happiest place — full of singing letters and laughing words.",
+                "But a witch named Miss Spell grew jealous of our magic. She cast the mush-mush curse over the whole valley.",
+                "Worst of all, she sealed our five Vowel Stones —<b>A, E, I, O, and U</b>. They hold the magic that keeps Word Valley alive.",
+                "I searched a long, long time for someone with a kind heart and a brave spirit... and The Sound Book chose <b>you</b>.",
+                "You are our <b>Sound Keeper</b>. Only you can wake the Vowel Stones and bring the valley back to life.",
+                "I know reading can feel hard sometimes. I saw how you felt back in your classroom. But trust me — here, every word you fix makes *you* stronger too.",
+                "Take this magic wand. Point it, click it, and it will help you move, place, and choose. That's all you need!",
+                "Keep up, Sound Keeper!"
+            };
 
-            // 3. THIS RUNS ONLY AFTER THE PLAYER CLOSES THE ENTIRE DIALOGUE PANEL!
+            // --- FIXED: Define the callback BEFORE starting the dialogue ---
             OnDialogueEnd = () => {
+                SetPlayerControlState(false);
+                Camera mainCam = Camera.main;
+                if (pipCutsceneCamera != null)
+                {
+                    if (mainCam != null) mainCam.gameObject.SetActive(false);
+                    pipCutsceneCamera.gameObject.SetActive(true);
+                }
 
-                // First, command her to physically fly out to the fountain target!
-                pipFly.MoveToTarget(fountainTarget, () => {
+                pipFly.MoveToTarget(fountainTarget, () =>
+                {
+                    if (pipCutsceneCamera != null)
+                    {
+                        pipCutsceneCamera.gameObject.SetActive(false);
+                        if (mainCam != null) mainCam.gameObject.SetActive(true);
+                    }
 
-                    // This microsecond callback runs ONLY after she finishes her flight and lands at the fountain:
-                    if (pipHint != null)
-                    {
-                        pipHint.autoGuide = true; // Turn her automatic house-tracking brain on!
-                    }
-                    else if (player != null)
-                    {
-                        pipFly.FollowPlayerStart(player.transform); // Fallback: hover on shoulder
-                    }
+                    PlayerPrefs.SetInt("IntroFinished", 1);
+                    PlayerPrefs.Save();
+
+                    SetPlayerControlState(true);
                 });
             };
+
+            // Now start the dialogue with the callback fully registered
+            StartDialogue("Pip", introLines, pipIntroPortrait);
         }
     }
 
@@ -97,15 +148,19 @@ public class DialogueManager : MonoBehaviour
     {
         if (dialoguePanel == null || !dialoguePanel.activeSelf) return;
 
+        if (inputCooldownTimer > 0)
+        {
+            inputCooldownTimer -= Time.deltaTime;
+        }
+
         bool advance =
             (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame) ||
             (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame);
 
-        if (!advance) return;
+        if (!advance || inputCooldownTimer > 0) return;
 
         if (isTyping)
         {
-            // Skip the typing animation and show the whole line instantly
             StopAllCoroutines();
             dialogueText.text = currentFullLine;
             isTyping = false;
@@ -116,19 +171,15 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    // Overload Function: Allows Pip's automated intro sequences and the Altar script 
-    // to play plain text strings without throwing an error.
-    public void StartDialogue(string speaker, string[] newLines)
+    public void StartDialogue(string speaker, string[] newLines, Sprite speakerPortrait = null)
     {
         if (newLines == null || newLines.Length == 0) return;
 
-        // 1. Force the physical UI panel to wake up and appear on screen immediately!
         if (dialoguePanel != null)
         {
             dialoguePanel.SetActive(true);
         }
 
-        // Convert raw text strings into proper DialogueLine structural formats
         DialogueLine[] convertedLines = new DialogueLine[newLines.Length];
         for (int i = 0; i < newLines.Length; i++)
         {
@@ -139,32 +190,32 @@ public class DialogueManager : MonoBehaviour
             };
         }
 
-        // Send to master method with portraits set safely to empty/null
-        StartDialogue(convertedLines, speaker, null, null, dialogueCamera, null);
+        StartDialogue(convertedLines, speaker, speakerPortrait, null, dialogueCamera, OnDialogueEnd);
     }
 
-    // Call this to trigger ANY complex dialogue conversation across the game
     public void StartDialogue(DialogueLine[] lines, string npcName, Sprite npcPortrait,
-        Sprite playerPortrait, Camera cam, Action onComplete = null)
+        Sprite ignoredPlayerPortrait, Camera cam, Action onComplete = null)
     {
         if (lines == null || lines.Length == 0) return;
 
+        SetPlayerControlState(false);
+
         this.npcName = npcName;
         this.npcPortrait = npcPortrait;
-        this.playerPortrait = playerPortrait;
-        this.OnDialogueEnd = onComplete;
 
-        previousCamera = Camera.main;
-        dialogueCamera = cam;
-
-        if (dialogueCamera != null)
+        if (onComplete != null)
         {
-            if (previousCamera != null) previousCamera.gameObject.SetActive(false);
-            dialogueCamera.gameObject.SetActive(true);
+            this.OnDialogueEnd = onComplete;
         }
 
-        SetupPortrait(leftPortrait, npcPortrait);
-        SetupPortrait(rightPortrait, playerPortrait);
+        if (cam != null)
+        {
+            previousCamera = Camera.main;
+            dialogueCamera = cam;
+
+            dialogueCamera.gameObject.SetActive(true);
+            if (previousCamera != null) previousCamera.gameObject.SetActive(false);
+        }
 
         currentLines = lines;
         currentLineIndex = 0;
@@ -180,11 +231,24 @@ public class DialogueManager : MonoBehaviour
         DialogueLine line = currentLines[currentLineIndex];
         bool isPlayer = (line.speaker == Speaker.Player);
 
-        // Switches names automatically based on character selection choice
         nameText.text = isPlayer ? CharacterSelection.SelectedName : npcName;
+
+        if (CharacterSelection.Selected == 1)
+        {
+            runtimePlayerPortrait = pennPortrait;
+        }
+        else
+        {
+            runtimePlayerPortrait = paigePortrait;
+        }
+
+        SetupPortrait(leftPortrait, npcPortrait);
+        SetupPortrait(rightPortrait, runtimePlayerPortrait);
 
         Highlight(leftPortrait, !isPlayer);
         Highlight(rightPortrait, isPlayer);
+
+        inputCooldownTimer = 0.2f;
 
         StopAllCoroutines();
         StartCoroutine(TypeLine(FormatString(line.text)));
@@ -193,13 +257,28 @@ public class DialogueManager : MonoBehaviour
     void SetupPortrait(Image img, Sprite face)
     {
         if (img == null) return;
-        img.sprite = face;
-        img.enabled = (face != null);
+
+        if (face != null)
+        {
+            img.gameObject.SetActive(true);
+            img.enabled = true;
+            img.sprite = face;
+
+            Color c = img.color;
+            c.a = 1f;
+            img.color = c;
+        }
+        else
+        {
+            img.sprite = null;
+            img.enabled = false;
+            img.gameObject.SetActive(false);
+        }
     }
 
     void Highlight(Image img, bool isSpeaking)
     {
-        if (img == null || !img.enabled) return;
+        if (img == null || !img.gameObject.activeSelf || img.sprite == null) return;
         img.color = isSpeaking ? activeTint : inactiveTint;
     }
 
@@ -220,6 +299,38 @@ public class DialogueManager : MonoBehaviour
 
     void NextLine()
     {
+        // --- UPDATED INTERCEPTION TO FIND DEACTIVATED OBJECTS ---
+        if (currentLines != null && currentLineIndex == 8)
+        {
+            // FindObjectsOfTypeAll will successfully locate deactivated objects in the scene
+            MagicWandReward[] wands = Resources.FindObjectsOfTypeAll<MagicWandReward>();
+            MagicWandReward wandScript = wands.Length > 0 ? wands[0] : null;
+
+            if (wandScript != null)
+            {
+                if (dialoguePanel != null) dialoguePanel.SetActive(false);
+
+                wandScript.GiveWand(() => {
+                    currentLineIndex++;
+                    if (dialoguePanel != null) dialoguePanel.SetActive(true);
+
+                    if (currentLines != null && currentLineIndex < currentLines.Length)
+                    {
+                        ShowLine();
+                    }
+                    else
+                    {
+                        EndDialogue();
+                    }
+                });
+                return;
+            }
+            else
+            {
+                Debug.LogWarning("Could not find MagicWandReward anywhere in the scene assets!");
+            }
+        }
+
         currentLineIndex++;
 
         if (currentLines != null && currentLineIndex < currentLines.Length)
@@ -242,10 +353,27 @@ public class DialogueManager : MonoBehaviour
             if (previousCamera != null) previousCamera.gameObject.SetActive(true);
         }
 
-        // Fire any logic that is waiting for the text box to finish closing
+        // If a cutscene callback is assigned to OnDialogueEnd, let it handle re-enabling control!
+        if (OnDialogueEnd == null)
+        {
+            SetPlayerControlState(true);
+        }
+
         Action cb = OnDialogueEnd;
         OnDialogueEnd = null;
         cb?.Invoke();
+    }
+
+    public void SetPlayerControlState(bool enable)
+    {
+        Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+        if (activePlayer != null)
+        {
+            activePlayer.canControl = enable;
+
+            Cursor.lockState = enable ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !enable;
+        }
     }
 
     string FormatString(string s)

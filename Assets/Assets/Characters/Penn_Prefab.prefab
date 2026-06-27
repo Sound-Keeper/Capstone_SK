@@ -166,7 +166,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2157257320450696787
 Transform:
   m_ObjectHideFlags: 0
@@ -182,7 +182,6 @@ Transform:
   m_Children:
   - {fileID: 4716087367721669920}
   - {fileID: 2827775352853933135}
-  - {fileID: 6866872441613539213}
   - {fileID: 8914126848932217063}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -204,7 +203,7 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.9
+  m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
@@ -224,6 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Charactercontroller
   charModel: {fileID: 4716087367721669920}
+  canControl: 1
 --- !u!114 &5077591140795145594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,6 +239,10 @@ MonoBehaviour:
   holdPoint: {fileID: 6866872441613539213}
   followSpeed: 10
   held: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  itemRadiusOffset: 0.4
 --- !u!114 &-923851444562756633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,6 +258,10 @@ MonoBehaviour:
   holdPoint: {fileID: 6866872441613539213}
   followSpeed: 10
   held: {fileID: 0}
+  Ground:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  itemRadiusOffset: 0.25
 --- !u!1 &1420352614501401938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1413,10 +1421,11 @@ Transform:
   m_GameObject: {fileID: 3860749745549712211}
   serializedVersion: 2
   m_LocalRotation: {x: 0.1487111, y: -0, z: -0, w: 0.9888807}
-  m_LocalPosition: {x: 0, y: 2.83, z: -2.79}
+  m_LocalPosition: {x: 0, y: 2.85, z: -2.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6866872441613539213}
   m_Father: {fileID: 2157257320450696787}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &5682120699025103136
@@ -1541,9 +1550,7 @@ MonoBehaviour:
   crosshairColor: {r: 1, g: 1, b: 1, a: 1}
   interactableLayer:
     serializedVersion: 2
-    m_Bits: 123
-  laserLine: {fileID: 3987370462538114119}
-  laserOrigin: {fileID: 8914126848932217063}
+    m_Bits: 64
 --- !u!1 &3866128995490864145
 GameObject:
   m_ObjectHideFlags: 0
@@ -1684,7 +1691,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8914126848932217063
 Transform:
   m_ObjectHideFlags: 0
@@ -2024,13 +2031,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5670437289976655179}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.32, z: 3.9199982}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: -0.42546988, z: 7.151447}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2157257320450696787}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 4716087367721669920}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &5812959591557065338
 GameObject:
   m_ObjectHideFlags: 0

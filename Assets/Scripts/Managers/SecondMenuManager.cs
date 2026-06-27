@@ -26,9 +26,24 @@ public class SecondMenuManager : MonoBehaviour
     // BUTTON 1: Linked to New Game / Character Select
     public void OpenCharacterSelectionScene()
     {
+        PlayerPrefs.SetInt("IntroFinished", 0);
+        PlayerPrefs.Save();
+
+        DialogueManager.hasPlayedPipIntro = false;
+        DialogueManager.hasPlayedPipIntroFinished = false;
+
         SceneController.Instance.NewTransition()
             .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.SecondMenu) // Reloading or switching
-            .Load(SceneDatabase.Slots.Menu, "CharacterSelection") // Ensure string matches Build Settings
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.CharSelect)
+            .Unload(SceneDatabase.Scenes.SecondMenu)
+            .WithOverlay()
+            .Perform();
+    }
+
+    public void GotoSettings()
+    {
+        SceneController.Instance.NewTransition()
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.Settings)
             .Unload(SceneDatabase.Scenes.SecondMenu)
             .WithOverlay()
             .Perform();
