@@ -22,7 +22,25 @@ public class Charactercontroller : MonoBehaviour
     void Start()
     {
         player = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
+
+        // Check if the dialogue manager is already active or if control is locked
+        if (canControl && DialogueManager.Instance != null && DialogueManager.Instance.dialoguePanel != null)
+        {
+            if (DialogueManager.Instance.dialoguePanel.activeSelf)
+            {
+                canControl = false;
+            }
+        }
+
+        if (canControl)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
 
         if (CoreManager.Instance != null && CoreManager.Instance.HasSavedPosition)
         {
@@ -44,6 +62,13 @@ public class Charactercontroller : MonoBehaviour
         // Guard check: Stop movement and rotation tracking if player is in a conversation
         if (!canControl)
         {
+            // --- FIX: Force the camera to look straight ahead while locked ---
+            rot = 0f;
+            if (charModel != null)
+            {
+                charModel.localRotation = Quaternion.Euler(rot, 0, 0);
+            }
+
             // Still apply default physics/gravity so they fall smoothly if talking mid-air
             if (player.isGrounded && yVelocity < 0)
             {
