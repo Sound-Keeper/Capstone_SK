@@ -12,15 +12,10 @@ public class WandPickUpRay : MonoBehaviour
     [Header("Raycast Masking")]
     public LayerMask interactableLayer;
 
-    [Header("Visual Laser Settings")]
-    public LineRenderer laserLine;
-    public Transform laserOrigin;
-
     private Camera cachedCam;
 
     void Start()
     {
-        // Cache the camera component to prevent Camera.main null crashes
         cachedCam = GetComponent<Camera>();
         if (cachedCam == null) cachedCam = Camera.main;
     }
@@ -37,44 +32,16 @@ public class WandPickUpRay : MonoBehaviour
 
     void Update()
     {
-        if (cachedCam == null) return; // Ultimate safety guard
+        if (cachedCam == null) return;
 
-        DrawLaserBeam();
-
-        // 1. E KEY PRESS: Pop out the 3D Book asset
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
             PerformInteraction(true);
         }
 
-        // 2. LEFT CLICK: Select vowel cubes / pick up objects
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             PerformInteraction(false);
-        }
-    }
-
-    void DrawLaserBeam()
-    {
-        if (laserLine == null || cachedCam == null) return;
-
-        Vector3 startPoint = laserOrigin != null ? laserOrigin.position : cachedCam.transform.position;
-        Vector3 direction = cachedCam.transform.forward;
-
-        laserLine.SetPosition(0, startPoint);
-
-        Ray passiveRay = new Ray(cachedCam.transform.position, direction);
-
-        // If your interactable layer is set to 'Nothing', we check everything so the laser still hits surfaces
-        int mask = interactableLayer.value == 0 ? ~0 : interactableLayer.value;
-
-        if (Physics.Raycast(passiveRay, out RaycastHit hit, range, mask))
-        {
-            laserLine.SetPosition(1, hit.point);
-        }
-        else
-        {
-            laserLine.SetPosition(1, cachedCam.transform.position + (direction * range));
         }
     }
 
@@ -85,90 +52,91 @@ public class WandPickUpRay : MonoBehaviour
         Ray ray = new Ray(cachedCam.transform.position, cachedCam.transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 2f);
 
-        // We use the specified layout mask here for precise selections
         if (Physics.Raycast(ray, out RaycastHit hit, range, interactableLayer))
         {
             Debug.Log("Ray hit: " + hit.collider.name);
 
+            // =============================================================
+            // UNIVERSAL INTERACTABLE CHECK (NPCs, Pip, items)
+            // =============================================================
             if (isPressingE)
             {
-                // =============================================================
-                // 3D BOOK POP OUT ACTION (E KEY)
-                // =============================================================
-                Uhouse3DManager bookManager = hit.collider.GetComponentInParent<Uhouse3DManager>();
-                if (bookManager != null)
+                IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+                if (interactable != null)
                 {
-                    bookManager.InteractWithBook();
+                    interactable.Interact();
+                    return; // Break execution immediately so child blocks aren't skipped or double evaluated
+                }
+            }
+
+            // =============================================================
+            // HOUSE U
+            // =============================================================
+            if (isPressingE)
+            {
+                BookChoice.HouseUInteractiveBook targetBook = hit.collider.GetComponentInParent<BookChoice.HouseUInteractiveBook>();
+                if (targetBook != null)
+                {
+                    targetBook.StartInspectionViaRaycast();
                     return;
                 }
             }
             else
             {
-                // =============================================================
-                // HOUSE U (3D CUBE CLICK)
-                // =============================================================
-                VowelCube3D cube3D = hit.collider.GetComponentInParent<VowelCube3D>();
-                if (cube3D != null)
+                BookChoice.HouseUChoiceButton targetChoice = hit.collider.GetComponentInParent<BookChoice.HouseUChoiceButton>();
+                if (targetChoice != null)
                 {
-                    cube3D.OnCubeClicked();
+                    targetChoice.SelectChoice();
                     return;
                 }
+            }
 
-                // BACKWARDS COMPATIBILITY (If you still have 2D paper objects active)
-                VowelPaper paper = hit.collider.GetComponentInParent<VowelPaper>();
-                if (paper != null)
+            // =============================================================
+            // HOUSE I
+            // =============================================================
+            if (carry != null)
+            {
+                if (!carry.IsHolding())
                 {
-                    paper.OnPaperClicked();
-                    return;
-                }
-
-                // =============================================================
-                // HOUSE I
-                // =============================================================
-                if (carry != null)
-                {
-                    if (!carry.IsHolding())
+                    LetterPickup letter = hit.collider.GetComponentInParent<LetterPickup>();
+                    if (letter != null)
                     {
-                        LetterPickup letter = hit.collider.GetComponentInParent<LetterPickup>();
-                        if (letter != null)
-                        {
-                            carry.PickUp(letter);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        Pillar slot = hit.collider.GetComponentInParent<Pillar>();
-                        if (slot != null)
-                        {
-                            slot.PlaceLetter(carry);
-                            return;
-                        }
+                        carry.PickUp(letter);
+                        return;
                     }
                 }
-
-                // =============================================================
-                // HOUSE A
-                // =============================================================
-                if (pieceCarry != null)
+                else
                 {
-                    if (!pieceCarry.IsHolding())
+                    Pillar slot = hit.collider.GetComponentInParent<Pillar>();
+                    if (slot != null)
                     {
-                        BrokenPiece piece = hit.collider.GetComponentInParent<BrokenPiece>();
-                        if (piece != null)
-                        {
-                            pieceCarry.PickUp(piece);
-                            return;
-                        }
+                        slot.PlaceLetter(carry);
+                        return;
                     }
-                    else
+                }
+            }
+
+            // =============================================================
+            // HOUSE A
+            // =============================================================
+            if (pieceCarry != null)
+            {
+                if (!pieceCarry.IsHolding())
+                {
+                    BrokenPiece piece = hit.collider.GetComponentInParent<BrokenPiece>();
+                    if (piece != null)
                     {
-                        PieceSlot slot = hit.collider.GetComponentInParent<PieceSlot>();
-                        if (slot != null)
-                        {
-                            slot.PlacePiece(pieceCarry);
-                            return;
-                        }
+                        pieceCarry.PickUp(piece);
+                        return;
+                    }
+                }
+                else
+                {
+                    PieceSlot slot = hit.collider.GetComponentInParent<PieceSlot>();
+                    if (slot != null)
+                    {
+                        slot.PlacePiece(pieceCarry);
+                        return;
                     }
                 }
             }

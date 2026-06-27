@@ -40,4 +40,30 @@ public static class PuzzleProgress
             default: return false;
         }
     }
+
+    // --- CALL THIS TO WIPE ALL PROGRESS DATA ON NEW GAME ---
+    public static void ResetAllProgress()
+    {
+        // 1. Reset Solved Triggers
+        HouseASolved = false;
+        HouseESolved = false;
+        HouseISolved = false;
+        HouseOSolved = false;
+        HouseUSolved = false;
+
+        // 2. Reset Permanent Completion Checkmarks
+        HouseAComplete = false;
+        HouseEComplete = false;
+        HouseIComplete = false;
+        HouseOComplete = false;
+        HouseUComplete = false;
+
+        // 3. Reset Stone Tracking Flags
+        HasVowelAStone = false;
+        HasVowelEStone = false;
+        HasVowelIStone = false;
+        HasVowelOStone = false;
+        HasVowelUStone = false;
+
+    }
 }

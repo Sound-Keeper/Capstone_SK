@@ -8,8 +8,17 @@ public class FirstMenuManager : MonoBehaviour
         SceneController.Instance
             .NewTransition()
             .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.SecondMenu)
-            .Unload(SceneDatabase.Scenes.FirstMenu)
+            .Unload(SceneDatabase.Scenes.MainMenu)
             .WithOverlay()
             .Perform();
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
     }
 }

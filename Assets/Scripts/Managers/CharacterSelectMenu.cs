@@ -45,11 +45,23 @@ public class CharacterSelectMenu : MonoBehaviour
         // 2. Since this is a fresh New Game run, wipe clean any residual checkpoint locations
         if (CoreManager.Instance != null) CoreManager.Instance.ClearSavedPosition();
 
+        PuzzleProgress.ResetAllProgress();
+
         // 3. Complete structural load sequence into gameplay
         SceneController.Instance.NewTransition()
             .Load(SceneDatabase.Slots.Session, SceneDatabase.Scenes.Session)
             .Load(SceneDatabase.Slots.SessionContent, SceneDatabase.Scenes.MainWorld, setActive: true)
             .Unload(SceneDatabase.Slots.Menu) // Wipe out selection frames entirely
+            .WithOverlay()
+            .Perform();
+    }
+
+    public void GoBack()
+    {
+        SceneController.Instance
+            .NewTransition()
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.SecondMenu)
+            .Unload(SceneDatabase.Scenes.CharSelect)
             .WithOverlay()
             .Perform();
     }

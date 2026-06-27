@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class NpcInteraction : MonoBehaviour
+// 1. ADDED THE INTERFACE REGISTRATION HERE
+public class NpcInteraction : MonoBehaviour, IInteractable
 {
     public enum PuzzleFlag { HouseA, HouseE, HouseI, HouseO, HouseU }
 
@@ -41,8 +42,13 @@ public class NpcInteraction : MonoBehaviour
     public bool autoPlayWhenSolved = false;
     public float autoPlayDelay = 1.5f;
 
-    bool playerInRange = false;
+    [Header("Solved Settings")]
+    [Tooltip("Check if this specific house is solved (e.g., 'A', 'E', 'I')")]
+    public string houseLetter = "A";
+
     bool hasTriggered = false;
+    bool playerInRange = false;
+    private bool waitingForSolvedExit = false;
 
     void Start()
     {
@@ -57,6 +63,16 @@ public class NpcInteraction : MonoBehaviour
         if (autoPlayWhenSolved && IsHouseSolved() && dialogueLinesAfterSolved.Count > 0)
         {
             StartCoroutine(AutoPlayAfterSolved());
+        }
+
+        if (PuzzleProgress.IsHouseComplete(houseLetter))
+        {
+            if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
+            {
+                dialogueLines = dialogueLinesAfterSolved;
+            }
+
+            sceneToLoad = "MainWorld";
         }
     }
 
@@ -82,38 +98,33 @@ public class NpcInteraction : MonoBehaviour
         }
     }
 
-    void ClearSolvedFlag()
-    {
-        switch (associatedHouse)
-        {
-            case PuzzleFlag.HouseA: PuzzleProgress.HouseASolved = false; break;
-            case PuzzleFlag.HouseE: PuzzleProgress.HouseESolved = false; break;
-            case PuzzleFlag.HouseI: PuzzleProgress.HouseISolved = false; break;
-            case PuzzleFlag.HouseO: PuzzleProgress.HouseOSolved = false; break;
-            case PuzzleFlag.HouseU: PuzzleProgress.HouseUSolved = false; break;
-        }
-    }
-
     void Update()
     {
         FindPlayerFallback();
 
-        if (player == null || promptCanvas == null) return;
-
-        float distance = Vector3.Distance(transform.position, player.position);
-        playerInRange = distance <= interactionRange;
-
-        float targetAlpha = (playerInRange && !hasTriggered) ? 1f : 0f;
-        promptCanvas.alpha = Mathf.MoveTowards(promptCanvas.alpha, targetAlpha, fadeSpeed * Time.deltaTime);
-
-        bool visible = promptCanvas.alpha > 0.001f;
-        promptCanvas.interactable = visible;
-        promptCanvas.blocksRaycasts = visible;
-
-        if (playerInRange && !hasTriggered && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        if (player != null)
         {
-            Interact();
+            float distance = Vector3.Distance(transform.position, player.position);
+            playerInRange = distance <= interactionRange;
         }
+        else
+        {
+            playerInRange = false;
+        }
+
+        if (promptCanvas != null)
+        {
+            // Only illuminate UI hover indicator badge if within proximity parameters
+            float targetAlpha = (playerInRange && !hasTriggered) ? 1f : 0f;
+            promptCanvas.alpha = Mathf.MoveTowards(promptCanvas.alpha, targetAlpha, fadeSpeed * Time.deltaTime);
+
+            bool visible = promptCanvas.alpha > 0.001f;
+            promptCanvas.interactable = visible;
+            promptCanvas.blocksRaycasts = visible;
+        }
+
+        // 2. KEYPRESS REMOVED FROM HERE COMPLETELY. 
+        // No more auto-triggering dialogue without looking!
     }
 
     void FindPlayerFallback()
@@ -125,52 +136,87 @@ public class NpcInteraction : MonoBehaviour
         }
     }
 
-    void Interact()
+    // 3. RENAMED INTERACT FUNCTION TO SATISFY IINTERACTABLE REQUIREMENT
+    public void Interact()
     {
+        // Safety lock: Don't interact if we already triggered it or if the player isn't close enough
+        if (hasTriggered || !playerInRange) return;
         hasTriggered = true;
 
-        if (DialogueManager.Instance == null)
+        if (promptCanvas != null) promptCanvas.alpha = 0f;
+
+        if (PuzzleProgress.IsHouseComplete(houseLetter))
         {
-            Debug.LogError("DialogueManager.Instance is missing from your scene!");
-            return;
+            if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
+            {
+                dialogueLines = dialogueLinesAfterSolved;
+            }
+
+            waitingForSolvedExit = true;
         }
 
-        List<DialogueLine> linesToPlay = dialogueLines;
-
-        if (IsHouseSolved() && dialogueLinesAfterSolved.Count > 0)
+        if (DialogueManager.Instance != null)
         {
-            linesToPlay = dialogueLinesAfterSolved;
-            ClearSolvedFlag();
+            DialogueManager.Instance.StartDialogue(
+                dialogueLines.ToArray(),
+                npcName,
+                npcPortrait,
+                playerPortrait,
+                dialogueCamera,
+                OnDialogueComplete
+            );
         }
-
-        DialogueManager.Instance.StartDialogue(
-            linesToPlay.ToArray(),
-            npcName,
-            npcPortrait,
-            playerPortrait,
-            dialogueCamera,
-            OnDialogueComplete
-        );
     }
 
     void OnDialogueComplete()
     {
-        if (string.IsNullOrEmpty(sceneToLoad))
+        if (IsHouseSolved() || PuzzleProgress.IsHouseComplete(houseLetter) || (waitingForSolvedExit && IsHouseSolved()))
         {
-            StartCoroutine(ReEnableInteractNextFrame());
+            StartCoroutine(WaitAndWarpRoutine());
             return;
         }
 
+        if (!string.IsNullOrEmpty(sceneToLoad) && sceneToLoad != "MainWorld")
+        {
+            ExecuteSceneWarp(sceneToLoad);
+            return;
+        }
+
+        StartCoroutine(ReEnableInteractNextFrame());
+    }
+
+    private System.Collections.IEnumerator WaitAndWarpRoutine()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        if (DialogueManager.Instance != null && DialogueManager.Instance.dialoguePanel != null)
+        {
+            while (DialogueManager.Instance.dialoguePanel.activeSelf)
+            {
+                yield return null;
+            }
+        }
+
+        waitingForSolvedExit = false;
+        ExecuteSceneWarp("MainWorld");
+    }
+
+    private void ExecuteSceneWarp(string destinationScene)
+    {
         if (player != null)
         {
+            if (destinationScene != "MainWorld" && CoreManager.Instance != null)
+            {
+                CoreManager.Instance.SavePlayerPosition(player.position, player.rotation);
+            }
+
             Camera playerCam = player.GetComponentInChildren<Camera>(true);
             if (playerCam != null) playerCam.gameObject.SetActive(true);
         }
 
-        // Trigger your custom scene transition framework
         SceneController.Instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.SessionContent, sceneToLoad, setActive: true)
+            .Load(SceneDatabase.Slots.SessionContent, destinationScene, setActive: true)
             .WithOverlay()
             .WithClearUnusedAssets()
             .Perform();
@@ -180,5 +226,15 @@ public class NpcInteraction : MonoBehaviour
     {
         yield return null;
         hasTriggered = false;
+
+        Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+        if (activePlayer != null)
+        {
+            activePlayer.canControl = true;
+        }
+
+        // Lock the cursor to the center and hide it!
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }
