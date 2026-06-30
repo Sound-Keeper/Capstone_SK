@@ -10,6 +10,10 @@ public class PlayerHold : MonoBehaviour
     public LayerMask groundLayer = ~0;
     public float itemRadiusOffset = 0.4f;
 
+    // --- PARTICLE ADDITIONS ---
+    [Header("Visual Effects")]
+    public ParticleSystem holdParticle;
+
     private Camera playerCam;
 
     void Start()
@@ -23,18 +27,15 @@ public class PlayerHold : MonoBehaviour
         if (held == null || holdPoint == null) return;
 
         // --- FIXED PARENT SCALE BREAK ---
-        // Strip the parent so it doesn't skew when looking around
         if (held.transform.parent != null)
         {
             held.transform.SetParent(null);
         }
 
-        // Force it to use its true, unwarped world scale size
         held.transform.localScale = held.startScale;
 
         Vector3 targetPosition = holdPoint.position;
 
-        // Floor collision check
         if (playerCam != null)
         {
             Vector3 rayStart = playerCam.transform.position;
@@ -47,7 +48,6 @@ public class PlayerHold : MonoBehaviour
             }
         }
 
-        // Smoothly follow position and camera tilt rotation
         held.transform.position = Vector3.Lerp(held.transform.position, targetPosition, followSpeed * Time.deltaTime);
         held.transform.rotation = Quaternion.Slerp(held.transform.rotation, holdPoint.rotation, followSpeed * Time.deltaTime);
     }
@@ -59,15 +59,29 @@ public class PlayerHold : MonoBehaviour
         if (held != null) return;
 
         held = letter;
-        held.transform.SetParent(null); // Detach immediately from the squished House I group
+        held.transform.SetParent(null);
 
         Collider col = letter.GetComponent<Collider>();
         if (col != null)
             col.enabled = false;
+
+        // --- PARTICLE ADDITIONS ---
+        // Turn the magic on!
+        if (holdParticle != null)
+        {
+            holdParticle.Play();
+        }
     }
 
     public void ClearHeld()
     {
         held = null;
+
+        // --- PARTICLE ADDITIONS ---
+        // Turn the magic off smoothly
+        if (holdParticle != null)
+        {
+            holdParticle.Stop();
+        }
     }
 }

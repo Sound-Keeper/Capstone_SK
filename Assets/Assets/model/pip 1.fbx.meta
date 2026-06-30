@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d43cab02c37819144a2cbd7159dc5aa5
+guid: 0691d5df4c59c754da54f42be7c80541
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -8,36 +8,36 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: textuer_body_pip
-    second: {fileID: 2100000, guid: 1dfd7828e57285e44825539896a099d6, type: 2}
+    second: {fileID: 2100000, guid: 90329d47b3e44ef459bf10f33c00be0d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: texture_archm_hat
-    second: {fileID: 2100000, guid: 2a2bcd883a134bc458e07d4a66e7856c, type: 2}
+      name: texture_archmage_hat
+    second: {fileID: 2100000, guid: 57f6f4d452be2c846be068663d739a1e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: texture_face_pip
-    second: {fileID: 2100000, guid: 5a1fcce72fa23994ba23a710f8d55b33, type: 2}
+    second: {fileID: 2100000, guid: 47146889b9351a24a85b8bfcc82b0390, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: texture_left_wwing
-    second: {fileID: 2100000, guid: efafdd3058302c1478d7a183f8c0a3ac, type: 2}
+    second: {fileID: 2100000, guid: cf7bc3a4b28a9a5479bbcd8773c1293f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: texture_nose_pip
-    second: {fileID: 2100000, guid: 11883378d063c1f4fad80bc43c443938, type: 2}
+    second: {fileID: 2100000, guid: dae75c380d1cdf14fa4fb0bf90b290ee, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: texture_right_wing
-    second: {fileID: 2100000, guid: 3662b37e416388b4a8de4c9ccc55a43e, type: 2}
+    second: {fileID: 2100000, guid: 02420750d0830b54d8858fa4f0fb15f6, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
-    materialSearch: 2
+    materialSearch: 1
     materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
@@ -59,7 +59,36 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Flying
+      takeName: Take 001
+      internalID: 1827226128182048838
+      firstFrame: 3
+      lastFrame: 20
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -102,7 +131,7 @@ ModelImporter:
     strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
-    normalImportMode: 0
+    normalImportMode: 1
     tangentImportMode: 3
     normalCalculationMode: 4
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0

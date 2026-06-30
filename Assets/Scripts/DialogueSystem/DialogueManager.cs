@@ -84,7 +84,8 @@ public class DialogueManager : MonoBehaviour
                               PuzzleProgress.HouseISolved || PuzzleProgress.HouseOSolved ||
                               PuzzleProgress.HouseUSolved;
 
-        if (anyHouseSolved || PlayerPrefs.GetInt("IntroFinished", 0) == 1)
+        // FIXED: Checked the static tracking variable instead of PlayerPrefs
+        if (anyHouseSolved || hasPlayedPipIntroFinished)
         {
             hasPlayedPipIntro = true;
             hasPlayedPipIntroFinished = true;
@@ -134,8 +135,8 @@ public class DialogueManager : MonoBehaviour
                         if (mainCam != null) mainCam.gameObject.SetActive(true);
                     }
 
-                    PlayerPrefs.SetInt("IntroFinished", 1);
-                    PlayerPrefs.Save();
+                    // FIXED: Set the state variable to true instead of writing to PlayerPrefs
+                    hasPlayedPipIntroFinished = true;
 
                     SetPlayerControlState(true);
                 });
