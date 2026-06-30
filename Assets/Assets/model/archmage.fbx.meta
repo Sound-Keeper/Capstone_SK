@@ -3,11 +3,66 @@ guid: 526c45da0b7505d4dade7e69d06a12e6
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lashes_paige_texture
+    second: {fileID: 2100000, guid: 179b3cc8d1bd52641a551c38dc0cbcd1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lower_lashes_texture
+    second: {fileID: 2100000, guid: 542901f7550a94c46a4f650d461024a9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archm_corset
+    second: {fileID: 2100000, guid: ea61a3d510a2cf442a596c160770aaae, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archm_dress
+    second: {fileID: 2100000, guid: c65faf0f5dad8a144b5c9a825b134119, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archm_hair
+    second: {fileID: 2100000, guid: 835928efaa07905419832f9c19e81152, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archm_hat
+    second: {fileID: 2100000, guid: ccc3697a0060a674d8ca987bcc4c7ff8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archm_shoes
+    second: {fileID: 2100000, guid: b7e168072b89c104c874bd0745099d25, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_body_lambert
+    second: {fileID: 2100000, guid: ab47bb9a18d06804f9ce45277dfdb31a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye1
+    second: {fileID: 2100000, guid: f3ea8d2efe7a3a44faeaa12c3579847f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye2
+    second: {fileID: 2100000, guid: 75b5857084070e046962bca6e28c8a5e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye_white
+    second: {fileID: 2100000, guid: d843e672d60468a45a803248d44b6473, type: 2}
   materials:
     materialImportMode: 2
-    materialName: 0
-    materialSearch: 1
+    materialName: 2
+    materialSearch: 2
     materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
@@ -33,7 +88,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 30
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -91,7 +146,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 30
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
