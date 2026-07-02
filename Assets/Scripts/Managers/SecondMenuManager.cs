@@ -49,6 +49,16 @@ public class SecondMenuManager : MonoBehaviour
             .Perform();
     }
 
+    public void GoBack()
+    {
+        SceneController.Instance
+            .NewTransition()
+            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu)
+            .Unload(SceneDatabase.Scenes.SecondMenu)
+            .WithOverlay()
+            .Perform();
+    }
+
     // BUTTON 2: Linked to Continue
     public void ActionContinueGame()
     {

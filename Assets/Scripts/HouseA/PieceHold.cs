@@ -10,6 +10,10 @@ public class PieceHold : MonoBehaviour
     public LayerMask Ground = ~0;
     public float itemRadiusOffset = 0.25f;
 
+    // --- PARTICLE ADDITIONS ---
+    [Header("Visual Effects")]
+    public ParticleSystem holdParticle;
+
     private Camera playerCam;
 
     void Start()
@@ -24,7 +28,6 @@ public class PieceHold : MonoBehaviour
 
         Vector3 targetPosition = holdPoint.position;
 
-        // Prevent clipping by raycasting from camera to hold point
         if (playerCam != null)
         {
             Vector3 rayStart = playerCam.transform.position;
@@ -33,7 +36,6 @@ public class PieceHold : MonoBehaviour
 
             if (Physics.Raycast(rayStart, rayDirection.normalized, out RaycastHit hit, rayLength, Ground))
             {
-                // Push position out slightly away from the floor surface
                 targetPosition = hit.point + (hit.normal * itemRadiusOffset);
             }
         }
@@ -62,7 +64,24 @@ public class PieceHold : MonoBehaviour
 
         Collider col = piece.GetComponent<Collider>();
         if (col != null) col.enabled = false;
+
+        // --- PARTICLE ADDITIONS ---
+        // Turn the magic on!
+        if (holdParticle != null)
+        {
+            holdParticle.Play();
+        }
     }
 
-    public void ClearHeld() { held = null; }
+    public void ClearHeld()
+    {
+        held = null;
+
+        // --- PARTICLE ADDITIONS ---
+        // Turn the magic off smoothly
+        if (holdParticle != null)
+        {
+            holdParticle.Stop();
+        }
+    }
 }

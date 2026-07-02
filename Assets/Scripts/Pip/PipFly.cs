@@ -1,4 +1,3 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PipFly : MonoBehaviour
@@ -71,7 +70,12 @@ public class PipFly : MonoBehaviour
 
     void Update()
     {
-        if (!hasSnappedToFountain && DialogueManager.hasPlayedPipIntroFinished)
+        // --- UPDATED CONDITIONS TO PREVENT SNAPPING IF A PUZZLE IS ALREADY SOLVED ---
+        bool zeroHousesSolved = !(PuzzleProgress.HouseASolved || PuzzleProgress.HouseESolved ||
+                                  PuzzleProgress.HouseISolved || PuzzleProgress.HouseOSolved ||
+                                  PuzzleProgress.HouseUSolved);
+
+        if (!hasSnappedToFountain && DialogueManager.hasPlayedPipIntroFinished && zeroHousesSolved)
         {
             DialogueManager dialogueMgr = FindFirstObjectByType<DialogueManager>();
             if (dialogueMgr != null && dialogueMgr.fountainTarget != null)

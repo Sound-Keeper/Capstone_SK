@@ -3,7 +3,87 @@ guid: 526c45da0b7505d4dade7e69d06a12e6
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: eyebrows_penn_texture
+    second: {fileID: 2100000, guid: e1ac1183075597d4e99dfe0431438fc6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert43
+    second: {fileID: 2100000, guid: 5d582fa504ae8a74eb35ff7e768dc6b7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lashes_paige_texture
+    second: {fileID: 2100000, guid: 9b54321be17cafb40a80266a8028ed73, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lower_lashes_texture
+    second: {fileID: 2100000, guid: 3eacd17ab5ffd714c9e661342523cfc3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archm_corset
+    second: {fileID: 2100000, guid: 70a9d23233b06aa4e832474cbd389f87, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archm_dress
+    second: {fileID: 2100000, guid: ef94e4a23a5b41c4bb196b3f683bc2d4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archm_shoes
+    second: {fileID: 2100000, guid: c01ac3e1459b9614ba2e594107b73c65, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_archmage_hat
+    second: {fileID: 2100000, guid: dd96dfecfa1b2d6418b02b88ecdb5d04, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_body_lambert
+    second: {fileID: 2100000, guid: 2d39109ec5a22d148b00e8b7481620f7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_deets_eyes_witch_left
+    second: {fileID: 2100000, guid: 00d890e36366e81469b622b7ae135d18, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye1
+    second: {fileID: 2100000, guid: bf56104f9fb291f49a445e1302d1c9fa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye2
+    second: {fileID: 2100000, guid: 3c4499dabe5dcb641b97b673c1746724, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye_deets_witch_right
+    second: {fileID: 2100000, guid: 70e820898f2483f46813f27802cdaab1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye_white
+    second: {fileID: 2100000, guid: 77f38b08949eb7943bab985509da25eb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eye_witch_right
+    second: {fileID: 2100000, guid: 3a24b6a696ef8514fb09ed51cc675496, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: texture_eyes_witch_left
+    second: {fileID: 2100000, guid: cf8c8967d1ff8694fafe0ee2ddd28d68, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -33,7 +113,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 30
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -72,7 +152,7 @@ ModelImporter:
     strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
-    normalImportMode: 0
+    normalImportMode: 1
     tangentImportMode: 3
     normalCalculationMode: 4
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
@@ -91,7 +171,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 30
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

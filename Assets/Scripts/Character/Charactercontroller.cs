@@ -22,8 +22,17 @@ public class Charactercontroller : MonoBehaviour
     void Start()
     {
         player = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
 
+        // 1. Check if the dialogue manager is already active or if control is locked BEFORE doing anything else
+        if (DialogueManager.Instance != null && DialogueManager.Instance.dialoguePanel != null)
+        {
+            if (DialogueManager.Instance.dialoguePanel.activeSelf)
+            {
+                canControl = false;
+            }
+        }
+
+        // 2. Handle position and rotation restoration FIRST
         if (CoreManager.Instance != null && CoreManager.Instance.HasSavedPosition)
         {
             Debug.Log("Restoring position: " + CoreManager.Instance.SavedPlayerPosition);
@@ -31,11 +40,42 @@ public class Charactercontroller : MonoBehaviour
             transform.position = CoreManager.Instance.SavedPlayerPosition;
             transform.rotation = CoreManager.Instance.SavedPlayerRotation;
             player.enabled = true;
+
+            // --- CRITICAL FIX FOR ROTATION RETENTION ---
+            // Extract the local X rotation (pitch) from the saved model configuration 
+            // so our look engine doesn't snap back to 0 on the first frame of input!
+            if (charModel != null)
+            {
+                // Normalize angles to match our clamped range (-80 to 37)
+                float savedX = charModel.localEulerAngles.x;
+                if (savedX > 180f) savedX -= 360f;
+                rot = savedX;
+            }
         }
         else
         {
             Debug.Log("No saved position found. HasSavedPosition: " +
                 (CoreManager.Instance != null ? CoreManager.Instance.HasSavedPosition.ToString() : "CoreManager is NULL"));
+
+            // If no save file, initialize 'rot' based on the current scene placement
+            if (charModel != null)
+            {
+                float initialX = charModel.localEulerAngles.x;
+                if (initialX > 180f) initialX -= 360f;
+                rot = initialX;
+            }
+        }
+
+        // 3. Set up the cursor constraints cleanly based on the state determined above
+        if (canControl)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 

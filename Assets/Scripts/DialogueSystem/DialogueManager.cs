@@ -61,6 +61,7 @@ public class DialogueManager : MonoBehaviour
     string currentFullLine = "";
     Camera previousCamera;
     Camera dialogueCamera;
+    private Coroutine typingCoroutine;
 
     private float inputCooldownTimer = 0f;
 
@@ -83,7 +84,8 @@ public class DialogueManager : MonoBehaviour
                               PuzzleProgress.HouseISolved || PuzzleProgress.HouseOSolved ||
                               PuzzleProgress.HouseUSolved;
 
-        if (anyHouseSolved || PlayerPrefs.GetInt("IntroFinished", 0) == 1)
+        // FIXED: Checked the static tracking variable instead of PlayerPrefs
+        if (anyHouseSolved || hasPlayedPipIntroFinished)
         {
             hasPlayedPipIntro = true;
             hasPlayedPipIntroFinished = true;
@@ -101,6 +103,7 @@ public class DialogueManager : MonoBehaviour
         if (!hasPlayedPipIntro && pipFly != null && fountainTarget != null)
         {
             hasPlayedPipIntro = true;
+            SetPlayerControlState(false);
             string[] introLines = new string[] {
                 "Hoo! Oh, thank goodness — you're finally here, little one!",
                 "Don't be afraid. My name is Pip. Welcome to Word Valley.",
@@ -132,8 +135,8 @@ public class DialogueManager : MonoBehaviour
                         if (mainCam != null) mainCam.gameObject.SetActive(true);
                     }
 
-                    PlayerPrefs.SetInt("IntroFinished", 1);
-                    PlayerPrefs.Save();
+                    // FIXED: Set the state variable to true instead of writing to PlayerPrefs
+                    hasPlayedPipIntroFinished = true;
 
                     SetPlayerControlState(true);
                 });
@@ -161,7 +164,8 @@ public class DialogueManager : MonoBehaviour
 
         if (isTyping)
         {
-            StopAllCoroutines();
+            if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+
             dialogueText.text = currentFullLine;
             isTyping = false;
         }
@@ -250,8 +254,12 @@ public class DialogueManager : MonoBehaviour
 
         inputCooldownTimer = 0.2f;
 
-        StopAllCoroutines();
-        StartCoroutine(TypeLine(FormatString(line.text)));
+        // --- SAFELY STOP ONLY THE TYPING COROUTINE ---
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+        }
+        typingCoroutine = StartCoroutine(TypeLine(FormatString(line.text)));
     }
 
     void SetupPortrait(Image img, Sprite face)
@@ -366,16 +374,53 @@ public class DialogueManager : MonoBehaviour
 
     public void SetPlayerControlState(bool enable)
     {
+        // If we want to freeze the player, start a coroutine to ensure we catch them
+        if (!enable)
+        {
+            StartCoroutine(WaitAndLockPlayer());
+        }
+        else
+        {
+            // If enabling control, stop any running lock loops and free them immediately
+            StopAllCoroutines();
+            ApplyControl(true);
+        }
+    }
+
+
+
+    private IEnumerator WaitAndLockPlayer()
+    {
+        Charactercontroller activePlayer = null;
+
+        // Keep checking every frame until the player actually spawns/activates
+        while (activePlayer == null)
+        {
+            activePlayer = FindFirstObjectByType<Charactercontroller>();
+
+            if (activePlayer != null)
+            {
+                // Found them! Freeze them instantly and exit the loop
+                activePlayer.canControl = false;
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                yield break;
+            }
+
+            // Wait for the next frame before checking again
+            yield return null;
+        }
+    }
+    private void ApplyControl(bool enable)
+    {
         Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
         if (activePlayer != null)
         {
             activePlayer.canControl = enable;
-
             Cursor.lockState = enable ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !enable;
         }
     }
-
     string FormatString(string s)
     {
         if (string.IsNullOrEmpty(s)) return s;

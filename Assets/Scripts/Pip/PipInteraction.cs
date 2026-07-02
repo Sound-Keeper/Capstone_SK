@@ -108,12 +108,17 @@ public class PipInteraction : MonoBehaviour, IInteractable
                 if (mainCam != null) mainCam.gameObject.SetActive(true);
             }
 
-            // Unlock Player
-            if (activePlayer != null) activePlayer.canControl = true;
-
-            // Lock Mouse
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            // --- FIXED HERE ---
+            // Instead of manually changing lock states here which resets the input system x-axis vector lookup, 
+            // call your built-in dynamic control re-enabler inside the dialogue manager framework.
+            if (DialogueManager.Instance != null)
+            {
+                DialogueManager.Instance.SetPlayerControlState(true);
+            }
+            else if (activePlayer != null)
+            {
+                activePlayer.canControl = true;
+            }
         });
     }
 }
