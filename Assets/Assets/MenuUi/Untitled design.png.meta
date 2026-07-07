@@ -382,7 +382,7 @@ TextureImporter:
         width: 92
         height: 85
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -404,7 +404,7 @@ TextureImporter:
         width: 82
         height: 67
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -413,6 +413,28 @@ TextureImporter:
       bones: []
       spriteID: 19b004fe3b3cc064981f6f6586bf1735
       internalID: -154984325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Border
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 139
+        width: 62
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba2346aa3c9622545b0199b4b66f96e8
+      internalID: 1470775902
       vertices: []
       indices: 
       edges: []
@@ -431,6 +453,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Border: 1470775902
       CharSelectButton: -1208626342
       GameLogo: 10663584
       HomeButton: 384113707

@@ -5,14 +5,19 @@ public class VowelStoneActivator : MonoBehaviour
     [Header("Stone GameObjects")]
     [Tooltip("Assign the Astone_Prefab instance from your hierarchy here")]
     public GameObject stoneA;
+    public GameObject vinesA;
     [Tooltip("Assign the Estone_Prefab instance from your hierarchy here")]
     public GameObject stoneE;
+    public GameObject vinesE;
     [Tooltip("Assign the Istone_Prefab instance from your hierarchy here")]
     public GameObject stoneI;
+    public GameObject vinesI;
     [Tooltip("Assign the Ostone_Prefab instance from your hierarchy here")]
     public GameObject stoneO;
+    public GameObject vinesO;
     [Tooltip("Assign the Ustone_Prefab instance from your hierarchy here")]
     public GameObject stoneU;
+    public GameObject vinesU;
 
     [Header("Animation Settings")]
     [Tooltip("How fast the stones rotate (degrees per second)")]
@@ -37,11 +42,36 @@ public class VowelStoneActivator : MonoBehaviour
 
     public void RefreshStoneVisibility()
     {
-        if (stoneA != null) stoneA.SetActive(PuzzleProgress.HasVowelAStone); 
-        if (stoneE != null) stoneE.SetActive(PuzzleProgress.HasVowelEStone); 
-        if (stoneI != null) stoneI.SetActive(PuzzleProgress.HasVowelIStone); 
-        if (stoneO != null) stoneO.SetActive(PuzzleProgress.HasVowelOStone); 
-        if (stoneU != null) stoneU.SetActive(PuzzleProgress.HasVowelUStone); 
+        if (stoneA != null)
+        {
+            stoneA.SetActive(PuzzleProgress.HasVowelAStone);
+            vinesA.SetActive(!PuzzleProgress.HasVowelAStone);
+        }
+
+        if (stoneE != null)
+        {
+            stoneE.SetActive(PuzzleProgress.HasVowelEStone);
+            vinesE.SetActive(!PuzzleProgress.HasVowelEStone);
+        }
+ 
+        if (stoneI != null)
+        {
+            stoneI.SetActive(PuzzleProgress.HasVowelIStone);
+            vinesI.SetActive(!PuzzleProgress.HasVowelIStone);
+        }
+
+        if (stoneO != null)
+        {
+            stoneO.SetActive(PuzzleProgress.HasVowelOStone);
+            vinesO.SetActive(!PuzzleProgress.HasVowelOStone);
+        }
+ 
+        if (stoneU != null)
+        {
+            stoneU.SetActive(PuzzleProgress.HasVowelUStone);
+            vinesU.SetActive(!PuzzleProgress.HasVowelUStone);
+        }
+
     }
 
     /// <summary>

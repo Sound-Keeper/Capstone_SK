@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
 {
-
     public static bool hasPlayedPipIntro = false;
     public static bool HasPlayedPipIntro => hasPlayedPipIntro;
     public static bool hasPlayedPipIntroFinished = false;
@@ -26,14 +25,10 @@ public class DialogueManager : MonoBehaviour
     public Image rightPortrait;
 
     [Header("Global Character Portrait Assignments")]
-    [Tooltip("Global Portrait for Paige (Character 0)")]
     public Sprite paigePortrait;
-    [Tooltip("Global Portrait for Penn (Character 1)")]
     public Sprite pennPortrait;
 
-    [Tooltip("Tint for the speaker who is currently talking.")]
     public Color activeTint = Color.white;
-    [Tooltip("Tint for the speaker who is NOT talking (dimmed).")]
     public Color inactiveTint = new Color(0.45f, 0.45f, 0.45f, 1f);
 
     [Header("Typing Effect")]
@@ -41,14 +36,12 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Pip Intro Sequence Setup")]
     public PipFly pipFly;
-    [Tooltip("Assign the Pip portrait here for the opening cinematic sequence!")]
     public Sprite pipIntroPortrait;
     public Transform fountainTarget;
     public float arriveDistance = 3f;
 
     [Header("Cinematic Cutscene Setup")]
-    [Tooltip("A camera that points at or follows Pip while he flies to the fountain.")]
-    public Camera pipCutsceneCamera; // <--- ADDED THIS FIELD FOR THE CUTSCENE
+    public Camera pipCutsceneCamera;
 
     [HideInInspector] public Action OnDialogueEnd;
 
@@ -80,13 +73,24 @@ public class DialogueManager : MonoBehaviour
         PipHint pipHintSystem = FindFirstObjectByType<PipHint>();
         GameObject player = GameObject.FindWithTag("Player");
 
+        // --- DEBUG LOGS START ---
+        Debug.Log($"[DIAL_MGR START] --- Checking Static Variables ---");
+        Debug.Log($"[DIAL_MGR START] DialogueManager.hasPlayedPipIntroFinished = {hasPlayedPipIntroFinished}");
+        Debug.Log($"[DIAL_MGR START] DialogueManager.hasPlayedPipIntro = {hasPlayedPipIntro}");
+        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseASolved = {PuzzleProgress.HouseASolved}");
+        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseESolved = {PuzzleProgress.HouseESolved}");
+        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseISolved = {PuzzleProgress.HouseISolved}");
+        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseOSolved = {PuzzleProgress.HouseOSolved}");
+        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseUSolved = {PuzzleProgress.HouseUSolved}");
+        // --- DEBUG LOGS END ---
+
         bool anyHouseSolved = PuzzleProgress.HouseASolved || PuzzleProgress.HouseESolved ||
                               PuzzleProgress.HouseISolved || PuzzleProgress.HouseOSolved ||
                               PuzzleProgress.HouseUSolved;
 
-        // FIXED: Checked the static tracking variable instead of PlayerPrefs
         if (anyHouseSolved || hasPlayedPipIntroFinished)
         {
+            Debug.LogWarning("[DIAL_MGR START] Trigger condition met to SKIP intro sequence! Bypassing to finished state.");
             hasPlayedPipIntro = true;
             hasPlayedPipIntroFinished = true;
         }
@@ -102,17 +106,18 @@ public class DialogueManager : MonoBehaviour
 
         if (!hasPlayedPipIntro && pipFly != null && fountainTarget != null)
         {
+            Debug.Log("[DIAL_MGR START] Conditions met successfully! Launching Pip Intro Dialogue.");
             hasPlayedPipIntro = true;
             SetPlayerControlState(false);
             string[] introLines = new string[] {
-                "Hoo! Oh, thank goodness — you're finally here, little one!",
+                "Hoo! Oh, thank goodness you're finally here, little one!",
                 "Don't be afraid. My name is Pip. Welcome to Word Valley.",
-                "This valley lives inside The Sound Book. It used to be the brightest, happiest place — full of singing letters and laughing words.",
+                "This valley lives inside The Sound Book. It used to be the brightest, happiest place full of singing letters and laughing words.",
                 "But a witch named Miss Spell grew jealous of our magic. She cast the mush-mush curse over the whole valley.",
-                "Worst of all, she sealed our five Vowel Stones —<b>A, E, I, O, and U</b>. They hold the magic that keeps Word Valley alive.",
-                "I searched a long, long time for someone with a kind heart and a brave spirit... and The Sound Book chose <b>you</b>.",
-                "You are our <b>Sound Keeper</b>. Only you can wake the Vowel Stones and bring the valley back to life.",
-                "I know reading can feel hard sometimes. I saw how you felt back in your classroom. But trust me — here, every word you fix makes *you* stronger too.",
+                "Worst of all, she sealed our five Vowel Stones, <i>A, E, I, O, and U</i>. They hold the magic that keeps Word Valley alive.",
+                "I searched a long, long time for someone with a kind heart and a brave spirit... and The Sound Book chose <i>you</i>.",
+                "You are our <i>Sound Keeper</i>. Only you can wake the Vowel Stones and bring the valley back to life.",
+                "I know reading can feel hard sometimes. I saw how you felt back in your classroom. But trust me here, every word you fix makes *you* stronger too.",
                 "Take this magic wand. Point it, click it, and it will help you move, place, and choose. That's all you need!",
                 "Keep up, Sound Keeper!"
             };
@@ -135,15 +140,20 @@ public class DialogueManager : MonoBehaviour
                         if (mainCam != null) mainCam.gameObject.SetActive(true);
                     }
 
-                    // FIXED: Set the state variable to true instead of writing to PlayerPrefs
-                    hasPlayedPipIntroFinished = true;
+                    // REMOVED: hasPlayedPipIntroFinished = true; <-- REMOVE THIS LINE!
+                    // We let PipInteraction flip this flag AFTER you talk to him at the fountain.
 
                     SetPlayerControlState(true);
                 });
             };
 
-            // Now start the dialogue with the callback fully registered
             StartDialogue("Pip", introLines, pipIntroPortrait);
+        }
+        else
+        {
+            // Logging if the conditions failed to initialize the cutscene
+            Debug.LogWarning($"[DIAL_MGR START] Bypassed actual intro sequence trigger block. " +
+                             $"pipFly missing? {pipFly == null} | fountainTarget missing? {fountainTarget == null}");
         }
     }
 
@@ -254,7 +264,6 @@ public class DialogueManager : MonoBehaviour
 
         inputCooldownTimer = 0.2f;
 
-        // --- SAFELY STOP ONLY THE TYPING COROUTINE ---
         if (typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);
@@ -307,10 +316,8 @@ public class DialogueManager : MonoBehaviour
 
     void NextLine()
     {
-        // --- UPDATED INTERCEPTION TO FIND DEACTIVATED OBJECTS ---
         if (currentLines != null && currentLineIndex == 8)
         {
-            // FindObjectsOfTypeAll will successfully locate deactivated objects in the scene
             MagicWandReward[] wands = Resources.FindObjectsOfTypeAll<MagicWandReward>();
             MagicWandReward wandScript = wands.Length > 0 ? wands[0] : null;
 
@@ -361,7 +368,6 @@ public class DialogueManager : MonoBehaviour
             if (previousCamera != null) previousCamera.gameObject.SetActive(true);
         }
 
-        // If a cutscene callback is assigned to OnDialogueEnd, let it handle re-enabling control!
         if (OnDialogueEnd == null)
         {
             SetPlayerControlState(true);
@@ -374,43 +380,34 @@ public class DialogueManager : MonoBehaviour
 
     public void SetPlayerControlState(bool enable)
     {
-        // If we want to freeze the player, start a coroutine to ensure we catch them
         if (!enable)
         {
             StartCoroutine(WaitAndLockPlayer());
         }
         else
         {
-            // If enabling control, stop any running lock loops and free them immediately
             StopAllCoroutines();
             ApplyControl(true);
         }
     }
 
-
-
     private IEnumerator WaitAndLockPlayer()
     {
         Charactercontroller activePlayer = null;
-
-        // Keep checking every frame until the player actually spawns/activates
         while (activePlayer == null)
         {
             activePlayer = FindFirstObjectByType<Charactercontroller>();
-
             if (activePlayer != null)
             {
-                // Found them! Freeze them instantly and exit the loop
                 activePlayer.canControl = false;
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 yield break;
             }
-
-            // Wait for the next frame before checking again
             yield return null;
         }
     }
+
     private void ApplyControl(bool enable)
     {
         Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
@@ -421,6 +418,7 @@ public class DialogueManager : MonoBehaviour
             Cursor.visible = !enable;
         }
     }
+
     string FormatString(string s)
     {
         if (string.IsNullOrEmpty(s)) return s;

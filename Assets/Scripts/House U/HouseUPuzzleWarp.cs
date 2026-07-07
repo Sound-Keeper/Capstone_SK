@@ -7,7 +7,7 @@ namespace BookChoice
     {
         [Header("Settings")]
         [Tooltip("The scene we want to load back into.")]
-        public string destinationScene = "MainWorld";
+        public string destinationScene = "MapTest";
 
         public void StartWarp()
         {

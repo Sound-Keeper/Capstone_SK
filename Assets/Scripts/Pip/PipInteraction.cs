@@ -17,25 +17,23 @@ public class PipInteraction : MonoBehaviour, IInteractable
     {
         if (DialogueManager.Instance == null || pipHintSystem == null) return;
 
-        // 1. Get the current active uncompleted house (e.g., if A is done, this returns E)
         PipHint.HintObjective nextObjective = pipHintSystem.GetActiveObjective();
         string[] lines;
         bool shouldTriggerFlight = false;
 
+        // --- FIXED CONDITION: Check if he hasn't delivered his fountain line yet ---
         if (!DialogueManager.HasPlayedPipIntroFinished)
         {
-            // Pip is waiting at the fountain for the first time
+            // Pip is sitting at the fountain, waiting to deliver your custom inspector intro!
             lines = pipHintSystem.fountainIntroDialogue.ToArray();
             shouldTriggerFlight = true;
         }
         else if (nextObjective != null)
         {
-            // Check if Pip has already physically flown to this house's hover location
             float distanceToObjective = Vector3.Distance(transform.position, nextObjective.hoverLocation.position);
 
             if (distanceToObjective > 2.0f)
             {
-                // Pip is still physically standing at the old house, meaning a puzzle was JUST completed!
                 lines = new string[] {
                     $"Fantastic work solving that puzzle!",
                     $"Let's head over to House {nextObjective.houseLetter} next!"
@@ -44,27 +42,25 @@ public class PipInteraction : MonoBehaviour, IInteractable
             }
             else
             {
-                // Pip is already at the house waiting for you to solve it. Just show hints!
                 lines = nextObjective.dialogueHints.ToArray();
                 shouldTriggerFlight = false;
             }
         }
         else
         {
-            // All houses complete!
             lines = new string[] { "Amazing work! Every single valley house is saved!" };
             shouldTriggerFlight = false;
         }
 
-        // --- PUT THE FIX HERE: Setup the Cutscene Trigger BEFORE starting the dialogue ---
         if (shouldTriggerFlight)
         {
             DialogueManager.Instance.OnDialogueEnd = () => {
 
+                // --- FIXED HERE: Mark the intro finished ONLY after this fountain conversation ends ---
                 if (!DialogueManager.HasPlayedPipIntroFinished)
                 {
                     DialogueManager.hasPlayedPipIntroFinished = true;
-                    TriggerFlightSequence(nextObjective);
+                    TriggerFlightSequence(nextObjective); // Flies to House A!
                 }
                 else
                 {
@@ -74,11 +70,9 @@ public class PipInteraction : MonoBehaviour, IInteractable
         }
         else
         {
-            // If he's just giving hints, clear any leftover callbacks so the player unlocks normally
             DialogueManager.Instance.OnDialogueEnd = null;
         }
 
-        // --- PUT THE FIX HERE: Start the dialogue AFTER the callback layout is secured ---
         DialogueManager.Instance.StartDialogue(pipName, lines, pipPortrait);
     }
 

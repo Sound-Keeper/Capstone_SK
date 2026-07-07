@@ -72,7 +72,7 @@ public class NpcInteraction : MonoBehaviour, IInteractable
                 dialogueLines = dialogueLinesAfterSolved;
             }
 
-            sceneToLoad = "MainWorld";
+            sceneToLoad = "MapTest";
         }
     }
 
@@ -176,7 +176,7 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             return;
         }
 
-        if (!string.IsNullOrEmpty(sceneToLoad) && sceneToLoad != "MainWorld")
+        if (!string.IsNullOrEmpty(sceneToLoad) && sceneToLoad != "MapTest")
         {
             ExecuteSceneWarp(sceneToLoad);
             return;
@@ -198,14 +198,14 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         }
 
         waitingForSolvedExit = false;
-        ExecuteSceneWarp("MainWorld");
+        ExecuteSceneWarp("MapTest");
     }
 
     private void ExecuteSceneWarp(string destinationScene)
     {
         if (player != null)
         {
-            if (destinationScene != "MainWorld" && CoreManager.Instance != null)
+            if (destinationScene != "MapTest" && CoreManager.Instance != null)
             {
                 CoreManager.Instance.SavePlayerPosition(player.position, player.rotation);
             }

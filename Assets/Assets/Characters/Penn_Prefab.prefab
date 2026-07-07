@@ -166,7 +166,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2157257320450696787
 Transform:
   m_ObjectHideFlags: 0
@@ -3464,15 +3464,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7381180447955637560, guid: db9a03045676b34469e49e406df3286c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7933534
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7381180447955637560, guid: db9a03045676b34469e49e406df3286c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.60876137
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 7381180447955637560, guid: db9a03045676b34469e49e406df3286c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 75
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 7381180447955637560, guid: db9a03045676b34469e49e406df3286c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -3481,6 +3481,22 @@ PrefabInstance:
     - target: {fileID: 7381180447955637560, guid: db9a03045676b34469e49e406df3286c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8885374527392560453, guid: db9a03045676b34469e49e406df3286c, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8885374527392560453, guid: db9a03045676b34469e49e406df3286c, type: 3}
+      propertyPath: ShapeModule.arc.speed.scalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8885374527392560453, guid: db9a03045676b34469e49e406df3286c, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8885374527392560453, guid: db9a03045676b34469e49e406df3286c, type: 3}
+      propertyPath: EmissionModule.rateOverTime.minScalar
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
