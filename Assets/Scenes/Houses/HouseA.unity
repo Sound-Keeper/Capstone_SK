@@ -24151,6 +24151,7 @@ MonoBehaviour:
   fadeSpeed: 5
   promptCanvas: {fileID: 1061325197}
   player: {fileID: 0}
+  isInPuzzleHouse: 1
   npcName: 'Sheriff Sans:'
   npcPortrait: {fileID: -1826037531, guid: 9249fd80ca4c11a4d8910ad8a36da092, type: 3}
   playerPortrait: {fileID: 0}

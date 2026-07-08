@@ -1,9 +1,24 @@
 fileFormatVersion: 2
-guid: f3fbfc9a5dc284c43a12dc5b5783f829
+guid: 0c8b2e9f60682f643a2925d3716aea9f
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: signboard1UV
+    second: {fileID: 2100000, guid: 5f850d5802319624395c6ed6e2b58c0c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: signboard2UV
+    second: {fileID: 2100000, guid: beac56dd49376f9408b636e18e75a0d1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: signboard3UV
+    second: {fileID: 2100000, guid: d603e3fc2020ac8448b5d08fa5fae3da, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -91,7 +106,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.29999998
+    globalScale: 30
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

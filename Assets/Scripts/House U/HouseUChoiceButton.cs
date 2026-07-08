@@ -105,6 +105,7 @@ namespace BookChoice
             {
                 transform.position = targetSignSlot.position;
                 transform.rotation = targetSignSlot.rotation;
+                transform.localScale = targetSignSlot.localScale;
 
                 // Make the letter physically part of the world sign mesh canvas now
                 transform.SetParent(targetSignSlot);

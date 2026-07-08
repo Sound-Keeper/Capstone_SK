@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// 1. ADDED THE INTERFACE REGISTRATION HERE
 public class NpcInteraction : MonoBehaviour, IInteractable
 {
     public enum PuzzleFlag { HouseA, HouseE, HouseI, HouseO, HouseU }
@@ -15,6 +14,10 @@ public class NpcInteraction : MonoBehaviour, IInteractable
     [Header("References")]
     public CanvasGroup promptCanvas;
     public Transform player;
+
+    [Header("Scene Location Context")]
+    [Tooltip("CHECK THIS box for the NPC instance inside the House scene. UNCHECK THIS box for the NPC out in MapTest.")]
+    public bool isInPuzzleHouse = false;
 
     [Header("Dialogue Config")]
     public string npcName = "NPC";
@@ -60,19 +63,19 @@ public class NpcInteraction : MonoBehaviour, IInteractable
 
         FindPlayerFallback();
 
-        if (autoPlayWhenSolved && IsHouseSolved() && dialogueLinesAfterSolved.Count > 0)
+        // ONLY auto-play the thank-you text if we are out in MapTest (NOT inside the puzzle house)
+        if (!isInPuzzleHouse && autoPlayWhenSolved && IsHouseSolved() && dialogueLinesAfterSolved.Count > 0)
         {
             StartCoroutine(AutoPlayAfterSolved());
         }
 
+        // Swap dialogue lines to post-completion if complete
         if (PuzzleProgress.IsHouseComplete(houseLetter))
         {
             if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
             {
                 dialogueLines = dialogueLinesAfterSolved;
             }
-
-            sceneToLoad = "MapTest";
         }
     }
 
@@ -114,7 +117,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
 
         if (promptCanvas != null)
         {
-            // Only illuminate UI hover indicator badge if within proximity parameters
             float targetAlpha = (playerInRange && !hasTriggered) ? 1f : 0f;
             promptCanvas.alpha = Mathf.MoveTowards(promptCanvas.alpha, targetAlpha, fadeSpeed * Time.deltaTime);
 
@@ -122,9 +124,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             promptCanvas.interactable = visible;
             promptCanvas.blocksRaycasts = visible;
         }
-
-        // 2. KEYPRESS REMOVED FROM HERE COMPLETELY. 
-        // No more auto-triggering dialogue without looking!
     }
 
     void FindPlayerFallback()
@@ -136,10 +135,8 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         }
     }
 
-    // 3. RENAMED INTERACT FUNCTION TO SATISFY IINTERACTABLE REQUIREMENT
     public void Interact()
     {
-        // Safety lock: Don't interact if we already triggered it or if the player isn't close enough
         if (hasTriggered || !playerInRange) return;
         hasTriggered = true;
 
@@ -170,18 +167,21 @@ public class NpcInteraction : MonoBehaviour, IInteractable
 
     void OnDialogueComplete()
     {
-        if (IsHouseSolved() || PuzzleProgress.IsHouseComplete(houseLetter) || (waitingForSolvedExit && IsHouseSolved()))
+        // 1. IF INSIDE HOUSE: Warp player to MapTest on completion
+        if (isInPuzzleHouse && (IsHouseSolved() || PuzzleProgress.IsHouseComplete(houseLetter) || (waitingForSolvedExit && IsHouseSolved())))
         {
             StartCoroutine(WaitAndWarpRoutine());
             return;
         }
 
-        if (!string.IsNullOrEmpty(sceneToLoad) && sceneToLoad != "MapTest")
+        // 2. IF OUT IN MAPTEST BEFORE PUZZLE IS DONE: Entry warp to enter the house
+        if (!isInPuzzleHouse && !PuzzleProgress.IsHouseComplete(houseLetter) && !string.IsNullOrEmpty(sceneToLoad) && sceneToLoad != "MapTest")
         {
             ExecuteSceneWarp(sceneToLoad);
             return;
         }
 
+        // 3. IF OUT IN MAPTEST AFTER PUZZLE IS DONE: Just say lines, end dialogue, and do not warp anywhere!
         StartCoroutine(ReEnableInteractNextFrame());
     }
 
@@ -233,7 +233,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             activePlayer.canControl = true;
         }
 
-        // Lock the cursor to the center and hide it!
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
