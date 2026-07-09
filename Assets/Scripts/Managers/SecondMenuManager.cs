@@ -33,7 +33,6 @@ public class SecondMenuManager : MonoBehaviour
         DialogueManager.hasPlayedPipIntroFinished = false;
 
         SceneController.Instance.NewTransition()
-            .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.SecondMenu) // Reloading or switching
             .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.CharSelect)
             .Unload(SceneDatabase.Scenes.SecondMenu)
             .WithOverlay()

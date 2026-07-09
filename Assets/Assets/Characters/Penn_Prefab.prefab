@@ -263,7 +263,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   itemRadiusOffset: 0.4
-  holdParticle: {fileID: 0}
+  holdParticle: {fileID: 5608940961891377408}
 --- !u!1 &1420352614501401938
 GameObject:
   m_ObjectHideFlags: 0
@@ -3503,6 +3503,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db9a03045676b34469e49e406df3286c, type: 3}
+--- !u!198 &5608940961891377408 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8885374527392560453, guid: db9a03045676b34469e49e406df3286c, type: 3}
+  m_PrefabInstance: {fileID: 3934394655615341637}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5834131406633140605 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7381180447955637560, guid: db9a03045676b34469e49e406df3286c, type: 3}

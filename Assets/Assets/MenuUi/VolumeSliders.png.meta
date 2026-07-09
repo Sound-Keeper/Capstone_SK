@@ -193,7 +193,7 @@ TextureImporter:
         width: 539
         height: 26
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -202,6 +202,50 @@ TextureImporter:
       bones: []
       spriteID: 2cdb273f57f4bd143bf867e53662b276
       internalID: 735047411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: slider
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 267
+        width: 585
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b27569640a947f4d94d2685310dfd1f
+      internalID: -1765554122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bgslider
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 208
+        width: 270
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5eabb7a913439f74b9257da32a36bb48
+      internalID: 214121709
       vertices: []
       indices: 
       edges: []
@@ -225,6 +269,8 @@ TextureImporter:
       MusicVolSlider: 1864956678
       SFXVolSlider: -1880351568
       backgroundslider: 735047411
+      bgslider: 214121709
+      slider: -1765554122
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

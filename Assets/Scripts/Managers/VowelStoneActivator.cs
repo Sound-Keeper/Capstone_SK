@@ -9,15 +9,19 @@ public class VowelStoneActivator : MonoBehaviour
     [Tooltip("Assign the Estone_Prefab instance from your hierarchy here")]
     public GameObject stoneE;
     public GameObject vinesE;
+    public GameObject boundingboxE;
     [Tooltip("Assign the Istone_Prefab instance from your hierarchy here")]
     public GameObject stoneI;
     public GameObject vinesI;
+    public GameObject boundingboxI;
     [Tooltip("Assign the Ostone_Prefab instance from your hierarchy here")]
     public GameObject stoneO;
     public GameObject vinesO;
+    public GameObject boundingboxO;
     [Tooltip("Assign the Ustone_Prefab instance from your hierarchy here")]
     public GameObject stoneU;
     public GameObject vinesU;
+    public GameObject boundingboxU;
 
     [Header("Animation Settings")]
     [Tooltip("How fast the stones rotate (degrees per second)")]
@@ -52,24 +56,28 @@ public class VowelStoneActivator : MonoBehaviour
         {
             stoneE.SetActive(PuzzleProgress.HasVowelEStone);
             vinesE.SetActive(!PuzzleProgress.HasVowelEStone);
+            boundingboxE.SetActive(!PuzzleProgress.HasVowelAStone);
         }
  
         if (stoneI != null)
         {
             stoneI.SetActive(PuzzleProgress.HasVowelIStone);
             vinesI.SetActive(!PuzzleProgress.HasVowelIStone);
+            boundingboxI.SetActive(!PuzzleProgress.HasVowelEStone);
         }
 
         if (stoneO != null)
         {
             stoneO.SetActive(PuzzleProgress.HasVowelOStone);
             vinesO.SetActive(!PuzzleProgress.HasVowelOStone);
+            boundingboxO.SetActive(!PuzzleProgress.HasVowelIStone);
         }
  
         if (stoneU != null)
         {
             stoneU.SetActive(PuzzleProgress.HasVowelUStone);
             vinesU.SetActive(!PuzzleProgress.HasVowelUStone);
+            boundingboxU.SetActive(!PuzzleProgress.HasVowelOStone);
         }
 
     }
