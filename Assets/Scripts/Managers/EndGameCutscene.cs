@@ -13,12 +13,21 @@ public class EndGameCutscene : MonoBehaviour
     public Light directionalLight;
     [Tooltip("The divine intervention spotlight sitting over the fountain.")]
     public Light fountainSpotlight;
+    public ParticleSystem transformationSmoke;
 
     [Header("Cinematic Cameras")]
     [Tooltip("A dedicated camera focused on the fountain spotlight intervention.")]
     public Camera spotlightCamera;
     [Tooltip("Assign the 5 Vowel Stone cameras in order here (Element 0 to 4).")]
     public List<Camera> vowelStoneCameras = new List<Camera>();
+
+    [Header("Pip Transformation Setup")]
+    [Tooltip("The main flying Pip GameObject.")]
+    public GameObject pipGameObject;
+    [Tooltip("The regular owl-like visual object inside Pip (turned ON by default).")]
+    public GameObject pipOwlVisual;
+    [Tooltip("The human Archmage prefab model inside Pip (turned OFF by default).")]
+    public GameObject pipArchmageVisual;
 
     [Header("Inspector Editable Dialogues")]
     [Tooltip("The lines of the ritual chant spoken by the Player.")]
@@ -53,7 +62,6 @@ public class EndGameCutscene : MonoBehaviour
         if (spotlightCamera != null) spotlightCamera.gameObject.SetActive(false);
     }
 
-    // Called when the player interacts with Pip at the fountain after all puzzles are solved
     public void StartFountainRitual()
     {
         if (ritualSequenceStarted) return;
@@ -71,20 +79,11 @@ public class EndGameCutscene : MonoBehaviour
         // ============================================================
         for (int i = 0; i < playerChantLines.Count; i++)
         {
-            // Turn off previous camera setups
-            if (i == 0)
+            if (i - 1 < vowelStoneCameras.Count && i > 0 && vowelStoneCameras[i - 1] != null)
             {
-                // Turn off standard dialogue cameras if applicable
-            }
-            else
-            {
-                if (i - 1 < vowelStoneCameras.Count && vowelStoneCameras[i - 1] != null)
-                {
-                    vowelStoneCameras[i - 1].gameObject.SetActive(false);
-                }
+                vowelStoneCameras[i - 1].gameObject.SetActive(false);
             }
 
-            // Turn on current Vowel Stone camera
             if (i < vowelStoneCameras.Count && vowelStoneCameras[i] != null)
             {
                 vowelStoneCameras[i].gameObject.SetActive(true);
@@ -109,33 +108,34 @@ public class EndGameCutscene : MonoBehaviour
             while (!currentLineDone) yield return null;
         }
 
-        // Clean up the last Vowel Stone camera
         if (vowelStoneCameras.Count > 0 && vowelStoneCameras[vowelStoneCameras.Count - 1] != null)
         {
             vowelStoneCameras[vowelStoneCameras.Count - 1].gameObject.SetActive(false);
         }
 
         // ============================================================
-        // PHASE 2: Divine Spotlight Camera & Intensity Ramp (0 -> 8000 over 3s)
+        // PHASE 2: Divine Spotlight Camera & Intensity Ramp (0 -> 8000 over 5s)
         // ============================================================
         if (spotlightCamera != null) spotlightCamera.gameObject.SetActive(true);
 
         if (fountainSpotlight != null)
         {
-            float duration = 3.0f;
+            // CHANGED: Duration extended to 5.0f seconds
+            float duration = 5.0f;
             float elapsed = 0f;
 
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                // Linearly interpolate intensity from 0 to 8000
                 fountainSpotlight.intensity = Mathf.Lerp(0f, 8000f, elapsed / duration);
                 yield return null;
             }
             fountainSpotlight.intensity = 8000f;
         }
 
-        // Trigger environmental daylight changes right at the peak of the light beam intensity
+        // --- HIDDEN TRANSFORMATION HAPPENS HERE AT MAXIMUM FLASH BLINDNESS ---
+        ExecutePipHumanTransformation();
+
         TriggerDaylightTransformation();
         yield return new WaitForSeconds(1.0f);
 
@@ -154,7 +154,6 @@ public class EndGameCutscene : MonoBehaviour
         // ============================================================
         bool celebrationDone = false;
 
-        // --- FIXED PORTRAIT REFERENCE FALLBACK ---
         Sprite finalPipFace = null;
         PipInteraction activePipScript = FindFirstObjectByType<PipInteraction>();
         if (activePipScript != null) finalPipFace = activePipScript.pipPortrait;
@@ -165,12 +164,35 @@ public class EndGameCutscene : MonoBehaviour
 
         while (!celebrationDone) yield return null;
 
-        // Clean up cutscene cameras back to standard player view
         if (DialogueManager.Instance.pipCutsceneCamera != null) DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(false);
         if (Camera.main != null) Camera.main.gameObject.SetActive(true);
 
         DialogueManager.Instance.SetPlayerControlState(true);
         Debug.Log("[EndGameCutscene] Game Complete! World is saved.");
+    }
+
+    private void ExecutePipHumanTransformation()
+    {
+        // 1. Play the smoke blast right at Pip's feet
+        if (transformationSmoke != null)
+        {
+            transformationSmoke.Play();
+        }
+
+        // 2. Swap Visual Prefabs
+        if (pipOwlVisual != null) pipOwlVisual.SetActive(false);
+        if (pipArchmageVisual != null) pipArchmageVisual.SetActive(true);
+
+        // 3. Adjust flight systems
+        if (pipGameObject != null)
+        {
+            PipFly pipFlightSystem = pipGameObject.GetComponent<PipFly>();
+            if (pipFlightSystem != null)
+            {
+                pipFlightSystem.floatHeight = 1.1f;
+                pipFlightSystem.floatAmplitude = 0f;
+            }
+        }
     }
 
     private void TriggerDaylightTransformation()

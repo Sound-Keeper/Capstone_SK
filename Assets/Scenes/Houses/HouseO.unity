@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 24849967}
   - component: {fileID: 24849966}
   - component: {fileID: 24849965}
+  - component: {fileID: 24849971}
   m_Layer: 5
   m_Name: 4thOption
   m_TagString: Untagged
@@ -229,8 +230,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -289,6 +290,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 24849963}
   m_CullTransparentMesh: 1
+--- !u!114 &24849971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24849963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &254824625
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,7 +678,6 @@ GameObject:
   - component: {fileID: 274310104}
   - component: {fileID: 274310107}
   - component: {fileID: 274310106}
-  - component: {fileID: 274310105}
   m_Layer: 5
   m_Name: Sentence
   m_TagString: Untagged
@@ -690,21 +704,6 @@ RectTransform:
   m_AnchoredPosition: {x: -8.4729, y: 9.979919}
   m_SizeDelta: {x: 547.2579, y: 440.8095}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &274310105
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 274310103}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2403f14d865748f4b9c7d64d688eaa2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TypingScript
-  textComponent: {fileID: 274310106}
-  fullText: "\u201CLittle Miss Muffet sat on a tuffet,\nEating her curds and ____.\u201D"
-  typingSpeed: 0.05
 --- !u!114 &274310106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -819,6 +818,7 @@ GameObject:
   - component: {fileID: 290712033}
   - component: {fileID: 290712032}
   - component: {fileID: 290712031}
+  - component: {fileID: 290712037}
   m_Layer: 5
   m_Name: 2ndOption
   m_TagString: Untagged
@@ -914,8 +914,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -974,6 +974,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 290712029}
   m_CullTransparentMesh: 1
+--- !u!114 &290712037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 290712029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &315764822
 GameObject:
   m_ObjectHideFlags: 0
@@ -989,6 +1003,7 @@ GameObject:
   - component: {fileID: 315764825}
   - component: {fileID: 315764824}
   - component: {fileID: 315764829}
+  - component: {fileID: 315764830}
   m_Layer: 5
   m_Name: 1stOption
   m_TagString: Untagged
@@ -1070,8 +1085,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -1144,6 +1159,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FloatingChar
   speed: 3
   height: 3
+--- !u!114 &315764830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 315764822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &317714619
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,6 +1428,7 @@ GameObject:
   - component: {fileID: 412313689}
   - component: {fileID: 412313688}
   - component: {fileID: 412313687}
+  - component: {fileID: 412313693}
   m_Layer: 5
   m_Name: 2ndOption
   m_TagString: Untagged
@@ -1494,8 +1524,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -1554,6 +1584,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 412313685}
   m_CullTransparentMesh: 1
+--- !u!114 &412313693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 412313685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &413511912
 GameObject:
   m_ObjectHideFlags: 0
@@ -2025,6 +2069,7 @@ GameObject:
   - component: {fileID: 536633464}
   - component: {fileID: 536633463}
   - component: {fileID: 536633462}
+  - component: {fileID: 536633468}
   m_Layer: 5
   m_Name: 2ndOption
   m_TagString: Untagged
@@ -2120,8 +2165,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -2180,6 +2225,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 536633460}
   m_CullTransparentMesh: 1
+--- !u!114 &536633468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536633460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &680743262
 GameObject:
   m_ObjectHideFlags: 0
@@ -2402,6 +2461,7 @@ GameObject:
   - component: {fileID: 839013069}
   - component: {fileID: 839013068}
   - component: {fileID: 839013067}
+  - component: {fileID: 839013073}
   m_Layer: 5
   m_Name: 4thOption
   m_TagString: Untagged
@@ -2497,8 +2557,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -2557,6 +2617,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 839013065}
   m_CullTransparentMesh: 1
+--- !u!114 &839013073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839013065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &887276534
 GameObject:
   m_ObjectHideFlags: 0
@@ -3489,7 +3563,7 @@ MonoBehaviour:
   - Bless your heart, Sound Keeper. Miss Spell's curse grows weaker with every song.
   wrongDisplayDuration: 1.5
   dialogueLineDelay: 1
-  typingSpeed: 0.03
+  typingSpeed: 0.04
   book: {fileID: 1297625724506275936}
   puzzleCompleted: 0
   totalRequiredCorrect: 3
@@ -3644,6 +3718,7 @@ GameObject:
   - component: {fileID: 1159142711}
   - component: {fileID: 1159142710}
   - component: {fileID: 1159142709}
+  - component: {fileID: 1159142715}
   m_Layer: 5
   m_Name: 1stOption
   m_TagString: Untagged
@@ -3739,8 +3814,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -3799,6 +3874,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1159142707}
   m_CullTransparentMesh: 1
+--- !u!114 &1159142715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159142707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &1179808159
 GameObject:
   m_ObjectHideFlags: 0
@@ -3814,6 +3903,7 @@ GameObject:
   - component: {fileID: 1179808163}
   - component: {fileID: 1179808162}
   - component: {fileID: 1179808161}
+  - component: {fileID: 1179808167}
   m_Layer: 5
   m_Name: 3rdOption
   m_TagString: Untagged
@@ -3909,8 +3999,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -3969,6 +4059,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1179808159}
   m_CullTransparentMesh: 1
+--- !u!114 &1179808167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1179808159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &1278496120
 GameObject:
   m_ObjectHideFlags: 0
@@ -4126,7 +4230,6 @@ GameObject:
   - component: {fileID: 1301672106}
   - component: {fileID: 1301672109}
   - component: {fileID: 1301672108}
-  - component: {fileID: 1301672107}
   m_Layer: 5
   m_Name: Sentence
   m_TagString: Untagged
@@ -4153,21 +4256,6 @@ RectTransform:
   m_AnchoredPosition: {x: -8.4729, y: 9.9800415}
   m_SizeDelta: {x: 547.2579, y: 440.8095}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1301672107
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1301672105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2403f14d865748f4b9c7d64d688eaa2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TypingScript
-  textComponent: {fileID: 1301672108}
-  fullText: "\u201COne, two, buckle my ____.\u201D"
-  typingSpeed: 0.05
 --- !u!114 &1301672108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4662,6 +4750,7 @@ GameObject:
   - component: {fileID: 1441216080}
   - component: {fileID: 1441216079}
   - component: {fileID: 1441216078}
+  - component: {fileID: 1441216084}
   m_Layer: 5
   m_Name: 4thOption
   m_TagString: Untagged
@@ -4757,8 +4846,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -4817,6 +4906,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1441216076}
   m_CullTransparentMesh: 1
+--- !u!114 &1441216084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441216076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &1487568126
 GameObject:
   m_ObjectHideFlags: 0
@@ -4832,6 +4935,7 @@ GameObject:
   - component: {fileID: 1487568130}
   - component: {fileID: 1487568129}
   - component: {fileID: 1487568128}
+  - component: {fileID: 1487568134}
   m_Layer: 5
   m_Name: 3rdOption
   m_TagString: Untagged
@@ -4927,8 +5031,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -4987,6 +5091,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1487568126}
   m_CullTransparentMesh: 1
+--- !u!114 &1487568134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487568126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &1493979066
 GameObject:
   m_ObjectHideFlags: 0
@@ -5112,6 +5230,7 @@ GameObject:
   - component: {fileID: 1563671901}
   - component: {fileID: 1563671900}
   - component: {fileID: 1563671899}
+  - component: {fileID: 1563671905}
   m_Layer: 5
   m_Name: 3rdOption
   m_TagString: Untagged
@@ -5207,8 +5326,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -5267,6 +5386,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1563671897}
   m_CullTransparentMesh: 1
+--- !u!114 &1563671905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563671897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &1639798351
 GameObject:
   m_ObjectHideFlags: 0
@@ -10564,6 +10697,7 @@ GameObject:
   - component: {fileID: 1888494551}
   - component: {fileID: 1888494550}
   - component: {fileID: 1888494549}
+  - component: {fileID: 1888494555}
   m_Layer: 5
   m_Name: 1stOption
   m_TagString: Untagged
@@ -10659,8 +10793,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.7433963, g: 0.7433963, b: 0.7433963, a: 1}
+    m_PressedColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -10719,6 +10853,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1888494547}
   m_CullTransparentMesh: 1
+--- !u!114 &1888494555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888494547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &1934702922
 GameObject:
   m_ObjectHideFlags: 0
@@ -10783,7 +10931,6 @@ GameObject:
   - component: {fileID: 1972841753}
   - component: {fileID: 1972841755}
   - component: {fileID: 1972841754}
-  - component: {fileID: 1972841756}
   m_Layer: 5
   m_Name: Sentence
   m_TagString: Untagged
@@ -10909,21 +11056,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1972841752}
   m_CullTransparentMesh: 1
---- !u!114 &1972841756
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1972841752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2403f14d865748f4b9c7d64d688eaa2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TypingScript
-  textComponent: {fileID: 1972841754}
-  fullText: "\u201CTwinkle, twinkle, little star,\nHow I wonder what you ____.\u201D"
-  typingSpeed: 0.05
 --- !u!1 &2021586939
 GameObject:
   m_ObjectHideFlags: 0

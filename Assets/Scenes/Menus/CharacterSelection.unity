@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 17368181}
   - component: {fileID: 17368185}
   - component: {fileID: 17368184}
+  - component: {fileID: 17368186}
   m_Layer: 5
   m_Name: Back
   m_TagString: Untagged
@@ -290,6 +291,20 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 1, y: -15}
   m_UseGraphicAlpha: 1
+--- !u!114 &17368186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17368179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &139836221
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,6 +693,7 @@ GameObject:
   - component: {fileID: 1315732989}
   - component: {fileID: 1315732993}
   - component: {fileID: 1315732992}
+  - component: {fileID: 1315732994}
   m_Layer: 5
   m_Name: Confirm
   m_TagString: Untagged
@@ -835,6 +851,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1315732994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315732987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 46fec59d9ba150b40b5784b3c3c19fa1, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &1347194094
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,6 +1052,7 @@ GameObject:
   - component: {fileID: 1647594490}
   - component: {fileID: 1647594489}
   - component: {fileID: 1647594492}
+  - component: {fileID: 1647594493}
   m_Layer: 5
   m_Name: Paige
   m_TagString: Untagged
@@ -1164,6 +1195,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1647594493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647594487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &1906853400
 GameObject:
   m_ObjectHideFlags: 0
@@ -1177,6 +1222,7 @@ GameObject:
   - component: {fileID: 1906853403}
   - component: {fileID: 1906853402}
   - component: {fileID: 1906853405}
+  - component: {fileID: 1906853406}
   m_Layer: 5
   m_Name: Penn
   m_TagString: Untagged
@@ -1319,6 +1365,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1906853406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906853400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd08beac3f3e2544aa950c70e1e4d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudio
+  clickSound: {fileID: 8300000, guid: 225bc120d8545f74daace23a9a9428d6, type: 3}
+  hoverSound: {fileID: 8300000, guid: 848b56ba4ff6c064c858b36390267cc4, type: 3}
 --- !u!1 &2112138332
 GameObject:
   m_ObjectHideFlags: 0

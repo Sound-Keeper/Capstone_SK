@@ -9,6 +9,7 @@ public class Charactercontroller : MonoBehaviour
 
     // --- Control switch toggled by DialogueManager ---
     [HideInInspector] public bool canControl = true;
+    public static float MouseSensitivityMultiplier = 1.0f;
 
     float moveSpeed = 2f;
     float sprintSpeed = 5f;
@@ -93,9 +94,15 @@ public class Charactercontroller : MonoBehaviour
             player.Move(new Vector3(0, yVelocity, 0) * Time.deltaTime);
             return;
         }
-
+        if (PauseMenu.GameisPaused)
+        {
+            return; // Completely exits Update(), freezing both position and look inputs!
+        }
         Vector2 move = InputSystem.actions.FindAction("Move").ReadValue<Vector2>();
         Vector2 look = InputSystem.actions.FindAction("Look").ReadValue<Vector2>();
+
+        float baselineScale = 0.1f;
+        float finalSensitivity = rotationSpeed * MouseSensitivityMultiplier * baselineScale * Time.unscaledDeltaTime;
 
         // Sprint
         bool isSprinting = Keyboard.current.leftShiftKey.isPressed;
@@ -126,10 +133,10 @@ public class Charactercontroller : MonoBehaviour
         player.Move(finalMove * Time.deltaTime);
 
         // LEFT / RIGHT LOOK
-        transform.Rotate(Vector3.up * look.x * rotationSpeed * Time.deltaTime);
+        transform.Rotate(Vector3.up * look.x * finalSensitivity);
 
         // UP / DOWN LOOK
-        rot -= look.y * rotationSpeed * Time.deltaTime;
+        rot -= look.y * finalSensitivity;
         rot = Mathf.Clamp(rot, -80f, 37f);
 
         // Apply Camera Rotation

@@ -184,9 +184,9 @@ public class PipFly : MonoBehaviour
 
         foreach (GameObject playerObj in players)
         {
-            if (playerObj == null || !playerObj.activeInHierarchy) continue; 
+            if (playerObj == null || !playerObj.activeInHierarchy) continue;
 
-            float distance = Vector3.Distance(transform.position, playerObj.transform.position); 
+            float distance = Vector3.Distance(transform.position, playerObj.transform.position);
             if (distance < closestDistance)
             {
                 closestDistance = distance;
@@ -197,30 +197,30 @@ public class PipFly : MonoBehaviour
         // Track player if they are inside the specified look distance threshold
         if (closestPlayer != null && closestDistance <= detectionRadius)
         {
-            Vector3 lookDir = closestPlayer.transform.position - transform.position; 
+            Vector3 lookDir = closestPlayer.transform.position - transform.position;
             lookDir.y = 0; // Lock rotation axis
 
-            if (lookDir != Vector3.zero) 
+            if (lookDir != Vector3.zero)
             {
-                Quaternion targetLook = Quaternion.LookRotation(lookDir); 
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetLook, Time.deltaTime * turnSpeed); 
+                Quaternion targetLook = Quaternion.LookRotation(lookDir);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetLook, Time.deltaTime * turnSpeed);
             }
         }
         else
         {
-            // If the player walks away, smoothly turn back to your target slot's forward alignment direction[cite: 4, 13]
+            // If the player walks away, smoothly turn back to your target slot's forward alignment direction
             transform.rotation = Quaternion.Slerp(transform.rotation, homeRotation, Time.deltaTime * turnSpeed);
         }
     }
 
     private void FindPlayers()
     {
-        players = GameObject.FindGameObjectsWithTag(playerTag); 
+        players = GameObject.FindGameObjectsWithTag(playerTag);
     }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow; 
-        Gizmos.DrawWireSphere(transform.position, detectionRadius); 
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }
