@@ -19,13 +19,19 @@ public class VowelStone : MonoBehaviour
     public Camera rewardCamera;
     public float appearDelay = 0.5f;
     public float pauseDuration = 2f;
-    public float moveDuration = 2.5f;
     public float spinSpeed = 180f;
 
     [Header("FX / Visuals")]
     [Tooltip("The 3D model child or mesh that actually spins.")]
     public Transform stoneVisual;
     public ParticleSystem shineEffect;
+
+    // --- NEW PROPERTY FOR THE VINES ---
+    [Header("Blocked Progress Vines")]
+    [Tooltip("The vine GameObject that should disappear when this stone is unlocked.")]
+    public GameObject blockingVine;
+
+    public GameObject hintmap;
 
     [Header("UI Canvas")]
     public CanvasGroup questCompletedPanel;
@@ -38,26 +44,28 @@ public class VowelStone : MonoBehaviour
     private Camera previousCamera;
     private Charactercontroller cc;
     private Vector3 startPosition;
-    private bool isMoving = false;
 
     void Awake()
     {
-        // Save the start position for calculations
         startPosition = transform.position;
 
         if (questCompletedPanel != null)
             questCompletedPanel.alpha = 0f;
 
-        // --- ADD THIS LINE TO HIDE IT ON SCENE LOAD ---
         gameObject.SetActive(false);
+    }
+
+    void Start()
+    {
+        // Infinite background behavior: If this object is already active in a saved state,
+        // keep it spinning even when a cutscene isn't actively running.
+        StartCoroutine(InfiniteSpinAndFXRoutine());
     }
 
     public void GiveReward()
     {
-        // 1. CRITICAL: Turn the GameObject back ON first!
         gameObject.SetActive(true);
 
-        // 2. Safely grab our player references
         if (player == null)
         {
             GameObject pObj = GameObject.FindGameObjectWithTag("Player");
@@ -66,12 +74,15 @@ public class VowelStone : MonoBehaviour
 
         if (player != null) cc = player.GetComponent<Charactercontroller>();
 
-        // 3. Now that the object is awake and active, Unity can safely start the coroutine!
         StartCoroutine(CutsceneRoutine());
     }
 
     IEnumerator CutsceneRoutine()
     {
+        if (hintmap != null)
+        {
+            hintmap.SetActive(false);
+        }
         // 1. Setup Camera and Freeze Player
         if (rewardCamera != null)
         {
@@ -82,45 +93,29 @@ public class VowelStone : MonoBehaviour
 
         if (freezePlayer && cc != null) cc.canControl = false;
 
+        // Wait for the initial appear delay
         yield return new WaitForSeconds(appearDelay);
 
-        if (shineEffect != null) shineEffect.Play();
+        // --- MOVED HERE: The exact moment the stone appears and shines, the vine drops! ---
+        if (blockingVine != null)
+        {
+            blockingVine.SetActive(false);
+        }
 
-        // 2. Pause & Spin Beat
+        if (shineEffect != null && !shineEffect.isPlaying) shineEffect.Play();
+
+        // 2. Focused Cutscene Spin Beat
         float elapsed = 0f;
         while (elapsed < pauseDuration)
         {
             SpinObject();
-            KeepCameraFocused(); // Keep camera tracking the stone!
+            KeepCameraFocused();
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // 3. Float directly into the Player
-        elapsed = 0f;
-        Vector3 initialPos = transform.position;
-        isMoving = true;
-
-        // Offset slightly upward so it goes to player's chest, not feet
-        Vector3 targetPos = player != null ? player.position + Vector3.up * 1f : initialPos;
-
-        while (elapsed < moveDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / moveDuration;
-
-            // Smoothly move the stone's base object transform
-            transform.position = Vector3.Lerp(initialPos, targetPos, t);
-
-            SpinObject();
-            KeepCameraFocused(); // Move/Turn camera along with the stone!
-            yield return null;
-        }
-        isMoving = false;
-
+        // 3. Grant the Stone Tracking
         GrantStone();
-
-        gameObject.SetActive(false);
 
         // 4. Fade Up Win Text Banner
         if (questCompletedPanel != null)
@@ -130,7 +125,7 @@ public class VowelStone : MonoBehaviour
             yield return StartCoroutine(FadeCanvas(questCompletedPanel, 1f, 0f, uiFadeDuration));
         }
 
-        // 5. Restore normal player camera view
+        // 5. Restore normal player control and camera view
         if (rewardCamera != null)
         {
             rewardCamera.gameObject.SetActive(false);
@@ -142,9 +137,24 @@ public class VowelStone : MonoBehaviour
         OnRewardFinished?.Invoke();
     }
 
+    // This loop guarantees the stone keeps spinning and particles keep emitting forever after the cutscene ends
+    IEnumerator InfiniteSpinAndFXRoutine()
+    {
+        while (true)
+        {
+            SpinObject();
+
+            // If the script is running, make sure particles stay on
+            if (shineEffect != null && !shineEffect.isPlaying && gameObject.activeInHierarchy)
+            {
+                shineEffect.Play();
+            }
+            yield return null;
+        }
+    }
+
     void SpinObject()
     {
-        // Spin the designated visual sub-mesh asset so the root transform stays clean
         Transform targetSpin = stoneVisual != null ? stoneVisual : transform;
         targetSpin.Rotate(Vector3.up * spinSpeed * Time.deltaTime, Space.Self);
     }
@@ -152,17 +162,7 @@ public class VowelStone : MonoBehaviour
     void KeepCameraFocused()
     {
         if (rewardCamera == null) return;
-
-        // 1. Force the camera to always turn and look directly at the stone model
         rewardCamera.transform.LookAt(transform.position);
-
-        // 2. If the stone starts flying to the player, have the camera slide forward slightly 
-        // to stay closely glued to the action instead of getting left behind
-        if (isMoving && player != null)
-        {
-            Vector3 targetCamPos = transform.position - (player.forward * 3f) + (Vector3.up * 0.5f);
-            rewardCamera.transform.position = Vector3.Lerp(rewardCamera.transform.position, targetCamPos, Time.deltaTime * 2f);
-        }
     }
 
     void GrantStone()

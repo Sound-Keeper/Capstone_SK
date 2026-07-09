@@ -6,91 +6,171 @@ public class PipInteraction : MonoBehaviour, IInteractable
     public string pipName = "Pip";
     public Sprite pipPortrait;
 
+    [Header("Finale Cutscene Target")]
+    public Transform finaleFountainTarget;
+
+    [Header("Inspector Editable Instructions")]
+    public System.Collections.Generic.List<string> pipInstructionsLines = new System.Collections.Generic.List<string> {
+        "We are here, Sound Keeper! The fountain sits at the absolute heart of Word Valley.",
+        "All five Vowel Stones are glowing in your wand. But to break Miss Spell's curse completely, you must recite the Ancient Valley Sound Chant.",
+        "Are you ready? Repeat after me..."
+    };
+
     private PipHint pipHintSystem;
+
+    // Track exact ending progression states
+    private bool hasSaidHouseUCompletionInMapTest = false;
+    private bool arrivedAtFountainFinale = false;
 
     void Start()
     {
         pipHintSystem = FindFirstObjectByType<PipHint>();
+
+        if (pipPortrait == null && DialogueManager.Instance != null)
+        {
+            pipPortrait = DialogueManager.Instance.pipIntroPortrait;
+        }
+
+        // Safety: If game is reloaded and Pip is already at the fountain destination, match states
+        if (finaleFountainTarget != null && Vector3.Distance(transform.position, finaleFountainTarget.position) < 1f)
+        {
+            hasSaidHouseUCompletionInMapTest = true;
+            arrivedAtFountainFinale = true;
+        }
     }
 
     public void Interact()
     {
         if (DialogueManager.Instance == null || pipHintSystem == null) return;
 
-        // 1. Get the current active uncompleted house (e.g., if A is done, this returns E)
+        // Gated Safety: Don't allow this script to run inside any interior house scenes!
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MapTest")
+        {
+            return;
+        }
+
+        // ============================================================
+        // STEP 3: Pip is at the fountain AND has given instructions. START CHANT!
+        // ============================================================
+        if (arrivedAtFountainFinale && hasSaidHouseUCompletionInMapTest)
+        {
+            DialogueManager.Instance.SetPlayerControlState(false);
+            if (EndGameCutscene.Instance != null)
+            {
+                EndGameCutscene.Instance.StartFountainRitual();
+            }
+            return;
+        }
+
         PipHint.HintObjective nextObjective = pipHintSystem.GetActiveObjective();
         string[] lines;
         bool shouldTriggerFlight = false;
+        bool headingToFountainFinale = false;
 
         if (!DialogueManager.HasPlayedPipIntroFinished)
         {
-            // Pip is waiting at the fountain for the first time
             lines = pipHintSystem.fountainIntroDialogue.ToArray();
             shouldTriggerFlight = true;
         }
         else if (nextObjective != null)
         {
-            // Check if Pip has already physically flown to this house's hover location
+            // Standard hint tracking loops before the finale
             float distanceToObjective = Vector3.Distance(transform.position, nextObjective.hoverLocation.position);
 
             if (distanceToObjective > 2.0f)
             {
-                // Pip is still physically standing at the old house, meaning a puzzle was JUST completed!
+                string completedHouseDialogue = "Fantastic work solving that puzzle!";
+
+                for (int i = pipHintSystem.objectives.Count - 1; i >= 0; i--)
+                {
+                    var obj = pipHintSystem.objectives[i];
+                    if (PuzzleProgress.IsHouseComplete(obj.houseLetter))
+                    {
+                        completedHouseDialogue = obj.completionDialogue;
+                        break;
+                    }
+                }
+
                 lines = new string[] {
-                    $"Fantastic work solving that puzzle!",
+                    completedHouseDialogue,
                     $"Let's head over to House {nextObjective.houseLetter} next!"
                 };
                 shouldTriggerFlight = true;
             }
             else
             {
-                // Pip is already at the house waiting for you to solve it. Just show hints!
                 lines = nextObjective.dialogueHints.ToArray();
                 shouldTriggerFlight = false;
             }
         }
         else
         {
-            // All houses complete!
-            lines = new string[] { "Amazing work! Every single valley house is saved!" };
-            shouldTriggerFlight = false;
+            // ALL HOUSES ARE COMPLETE!
+            if (!hasSaidHouseUCompletionInMapTest)
+            {
+                // ============================================================
+                // STEP 1: First interaction in MapTest. Say completion line & fly away.
+                // ============================================================
+                string finalHouseDialogue = "Sensational! House U is clear!";
+
+                // Pull completion sentence string dynamically from your PipHint system configuration
+                if (pipHintSystem.objectives != null && pipHintSystem.objectives.Count > 0)
+                {
+                    finalHouseDialogue = pipHintSystem.objectives[pipHintSystem.objectives.Count - 1].completionDialogue;
+                }
+
+                lines = new string[] {
+                    finalHouseDialogue,
+                    "I'll meet you over at the center fountain right away!"
+                };
+
+                shouldTriggerFlight = true;
+                headingToFountainFinale = true;
+                hasSaidHouseUCompletionInMapTest = true; // Flag checked so this text won't run again!
+            }
+            else
+            {
+                // ============================================================
+                // STEP 2: Player walked over to the fountain. Give instructions!
+                // ============================================================
+                lines = pipInstructionsLines.ToArray();
+                shouldTriggerFlight = false; // Already standing at fountain, no flying required!
+                arrivedAtFountainFinale = true; // Ready for Step 3 interaction next time!
+            }
         }
 
-        // --- PUT THE FIX HERE: Setup the Cutscene Trigger BEFORE starting the dialogue ---
+        // Set up dialogue callbacks to safely execute flight mechanics cleanly after UI box disappears
         if (shouldTriggerFlight)
         {
             DialogueManager.Instance.OnDialogueEnd = () => {
-
                 if (!DialogueManager.HasPlayedPipIntroFinished)
                 {
                     DialogueManager.hasPlayedPipIntroFinished = true;
-                    TriggerFlightSequence(nextObjective);
+                    TriggerFlightSequence(nextObjective, false);
                 }
                 else
                 {
-                    TriggerFlightSequence(nextObjective);
+                    TriggerFlightSequence(nextObjective, headingToFountainFinale);
                 }
             };
         }
         else
         {
-            // If he's just giving hints, clear any leftover callbacks so the player unlocks normally
             DialogueManager.Instance.OnDialogueEnd = null;
         }
 
-        // --- PUT THE FIX HERE: Start the dialogue AFTER the callback layout is secured ---
         DialogueManager.Instance.StartDialogue(pipName, lines, pipPortrait);
     }
 
-    private void TriggerFlightSequence(PipHint.HintObjective nextObjective)
+    private void TriggerFlightSequence(PipHint.HintObjective nextObjective, bool isFinale)
     {
-        if (nextObjective == null || nextObjective.hoverLocation == null) return;
+        Transform destinationTarget = isFinale ? finaleFountainTarget : (nextObjective != null ? nextObjective.hoverLocation : null);
 
-        // Lock Player
+        if (destinationTarget == null) return;
+
         Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
         if (activePlayer != null) activePlayer.canControl = false;
 
-        // Toggle Cameras
         Camera mainCam = Camera.main;
         if (DialogueManager.Instance.pipCutsceneCamera != null)
         {
@@ -98,19 +178,13 @@ public class PipInteraction : MonoBehaviour, IInteractable
             DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(true);
         }
 
-        // Fly!
-        pipHintSystem.pip.MoveToTarget(nextObjective.hoverLocation, () => {
-
-            // Return Cameras
+        pipHintSystem.pip.MoveToTarget(destinationTarget, () => {
             if (DialogueManager.Instance.pipCutsceneCamera != null)
             {
                 DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(false);
                 if (mainCam != null) mainCam.gameObject.SetActive(true);
             }
 
-            // --- FIXED HERE ---
-            // Instead of manually changing lock states here which resets the input system x-axis vector lookup, 
-            // call your built-in dynamic control re-enabler inside the dialogue manager framework.
             if (DialogueManager.Instance != null)
             {
                 DialogueManager.Instance.SetPlayerControlState(true);

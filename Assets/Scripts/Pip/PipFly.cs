@@ -18,6 +18,17 @@ public class PipFly : MonoBehaviour
     public float floatSpeed = 2f;
     public float floatAmplitude = 0.2f;
 
+    // --- INTEGRATED SMOOTH LOOK SETTINGS ---
+    [Header("Smooth Player Look (Only When Stationary)")]
+    [SerializeField] private string playerTag = "Player";
+    [SerializeField] private float detectionRadius = 8f;
+    [SerializeField] private float turnSpeed = 3.5f;
+
+    private GameObject[] players;
+    private float searchTimer = 0f;
+    private float searchInterval = 0.5f;
+    // ----------------------------------------
+
     private Vector3 startPos;
     private Transform currentTarget;
     private Quaternion homeRotation; // Tracks the idle rotation position target
@@ -28,6 +39,7 @@ public class PipFly : MonoBehaviour
         startPos = transform.position;
         homeRotation = transform.rotation; // Default to spawn rotation
 
+        FindPlayers(); // Find players initially
 
         PipHint hint = FindFirstObjectByType<PipHint>();
         if (hint != null && hint.objectives != null && hint.objectives.Count > 0)
@@ -127,8 +139,8 @@ public class PipFly : MonoBehaviour
         }
         else
         {
-            // 3. IDLE ROTATION: Rotate back smoothly to look exactly where the target spot points
-            transform.rotation = Quaternion.Slerp(transform.rotation, homeRotation, rotationSpeed * Time.deltaTime);
+            // 3. IDLE LOOK: Smoothly look at closest player if stationary
+            HandleStationaryLook();
         }
 
         // 4. GROUND HEIGHT CALCULATION + SINE BOBBING
@@ -144,5 +156,71 @@ public class PipFly : MonoBehaviour
         }
 
         transform.position = targetPos;
+    }
+
+    private void HandleStationaryLook()
+    {
+        // Periodic search for players if array is empty or missing
+        if (players == null || players.Length == 0)
+        {
+            searchTimer += Time.deltaTime;
+            if (searchTimer >= searchInterval)
+            {
+                searchTimer = 0f;
+                FindPlayers();
+            }
+
+            if (players == null || players.Length == 0)
+            {
+                // Fallback to home spot direction if absolutely no player is found
+                transform.rotation = Quaternion.Slerp(transform.rotation, homeRotation, rotationSpeed * Time.deltaTime);
+                return;
+            }
+        }
+
+        // Find the closest player
+        GameObject closestPlayer = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach (GameObject playerObj in players)
+        {
+            if (playerObj == null || !playerObj.activeInHierarchy) continue; 
+
+            float distance = Vector3.Distance(transform.position, playerObj.transform.position); 
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestPlayer = playerObj;
+            }
+        }
+
+        // Track player if they are inside the specified look distance threshold
+        if (closestPlayer != null && closestDistance <= detectionRadius)
+        {
+            Vector3 lookDir = closestPlayer.transform.position - transform.position; 
+            lookDir.y = 0; // Lock rotation axis
+
+            if (lookDir != Vector3.zero) 
+            {
+                Quaternion targetLook = Quaternion.LookRotation(lookDir); 
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetLook, Time.deltaTime * turnSpeed); 
+            }
+        }
+        else
+        {
+            // If the player walks away, smoothly turn back to your target slot's forward alignment direction[cite: 4, 13]
+            transform.rotation = Quaternion.Slerp(transform.rotation, homeRotation, Time.deltaTime * turnSpeed);
+        }
+    }
+
+    private void FindPlayers()
+    {
+        players = GameObject.FindGameObjectsWithTag(playerTag); 
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow; 
+        Gizmos.DrawWireSphere(transform.position, detectionRadius); 
     }
 }

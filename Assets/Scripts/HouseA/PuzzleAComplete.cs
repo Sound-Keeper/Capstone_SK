@@ -3,10 +3,6 @@ using System.Collections;
 
 public class PuzzleAComplete : MonoBehaviour
 {
-    [Header("Settings")]
-    [Tooltip("The scene we want to load back into.")]
-    public string destinationScene = "MainWorld";
-
     /// <summary>
     /// Call this from your PuzzleManagerA's OnPuzzleComplete() event!
     /// </summary>
@@ -34,10 +30,9 @@ public class PuzzleAComplete : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         // 4. Fire the scene transition to load the MainWorld
-        Debug.Log($"[PuzzleTeleporter] Dialogue closed! Changing scene to {destinationScene}...");
         SceneController.Instance
             .NewTransition()
-            .Load(SceneDatabase.Slots.SessionContent, destinationScene, setActive: true)
+            .Load(SceneDatabase.Slots.SessionContent, "MapTest", setActive: true)
             .WithOverlay()
             .WithClearUnusedAssets()
             .Perform();

@@ -15,7 +15,7 @@ public static class SceneDatabase
         public const string MainMenu = "FirstMenu";
         public const string SecondMenu = "SecondMenu";
         public const string Settings = "Settings";
-        public const string MainWorld = "MainWorld";
+        public const string MainWorld = "MapTest";
         public const string Session = "Session";
         public const string CharSelect = "CharacterSelection";
 
