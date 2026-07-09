@@ -70477,6 +70477,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Paige_Prefab
       objectReference: {fileID: 0}
+    - target: {fileID: 6128571197267527217, guid: dc80f651ba550e742bc27980a41bb79e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
