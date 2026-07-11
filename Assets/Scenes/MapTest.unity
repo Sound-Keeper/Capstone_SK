@@ -33159,7 +33159,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6595631567725347586, guid: 39f9f3879c704974cae6ebdcc873a79e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.0246
       objectReference: {fileID: 0}
     - target: {fileID: 6595631567725347586, guid: 39f9f3879c704974cae6ebdcc873a79e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -33167,7 +33167,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6595631567725347586, guid: 39f9f3879c704974cae6ebdcc873a79e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.0405
       objectReference: {fileID: 0}
     - target: {fileID: 6595631567725347586, guid: 39f9f3879c704974cae6ebdcc873a79e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -97548,15 +97548,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c106052acd880364b91e859f3e0b7118, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.032999996
+      value: -0.0576
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c106052acd880364b91e859f3e0b7118, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.005900004
+      value: -0.0059
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c106052acd880364b91e859f3e0b7118, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.0405
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c106052acd880364b91e859f3e0b7118, type: 3}
       propertyPath: m_LocalRotation.w
@@ -116404,7 +116404,7 @@ Transform:
   m_GameObject: {fileID: 919132148443098302}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.9030741, z: -0, w: 0.4294848}
-  m_LocalPosition: {x: 0.13032426, y: -0.097429276, z: 0.110970676}
+  m_LocalPosition: {x: 0.0582, y: -0.0921, z: 0.1405}
   m_LocalScale: {x: 0.7142857, y: 0.7142857, z: 0.7142857}
   m_ConstrainProportionsScale: 0
   m_Children:
