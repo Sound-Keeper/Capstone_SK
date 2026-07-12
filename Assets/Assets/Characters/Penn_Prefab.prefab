@@ -229,7 +229,7 @@ MonoBehaviour:
   cameraHeightOffset: 1.5
   collisionLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   cameraCollisionBuffer: 0.2
   canControl: 1
 --- !u!114 &5077591140795145594
@@ -251,7 +251,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   itemRadiusOffset: 0.4
-  holdParticle: {fileID: 0}
+  holdParticle: {fileID: 5608940961891377408}
 --- !u!114 &-923851444562756633
 MonoBehaviour:
   m_ObjectHideFlags: 0

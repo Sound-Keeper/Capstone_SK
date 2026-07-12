@@ -2353,7 +2353,7 @@ MonoBehaviour:
   cameraHeightOffset: 1.5
   collisionLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   cameraCollisionBuffer: 0.2
   canControl: 1
 --- !u!114 &3241797248199107878

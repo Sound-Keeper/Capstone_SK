@@ -123,7 +123,7 @@ public class Charactercontroller : MonoBehaviour
         {
             cameraYaw += look.x * finalSensitivity;
             rot -= look.y * finalSensitivity;
-            rot = Mathf.Clamp(rot, -80f, 37f);
+            rot = Mathf.Clamp(rot, -80f, 80f);
 
             Quaternion cameraRotation = Quaternion.Euler(rot, cameraYaw, 0f);
 
