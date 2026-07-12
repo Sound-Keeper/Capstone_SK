@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class PipInteraction : MonoBehaviour, IInteractable
@@ -6,6 +7,14 @@ public class PipInteraction : MonoBehaviour, IInteractable
     public string pipName = "Pip";
     public Sprite pipPortrait;
 
+    [Header("Interaction Prompt UI")]
+    [SerializeField] private CanvasGroup promptCanvas;
+    [SerializeField] private float fadeSpeed = 5f;
+    [SerializeField] private float interactionDistance = 3f;
+
+    [Header("References")]
+    public Transform player; // Changed to Transform to mirror NpcInteraction's detection
+
     [Header("Finale Cutscene Target")]
     public Transform finaleFountainTarget;
 
@@ -13,7 +22,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
     public System.Collections.Generic.List<string> pipInstructionsLines = new System.Collections.Generic.List<string> {
         "We are here, Sound Keeper! The fountain sits at the absolute heart of Word Valley.",
         "All five Vowel Stones are glowing in your wand. But to break Miss Spell's curse completely, you must recite the Ancient Valley Sound Chant.",
-        "Are you ready? Repeat after me..."
+        "Come talk to me again whenever you're ready."
     };
 
     private PipHint pipHintSystem;
@@ -21,10 +30,15 @@ public class PipInteraction : MonoBehaviour, IInteractable
     // Track exact ending progression states
     private bool hasSaidHouseUCompletionInMapTest = false;
     private bool arrivedAtFountainFinale = false;
+    private bool hasTriggered = false; // Prevents the prompt from showing mid-dialogue
+    private bool playerInRange = false;
 
     void Start()
     {
         pipHintSystem = FindFirstObjectByType<PipHint>();
+
+        // Use the detection fallback logic instantly on start
+        FindPlayerFallback();
 
         if (pipPortrait == null && DialogueManager.Instance != null)
         {
@@ -37,6 +51,52 @@ public class PipInteraction : MonoBehaviour, IInteractable
             hasSaidHouseUCompletionInMapTest = true;
             arrivedAtFountainFinale = true;
         }
+
+        // Initialize Canvas state
+        if (promptCanvas != null)
+        {
+            promptCanvas.alpha = 0f;
+            promptCanvas.interactable = false;
+            promptCanvas.blocksRaycasts = false;
+        }
+    }
+
+    void Update()
+    {
+        // Continuously runs the fallback function in case the player spawns or updates dynamically
+        FindPlayerFallback();
+
+        // Mirrored range detection logic from NpcInteraction
+        if (player != null)
+        {
+            float distance = Vector3.Distance(transform.position, player.position);
+            playerInRange = distance <= interactionDistance;
+        }
+        else
+        {
+            playerInRange = false;
+        }
+
+        // Handle prompt fade in/out based on player distance
+        if (promptCanvas != null)
+        {
+            float targetAlpha = (playerInRange && !hasTriggered) ? 1f : 0f;
+            promptCanvas.alpha = Mathf.MoveTowards(promptCanvas.alpha, targetAlpha, fadeSpeed * Time.deltaTime);
+
+            bool visible = promptCanvas.alpha > 0.001f;
+            promptCanvas.interactable = visible;
+            promptCanvas.blocksRaycasts = visible;
+        }
+    }
+
+    // Exact detection method from your working NpcInteraction file
+    void FindPlayerFallback()
+    {
+        if (player == null)
+        {
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null) player = p.transform;
+        }
     }
 
     public void Interact()
@@ -48,6 +108,9 @@ public class PipInteraction : MonoBehaviour, IInteractable
         {
             return;
         }
+
+        // Hide the prompt once interaction starts
+        hasTriggered = true;
 
         // ============================================================
         // STEP 3: Pip is at the fountain AND has given instructions. START CHANT!
@@ -140,9 +203,14 @@ public class PipInteraction : MonoBehaviour, IInteractable
         }
 
         // Set up dialogue callbacks to safely execute flight mechanics cleanly after UI box disappears
+        // ============================================================
+        // Set up dialogue callbacks to safely execute actions after UI box disappears
+        // ============================================================
+        // Set up dialogue callbacks to safely execute flight mechanics cleanly after UI box disappears
         if (shouldTriggerFlight)
         {
             DialogueManager.Instance.OnDialogueEnd = () => {
+                ResetTriggerState();
                 if (!DialogueManager.HasPlayedPipIntroFinished)
                 {
                     DialogueManager.hasPlayedPipIntroFinished = true;
@@ -156,10 +224,51 @@ public class PipInteraction : MonoBehaviour, IInteractable
         }
         else
         {
-            DialogueManager.Instance.OnDialogueEnd = null;
+            DialogueManager.Instance.OnDialogueEnd = () => {
+                ResetTriggerState();
+
+                if (DialogueManager.Instance != null)
+                {
+                    DialogueManager.Instance.SetPlayerControlState(true);
+                }
+                else
+                {
+                    Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+                    if (activePlayer != null) activePlayer.canControl = true;
+                }
+            };
         }
 
-        DialogueManager.Instance.StartDialogue(pipName, lines, pipPortrait);
+        // ============================================================
+        // FIXED: Convert strings to DialogueLines and pass NULL for the camera
+        // =// This forces DialogueManager to drop House U's camera reference!
+        // ============================================================
+        if (DialogueManager.Instance != null)
+        {
+            System.Collections.Generic.List<DialogueLine> structuredLines = new System.Collections.Generic.List<DialogueLine>();
+            foreach (string textLine in lines)
+            {
+                DialogueLine newline = new DialogueLine();
+                newline.text = textLine;
+                // Matching your EndGameCutscene's structural design:
+                newline.speaker = Speaker.NPC;
+                structuredLines.Add(newline);
+            }
+
+            DialogueManager.Instance.StartDialogue(
+                structuredLines.ToArray(),
+                pipName,
+                pipPortrait,
+                null,                                  // No player portrait needed for Pip hints
+                null,                                  // PASSING NULL CLEARS THE CACHED HOUSE U CAMERA!
+                DialogueManager.Instance.OnDialogueEnd
+            );
+        }
+    } // This closes your Interact() method completely
+
+    private void ResetTriggerState()
+    {
+        hasTriggered = false;
     }
 
     private void TriggerFlightSequence(PipHint.HintObjective nextObjective, bool isFinale)
@@ -168,6 +277,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
 
         if (destinationTarget == null) return;
 
+        // Safely fetch script component context directly during execution frame only 
         Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
         if (activePlayer != null) activePlayer.canControl = false;
 

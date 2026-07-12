@@ -532,7 +532,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -9007041481734763087, guid: 6faf1938844272842b5b5ab3279150d7, type: 3}
+  - {fileID: 2100000, guid: 7e255a111ac7df04381b974c5705ad24, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2347,6 +2347,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Charactercontroller
   charModel: {fileID: 7965161897702096489}
+  characterVisualMesh: {fileID: 5314266694762630185}
+  cameraDistance: 5
+  minCameraDistance: 0.5
+  cameraHeightOffset: 1.5
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  cameraCollisionBuffer: 0.2
   canControl: 1
 --- !u!114 &3241797248199107878
 MonoBehaviour:
@@ -2489,7 +2497,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -7927649771804302890, guid: 6faf1938844272842b5b5ab3279150d7, type: 3}
+  - {fileID: 2100000, guid: f0921795882de324ab71b1e9835b96a7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

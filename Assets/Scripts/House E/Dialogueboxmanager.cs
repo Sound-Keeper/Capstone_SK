@@ -56,16 +56,39 @@ namespace BookChoice
         private bool pageWasFlipped = false;
         private UnityEngine.Events.UnityAction flipListener;
 
+        // --- CLICK TO SKIP & ADVANCE STATES ---
+        private bool isTyping = false;
+        private bool currentLineSkipped = false;
+        private bool userClickedNext = false;
+        private bool inputIsDisabled = false; // Prevents clicking during auto feedback sequences
+
         void Start()
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
-            // Cache the flip listener setup
             flipListener = () => { pageWasFlipped = true; };
 
             SetSpeakerUI(showJudge: true);
             PlayDialogueGroup(introDialogues, isJudge: true);
+        }
+
+        void Update()
+        {
+            if (inputIsDisabled) return;
+
+            // Listen for a left-mouse click or interaction button input
+            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Space))
+            {
+                if (isTyping)
+                {
+                    currentLineSkipped = true; // Skip typing to reveal whole text block
+                }
+                else
+                {
+                    userClickedNext = true; // Advance to the next line of dialogue
+                }
+            }
         }
 
         public void ShowFeedback(bool isCorrect, Action onWrongFinished = null)
@@ -85,7 +108,6 @@ namespace BookChoice
                 }
                 else
                 {
-                    // Start listening for a page flip immediately!
                     pageWasFlipped = false;
                     if (book != null) book.OnFlip.AddListener(flipListener);
 
@@ -147,7 +169,7 @@ namespace BookChoice
             foreach (string line in lines)
             {
                 yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(dialogueLineDelay);
+                yield return StartCoroutine(WaitUntilClick());
             }
         }
 
@@ -179,36 +201,37 @@ namespace BookChoice
             foreach (string line in finalDialogues)
             {
                 yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(dialogueLineDelay);
+                yield return StartCoroutine(WaitUntilClick());
             }
-
-            yield return new WaitForSeconds(0.5f);
 
             yield return StartCoroutine(TypeText("..."));
             if (continuebutton != null) continuebutton.gameObject.SetActive(true);
         }
 
+        // --- AUTOMATIC CORRECT SEQUENCE ---
         IEnumerator CorrectSequence()
         {
+            inputIsDisabled = true; // Disable click tracking completely for feedback execution
             SetSpeakerName(isJudge: false);
+
             foreach (string line in correctDialogues)
             {
                 yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(dialogueLineDelay);
+                yield return new WaitForSeconds(dialogueLineDelay); // Back to automatic timing
             }
 
             yield return new WaitForSeconds(0.5f);
 
             foreach (string line in nextStepDialogues)
             {
-                // If they've already flipped early, don't force them to read "Now flip the page."
                 if (pageWasFlipped) break;
 
                 yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(dialogueLineDelay);
+                yield return new WaitForSeconds(dialogueLineDelay); // Back to automatic timing
             }
 
-            // --- FIX: Safely wait for the flag instead of an active event window ---
+            inputIsDisabled = false; // Re-enable click requirements for the upcoming page flip block
+
             yield return new WaitUntil(() => pageWasFlipped);
 
             if (book != null)
@@ -221,13 +244,16 @@ namespace BookChoice
                 yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1]));
         }
 
+        // --- AUTOMATIC WRONG SEQUENCE ---
         IEnumerator WrongSequence(Action callback)
         {
+            inputIsDisabled = true; // Disable click tracking completely for feedback execution
             SetSpeakerName(isJudge: false);
+
             foreach (string line in wrongDialogues)
             {
                 yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(wrongDisplayDuration);
+                yield return new WaitForSeconds(wrongDisplayDuration); // Back to automatic timing
             }
 
             SetSpeakerUI(showJudge: true);
@@ -236,12 +262,12 @@ namespace BookChoice
             if (introDialogues.Length > 0)
                 yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1]));
 
+            inputIsDisabled = false; // Restore normal click requirements
             callback?.Invoke();
         }
 
         private void ResetAllActiveDialogues()
         {
-            // Clean up the book listener just in case they fail or clear sequences midway
             if (book != null) book.OnFlip.RemoveListener(flipListener);
 
             if (dialogueSequenceCoroutine != null)
@@ -250,6 +276,8 @@ namespace BookChoice
                 dialogueSequenceCoroutine = null;
             }
             StopCharacterPrinter();
+            isTyping = false;
+            inputIsDisabled = false;
         }
 
         private void StopCharacterPrinter()
@@ -266,6 +294,9 @@ namespace BookChoice
             StopCharacterPrinter();
             dialogueText.text = "";
 
+            isTyping = true;
+            currentLineSkipped = false;
+
             characterPrinterCoroutine = StartCoroutine(CoroutineObjectReferenceHolder(message));
             yield return characterPrinterCoroutine;
         }
@@ -274,10 +305,31 @@ namespace BookChoice
         {
             foreach (char letter in message)
             {
+                // Only skip via click if click inputs aren't disabled right now
+                if (currentLineSkipped && !inputIsDisabled)
+                {
+                    dialogueText.text = message;
+                    break;
+                }
+
                 dialogueText.text += letter;
                 yield return new WaitForSeconds(typingSpeed);
             }
+
+            isTyping = false;
             characterPrinterCoroutine = null;
+
+            yield return null;
+            userClickedNext = false;
+        }
+
+        private IEnumerator WaitUntilClick()
+        {
+            while (!userClickedNext)
+            {
+                yield return null;
+            }
+            userClickedNext = false;
         }
 
         private void SetSpeakerUI(bool showJudge)

@@ -223,6 +223,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Charactercontroller
   charModel: {fileID: 4716087367721669920}
+  characterVisualMesh: {fileID: 2827775352853933135}
+  cameraDistance: 5
+  minCameraDistance: 0.5
+  cameraHeightOffset: 1.5
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  cameraCollisionBuffer: 0.2
   canControl: 1
 --- !u!114 &5077591140795145594
 MonoBehaviour:
@@ -243,7 +251,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   itemRadiusOffset: 0.4
-  holdParticle: {fileID: 0}
+  holdParticle: {fileID: 5608940961891377408}
 --- !u!114 &-923851444562756633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,7 +394,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -8754580782591365834, guid: 3d1b6c555d23d7b4d96c640056435120, type: 3}
+  - {fileID: -8754580782591365834, guid: 1709bfe19ef2e2d45bc32aac259c9265, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1000,7 +1008,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0fbd9e793a7ac58439012e00907e2c27, type: 2}
+  - {fileID: 2100000, guid: bd233126b3fb38b489294e9f32a19407, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1371,7 +1379,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7e255a111ac7df04381b974c5705ad24, type: 2}
+  - {fileID: 7072817484877255331, guid: 375569ec6f409184c9fbe30e015ce2d3, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2179,7 +2187,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 862bcf0d321b54d4da3ca393fff0b951, type: 2}
+  - {fileID: 2284181399591005250, guid: 375569ec6f409184c9fbe30e015ce2d3, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3183,7 +3191,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f0921795882de324ab71b1e9835b96a7, type: 2}
+  - {fileID: 2359693267867395940, guid: 375569ec6f409184c9fbe30e015ce2d3, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
