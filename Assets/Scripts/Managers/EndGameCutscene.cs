@@ -28,6 +28,29 @@ public class EndGameCutscene : MonoBehaviour
     public GameObject pipOwlVisual;
     [Tooltip("The human Archmage prefab model inside Pip (turned OFF by default).")]
     public GameObject pipArchmageVisual;
+    [Tooltip("Drag the Archmage's UI portrait sprite here.")]
+    public Sprite archmagePortrait;
+
+    [Header("Miss Spell Disappearance Setup")]
+    [Tooltip("Drag the Miss Spell GameObject/Prefab instance here.")]
+    public GameObject missSpellGameObject;
+    [Tooltip("A dedicated camera focused on Miss Spell during her defeat.")]
+    public Camera missSpellCamera;
+    [Tooltip("The particle system that plays when Miss Spell disappears.")]
+    public ParticleSystem missSpellDisappearParticles;
+    [Tooltip("How long to stay on Miss Spell's camera to watch the particles blow away before switching to the Archmage.")]
+    public float missSpellCutsceneDelay = 2.0f;
+
+    // ============================================================
+    // NEW: MISS SPELL LIGHT CONTROLS
+    // ============================================================
+    [Header("Miss Spell Light Controls")]
+    [Tooltip("First light to change color during Miss Spell's vanish sequence.")]
+    public Light missSpellLight1;
+    [Tooltip("Second light to change color during Miss Spell's vanish sequence.")]
+    public Light missSpellLight2;
+    [Tooltip("The color the lights will change to when Miss Spell vanishes.")]
+    public Color missSpellTargetColor = Color.magenta;
 
     [Header("Inspector Editable Dialogues")]
     [Tooltip("The lines of the ritual chant spoken by the Player.")]
@@ -40,8 +63,8 @@ public class EndGameCutscene : MonoBehaviour
     };
 
     [Header("Post-Transformation Dialogue")]
-    [Tooltip("Pip's celebration text after the daylight transformation happens.")]
-    public List<string> pipCelebrationLines = new List<string> {
+    [Tooltip("Archmage's celebration text after Miss Spell vanishes.")]
+    public List<string> archmageCelebrationLines = new List<string> {
         "Look! The mush-mush curse is breaking! The sky... the light is back!",
         "Fantastic work, {player}! You saved the vowels, and you saved our home!",
         "You are officially the greatest Sound Keeper Word Valley has ever seen!"
@@ -56,10 +79,11 @@ public class EndGameCutscene : MonoBehaviour
 
         if (fountainSpotlight != null)
         {
-            fountainSpotlight.gameObject.SetActive(true); // Keep active but set intensity to 0
+            fountainSpotlight.gameObject.SetActive(true);
             fountainSpotlight.intensity = 0f;
         }
         if (spotlightCamera != null) spotlightCamera.gameObject.SetActive(false);
+        if (missSpellCamera != null) missSpellCamera.gameObject.SetActive(false);
     }
 
     public void StartFountainRitual()
@@ -114,13 +138,12 @@ public class EndGameCutscene : MonoBehaviour
         }
 
         // ============================================================
-        // PHASE 2: Divine Spotlight Camera & Intensity Ramp (0 -> 8000 over 5s)
+        // PHASE 2: Divine Spotlight Camera & Intensity Ramp (Divine Light)
         // ============================================================
         if (spotlightCamera != null) spotlightCamera.gameObject.SetActive(true);
 
         if (fountainSpotlight != null)
         {
-            // CHANGED: Duration extended to 5.0f seconds
             float duration = 5.0f;
             float elapsed = 0f;
 
@@ -133,37 +156,76 @@ public class EndGameCutscene : MonoBehaviour
             fountainSpotlight.intensity = 8000f;
         }
 
-        // --- HIDDEN TRANSFORMATION HAPPENS HERE AT MAXIMUM FLASH BLINDNESS ---
+        // ============================================================
+        // PHASE 3: Pip turns into Archmage + Daylight Transformation
+        // ============================================================
         ExecutePipHumanTransformation();
-
         TriggerDaylightTransformation();
         yield return new WaitForSeconds(1.0f);
 
-        // Turn off spotlight and its dedicated camera
         if (fountainSpotlight != null) fountainSpotlight.intensity = 0f;
         if (spotlightCamera != null) spotlightCamera.gameObject.SetActive(false);
 
-        // Bring back the main cutscene camera view for Pip's reaction
+        // ============================================================
+        // PHASE 4: Miss Spell Vanish Sequence (With Camera & Light Change)
+        // ============================================================
+        // 1. Turn on Miss Spell's camera
+        if (missSpellCamera != null) missSpellCamera.gameObject.SetActive(true);
+
+        // 2. NEW: Change the color of the two designated lights
+        if (missSpellLight1 != null) missSpellLight1.color = missSpellTargetColor;
+        if (missSpellLight2 != null) missSpellLight2.color = missSpellTargetColor;
+
+        if (missSpellGameObject != null)
+        {
+            // 3. Play particles
+            if (missSpellDisappearParticles != null)
+            {
+                missSpellDisappearParticles.transform.position = missSpellGameObject.transform.position;
+                missSpellDisappearParticles.Play();
+            }
+
+            // 4. Brief hold so the camera sees her right as particles flash
+            yield return new WaitForSeconds(0.1f);
+
+            // 5. Turn Miss Spell off
+            missSpellGameObject.SetActive(false);
+            Debug.Log("[EndGameCutscene] Miss Spell vanished! Lights updated to new color.");
+
+            // Hold camera frame for the remainder of the timer
+            yield return new WaitForSeconds(Mathf.Max(0.1f, missSpellCutsceneDelay - 0.1f));
+        }
+        else
+        {
+            yield return new WaitForSeconds(missSpellCutsceneDelay);
+        }
+
+        // Turn off Miss Spell's camera before shifting to dialogue
+        if (missSpellCamera != null) missSpellCamera.gameObject.SetActive(false);
+
+        // Bring back the cutscene camera view focused on the Archmage
         if (DialogueManager.Instance.pipCutsceneCamera != null)
         {
             DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(true);
         }
 
         // ============================================================
-        // PHASE 3: Celebration dialogue post-transformation
+        // PHASE 5: Archmage Talking (Celebration Dialogue)
         // ============================================================
         bool celebrationDone = false;
 
-        Sprite finalPipFace = null;
-        PipInteraction activePipScript = FindFirstObjectByType<PipInteraction>();
-        if (activePipScript != null) finalPipFace = activePipScript.pipPortrait;
-        if (finalPipFace == null && DialogueManager.Instance != null) finalPipFace = DialogueManager.Instance.pipIntroPortrait;
+        Sprite finalSpeakerFace = archmagePortrait;
+        if (finalSpeakerFace == null && DialogueManager.Instance != null)
+            finalSpeakerFace = DialogueManager.Instance.pipIntroPortrait;
 
-        DialogueManager.Instance.StartDialogue("Pip", pipCelebrationLines.ToArray(), finalPipFace);
+        DialogueManager.Instance.StartDialogue("Archmage", archmageCelebrationLines.ToArray(), finalSpeakerFace);
         DialogueManager.Instance.OnDialogueEnd = () => celebrationDone = true;
 
         while (!celebrationDone) yield return null;
 
+        // ============================================================
+        // PHASE 6: Clean up and Restore Control
+        // ============================================================
         if (DialogueManager.Instance.pipCutsceneCamera != null) DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(false);
         if (Camera.main != null) Camera.main.gameObject.SetActive(true);
 
@@ -173,17 +235,14 @@ public class EndGameCutscene : MonoBehaviour
 
     private void ExecutePipHumanTransformation()
     {
-        // 1. Play the smoke blast right at Pip's feet
         if (transformationSmoke != null)
         {
             transformationSmoke.Play();
         }
 
-        // 2. Swap Visual Prefabs
         if (pipOwlVisual != null) pipOwlVisual.SetActive(false);
         if (pipArchmageVisual != null) pipArchmageVisual.SetActive(true);
 
-        // 3. Adjust flight systems
         if (pipGameObject != null)
         {
             PipFly pipFlightSystem = pipGameObject.GetComponent<PipFly>();

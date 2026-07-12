@@ -53264,8 +53264,7 @@ MonoBehaviour:
   fadeSpeed: 5
   promptCanvas: {fileID: 607862304}
   hints:
-  - Hoo! Say the word slowly out loud, Sound Keeper. Which sound comes first? Which
-    comes last? Let the sounds lead your letters.
+  - Hoo! Maybe the picture on the top left has something to do with the missing word.
   completionLine: Good job! Now talk to Penny Cil.
   houseLetter: I
 --- !u!135 &1171105449
