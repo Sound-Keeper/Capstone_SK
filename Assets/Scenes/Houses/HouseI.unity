@@ -8599,6 +8599,8 @@ MonoBehaviour:
   puzzleManager: {fileID: 299667049}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!1001 &210641520
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29755,6 +29757,8 @@ MonoBehaviour:
   puzzleManager: {fileID: 299667049}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!1001 &550163306
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31527,6 +31531,7 @@ GameObject:
   m_Component:
   - component: {fileID: 576175570}
   - component: {fileID: 576175569}
+  - component: {fileID: 576175571}
   m_Layer: 0
   m_Name: VowelStone
   m_TagString: Untagged
@@ -31555,6 +31560,7 @@ MonoBehaviour:
   spinSpeed: 180
   stoneVisual: {fileID: 1561959768}
   shineEffect: {fileID: 2125214863}
+  rewardSFX: {fileID: 8300000, guid: 2a38749fab0c6914eb2db3a92e1ae8d9, type: 3}
   blockingVine: {fileID: 1937235455}
   hintmap: {fileID: 133324136}
   questCompletedPanel: {fileID: 469894029}
@@ -31562,7 +31568,19 @@ MonoBehaviour:
   uiHoldDuration: 2.5
   OnRewardFinished:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 576175571}
+        m_TargetAssemblyTypeName: WordMeaning, Assembly-CSharp
+        m_MethodName: PlayRewardDialogue
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &576175570
 Transform:
   m_ObjectHideFlags: 0
@@ -31581,6 +31599,22 @@ Transform:
   - {fileID: 2125214864}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -39.677, z: 0}
+--- !u!114 &576175571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576175568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b86606dc3457c04690d58364892635a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WordMeaning
+  definitions:
+  - wordName: Island
+    wordMeaning: /EYE-lund/ - a piece of land surrounded by water
+    definitionSFX: {fileID: 8300000, guid: 6806d173f39073d43b0b665b682400a6, type: 3}
 --- !u!1 &578759642
 GameObject:
   m_ObjectHideFlags: 0
@@ -35342,6 +35376,8 @@ MonoBehaviour:
   puzzleManager: {fileID: 299667049}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!1001 &655367378
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -79197,6 +79233,8 @@ MonoBehaviour:
   puzzleManager: {fileID: 299667049}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!1 &1765926529
 GameObject:
   m_ObjectHideFlags: 0
@@ -82094,6 +82132,8 @@ MonoBehaviour:
   puzzleManager: {fileID: 299667049}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!1 &1835868664
 GameObject:
   m_ObjectHideFlags: 0
@@ -90961,6 +91001,8 @@ MonoBehaviour:
   puzzleManager: {fileID: 299667049}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!1 &2095308389
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,12 +22,17 @@ public class MagicWandReward : MonoBehaviour
     public Transform wandVisual;
     public ParticleSystem shineEffect;
 
+    [Header("Audio")]
+    [Tooltip("Drag the custom audio/voiceover clip for this specific word here (Optional).")]
+    public AudioClip wandreward;
+
     [Header("Events")]
     public UnityEvent OnWandCollected;
 
     private Camera previousCamera;
     private Charactercontroller cc;
     private bool isMoving = false;
+
 
     void Awake()
     {
@@ -53,6 +59,8 @@ public class MagicWandReward : MonoBehaviour
     IEnumerator CutsceneRoutine(System.Action onSequenceFinished)
     {
         minimapUI.SetActive(false);
+        AudioSource bgmSource = FindFirstObjectByType<CoreAudioManager>()?.GetComponentInChildren<AudioSource>();
+        float precutscenevol = bgmSource.volume;
         // 1. Setup Camera and Freeze Player
         if (rewardCamera != null)
         {
@@ -83,7 +91,7 @@ public class MagicWandReward : MonoBehaviour
         isMoving = true;
 
         Vector3 targetPos = player != null ? player.position + Vector3.up * 1.2f : initialPos;
-
+        CoreAudioManager.FadeOutBGM(2.0f);
         while (elapsed < moveDuration)
         {
             elapsed += Time.deltaTime;
@@ -95,6 +103,8 @@ public class MagicWandReward : MonoBehaviour
             KeepCameraFocused();
             yield return null;
         }
+        CoreAudioManager.PlaySFX(wandreward);
+        CoreAudioManager.FadeInBGM(precutscenevol, 3.0f);
         isMoving = false;
 
         // Save progress if you track a global bool for the wand
@@ -114,6 +124,7 @@ public class MagicWandReward : MonoBehaviour
         onSequenceFinished?.Invoke(); // Resumes dialogue manager flow execution
         minimapUI.SetActive(true);
     }
+
 
     void SpinObject()
     {

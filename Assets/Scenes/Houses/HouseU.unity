@@ -2178,6 +2178,10 @@ MonoBehaviour:
   choicesContainer: {fileID: 1941785983}
   correctLetter: A
   customSignTargetSlot: {fileID: 1587110247}
+  definitions:
+  - wordName: Mountain
+    wordMeaning: /MAWN-tin/ - a very high hill with a peak
+    definitionSFX: {fileID: 8300000, guid: ec5caed39a6cf7f4abfe42304875cd60, type: 3}
 --- !u!65 &111473487
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5899,16 +5903,12 @@ MonoBehaviour:
   vinesA: {fileID: 0}
   stoneE: {fileID: 0}
   vinesE: {fileID: 0}
-  boundingboxE: {fileID: 0}
   stoneI: {fileID: 0}
   vinesI: {fileID: 0}
-  boundingboxI: {fileID: 0}
   stoneO: {fileID: 0}
   vinesO: {fileID: 0}
-  boundingboxO: {fileID: 0}
   stoneU: {fileID: 0}
   vinesU: {fileID: 2013069838}
-  boundingboxU: {fileID: 0}
   spinSpeed: 60
 --- !u!1001 &314968146
 PrefabInstance:
@@ -7857,6 +7857,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   itemRadiusOffset: 0.25
   holdParticle: {fileID: 0}
+  pickupSFX: {fileID: 0}
 --- !u!1001 &397397910
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8084,6 +8085,271 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 94696ad060c91df42821e67ecefbdd17, type: 3}
   m_PrefabInstance: {fileID: 541697672}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &399980901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 399980905}
+  - component: {fileID: 399980904}
+  - component: {fileID: 399980903}
+  - component: {fileID: 399980902}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &399980902
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399980901}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: -1815798239528864442, guid: 686fa48a202441a4d8f70e325a9641bd, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &399980903
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399980901}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 6664662782573280049, guid: 686fa48a202441a4d8f70e325a9641bd, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &399980904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399980901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d43f83845a94a06429e0163b27dabe44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoreAudioManager
+  audioMixer: {fileID: 24100000, guid: 686fa48a202441a4d8f70e325a9641bd, type: 2}
+  bgmSource: {fileID: 399980903}
+  sfxSource: {fileID: 399980902}
+  playlist:
+  - sceneName: FirstMenu
+    bgmClip: {fileID: 8300000, guid: ff35ac942fce1054ba672bb15903d43e, type: 3}
+  - sceneName: SecondMenu
+    bgmClip: {fileID: 8300000, guid: ff35ac942fce1054ba672bb15903d43e, type: 3}
+  - sceneName: Settings
+    bgmClip: {fileID: 8300000, guid: ff35ac942fce1054ba672bb15903d43e, type: 3}
+  - sceneName: CharacterSelection
+    bgmClip: {fileID: 8300000, guid: ff35ac942fce1054ba672bb15903d43e, type: 3}
+  - sceneName: MapTest
+    bgmClip: {fileID: 8300000, guid: bc8d09bf5ac01d34090d425ccfba00b6, type: 3}
+  - sceneName: HouseA
+    bgmClip: {fileID: 8300000, guid: ca949514a0ebe1d41b1adb6a01c3cf68, type: 3}
+  - sceneName: HouseE
+    bgmClip: {fileID: 8300000, guid: f075745ca099e4b47b26b284a6339e5f, type: 3}
+  - sceneName: HouseI
+    bgmClip: {fileID: 8300000, guid: e3ade88bd08a913469cf8b0c060fe390, type: 3}
+  - sceneName: HouseO
+    bgmClip: {fileID: 8300000, guid: 912c12eb767629f49be37d84fd4e2970, type: 3}
+  - sceneName: HouseU
+    bgmClip: {fileID: 8300000, guid: 27faa612f59cee34d8b6b2f6fbad7986, type: 3}
+  fadeDuration: 0.5
+--- !u!4 &399980905
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399980901}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &404775854 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f3fbfc9a5dc284c43a12dc5b5783f829, type: 3}
@@ -11477,6 +11743,10 @@ MonoBehaviour:
   choicesContainer: {fileID: 956661271}
   correctLetter: C
   customSignTargetSlot: {fileID: 1215950939}
+  definitions:
+  - wordName: Business
+    wordMeaning: /BIZ-niss/ - a place or company where people sell goods or services
+    definitionSFX: {fileID: 8300000, guid: 221a3fb76b2a22245a31eb388bb9c118, type: 3}
 --- !u!65 &645819851
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -37818,6 +38088,7 @@ MonoBehaviour:
   spinSpeed: 180
   stoneVisual: {fileID: 1622232098}
   shineEffect: {fileID: 864337357}
+  rewardSFX: {fileID: 8300000, guid: 2a38749fab0c6914eb2db3a92e1ae8d9, type: 3}
   blockingVine: {fileID: 2013069838}
   hintmap: {fileID: 0}
   questCompletedPanel: {fileID: 1820204771}
@@ -42573,7 +42844,6 @@ MonoBehaviour:
   associatedHouse: 4
   autoPlayWhenSolved: 1
   autoPlayDelay: 1.5
-  houseLetter: U
 --- !u!136 &1931993524
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -48469,6 +48739,10 @@ MonoBehaviour:
   choicesContainer: {fileID: 1458028720}
   correctLetter: C
   customSignTargetSlot: {fileID: 1038016665}
+  definitions:
+  - wordName: Unicorn
+    wordMeaning: /YOO-nih-korn/ - a magical horse with one horn on its forehead
+    definitionSFX: {fileID: 8300000, guid: 7cddae81ec2905344a83fe1149bdf077, type: 3}
 --- !u!65 &2132877472
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -50141,3 +50415,4 @@ SceneRoots:
   - {fileID: 419315061}
   - {fileID: 1586891364}
   - {fileID: 2004609371}
+  - {fileID: 399980905}

@@ -12,7 +12,6 @@ namespace BookChoice
         public enum HouseType { HouseE, HouseO, HouseA, HouseI, HouseU }
 
         [Header("House Settings")]
-        [Tooltip("Select which house this specific scene belongs to.")]
         public HouseType currentHouse = HouseType.HouseE;
 
         [Header("UI References")]
@@ -22,22 +21,42 @@ namespace BookChoice
         public GameObject judge;
         public Button continuebutton;
 
+        [Header("Dialogue Flow Indicator")]
+        [Tooltip("Assign an icon/image here that blinks ONLY when there is MORE text following it.")]
+        public GameObject nextLineIndicator;
+        public float indicatorBlinkSpeed = 0.4f;
+
         [Header("Vowel Stone Reference")]
-        [Tooltip("Drag the VowelStone GameObject containing the VowelStoneCutscene script here.")]
         public VowelStoneCutscene stoneCutscene;
 
         [Header("NPC Dialogue Arrays")]
-        public string[] introDialogues = { "Welcome to the trial of vowels.", "Choose the correct verb to proceed." };
-        public string[] correctDialogues = { "That's correct! Great job!", "Your linguistic skills are sharp." };
-        public string[] wrongDialogues = { "Oops! Try again.", "That syntax doesn't seem quite right..." };
-        public string[] nextStepDialogues = { "Splendid.", "Now flip the page." };
+        public string[] introDialogues;
+
+        [Tooltip("Pip's initial reaction text before explaining the definition.")]
+        public string correctFeedbackGreeting = "That's correct! Great job!";
+
+        public string[] wrongDialogues;
+        public string[] nextStepDialogues;
 
         [Header("Extra Messages")]
-        public string[] finalDialogues = { "Good job, you have finished my puzzle.", "You have proven your worth." };
+        public string[] finalDialogues;
+
+        [Header("House E Word Meanings & Audio")]
+        [TextArea(2, 4)] public string answer1MeaningText = "Definition for the first correct verb goes here...";
+        public AudioClip answer1MeaningSFX;
+
+        [Space]
+        [TextArea(2, 4)] public string answer2MeaningText = "Definition for the second correct verb goes here...";
+        public AudioClip answer2MeaningSFX;
+
+        // ─── NEW WRONG FEEDBACK SFX SLOT ─────────────────────────────────────────────
+        [Space]
+        [Tooltip("Drag your custom 'Oops! Try again' incorrect buzz/error sound effect here.")]
+        public AudioClip wrongFeedbackSFX;
+        // ─────────────────────────────────────────────────────────────────────────────
 
         [Header("Timing")]
         public float wrongDisplayDuration = 1.5f;
-        public float dialogueLineDelay = 2.0f;
 
         [Header("Typing Settings")]
         public float typingSpeed = 0.05f;
@@ -47,20 +66,19 @@ namespace BookChoice
 
         private Coroutine dialogueSequenceCoroutine;
         private Coroutine characterPrinterCoroutine;
+        private Coroutine blinkCoroutine;
 
         public bool puzzleCompleted = false;
         private int correctCount = 0;
         public int totalRequiredCorrect = 2;
 
-        // --- TRACK EARLY FLIPS ---
         private bool pageWasFlipped = false;
         private UnityEngine.Events.UnityAction flipListener;
 
-        // --- CLICK TO SKIP & ADVANCE STATES ---
         private bool isTyping = false;
         private bool currentLineSkipped = false;
         private bool userClickedNext = false;
-        private bool inputIsDisabled = false; // Prevents clicking during auto feedback sequences
+        private bool inputIsDisabled = false;
 
         void Start()
         {
@@ -68,6 +86,8 @@ namespace BookChoice
             Cursor.visible = true;
 
             flipListener = () => { pageWasFlipped = true; };
+
+            if (nextLineIndicator != null) nextLineIndicator.SetActive(false);
 
             SetSpeakerUI(showJudge: true);
             PlayDialogueGroup(introDialogues, isJudge: true);
@@ -77,16 +97,15 @@ namespace BookChoice
         {
             if (inputIsDisabled) return;
 
-            // Listen for a left-mouse click or interaction button input
             if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Space))
             {
                 if (isTyping)
                 {
-                    currentLineSkipped = true; // Skip typing to reveal whole text block
+                    currentLineSkipped = true;
                 }
                 else
                 {
-                    userClickedNext = true; // Advance to the next line of dialogue
+                    userClickedNext = true;
                 }
             }
         }
@@ -97,14 +116,13 @@ namespace BookChoice
 
             if (isCorrect)
             {
-                SetSpeakerUI(showJudge: false);
                 correctCount++;
 
                 if (correctCount >= totalRequiredCorrect)
                 {
                     puzzleCompleted = true;
                     ApplyHouseCompletionFlags();
-                    FinalSequence();
+                    dialogueSequenceCoroutine = StartCoroutine(Answer2Sequence());
                 }
                 else
                 {
@@ -130,26 +148,6 @@ namespace BookChoice
                     PuzzleProgress.HouseEComplete = true;
                     PuzzleProgress.HasVowelEStone = true;
                     break;
-                case HouseType.HouseO:
-                    PuzzleProgress.HouseOSolved = true;
-                    PuzzleProgress.HouseOComplete = true;
-                    PuzzleProgress.HasVowelOStone = true;
-                    break;
-                case HouseType.HouseA:
-                    PuzzleProgress.HouseASolved = true;
-                    PuzzleProgress.HouseAComplete = true;
-                    PuzzleProgress.HasVowelAStone = true;
-                    break;
-                case HouseType.HouseI:
-                    PuzzleProgress.HouseISolved = true;
-                    PuzzleProgress.HouseIComplete = true;
-                    PuzzleProgress.HasVowelIStone = true;
-                    break;
-                case HouseType.HouseU:
-                    PuzzleProgress.HouseUSolved = true;
-                    PuzzleProgress.HouseUComplete = true;
-                    PuzzleProgress.HasVowelUStone = true;
-                    break;
             }
         }
 
@@ -166,15 +164,73 @@ namespace BookChoice
         {
             if (lines == null || lines.Length == 0) yield break;
 
-            foreach (string line in lines)
+            for (int i = 0; i < lines.Length; i++)
             {
-                yield return StartCoroutine(TypeText(line));
+                bool hasMoreLines = i < lines.Length - 1;
+                yield return StartCoroutine(TypeText(lines[i], hasMoreLines));
                 yield return StartCoroutine(WaitUntilClick());
             }
         }
 
-        private void FinalSequence()
+        IEnumerator CorrectSequence()
         {
+            SetSpeakerUI(showJudge: false);
+            SetSpeakerName(isJudge: false);
+
+            if (answer1MeaningSFX != null) CoreAudioManager.PlaySFX(answer1MeaningSFX);
+
+            yield return StartCoroutine(TypeText(correctFeedbackGreeting, showIndicator: true));
+            yield return StartCoroutine(WaitUntilClick());
+
+            if (!string.IsNullOrEmpty(answer1MeaningText))
+            {
+                SetSpeakerUI(showJudge: true);
+                SetSpeakerName(isJudge: true);
+
+                yield return StartCoroutine(TypeText(answer1MeaningText, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+            }
+
+            SetSpeakerUI(showJudge: false);
+            SetSpeakerName(isJudge: false);
+
+            for (int i = 0; i < nextStepDialogues.Length; i++)
+            {
+                if (pageWasFlipped) break;
+
+                bool hasMoreLines = i < nextStepDialogues.Length - 1;
+                yield return StartCoroutine(TypeText(nextStepDialogues[i], hasMoreLines));
+                yield return StartCoroutine(WaitUntilClick());
+            }
+
+            yield return new WaitUntil(() => pageWasFlipped);
+
+            if (book != null)
+                book.OnFlip.RemoveListener(flipListener);
+
+            SetSpeakerUI(showJudge: true);
+            SetSpeakerName(isJudge: true);
+
+            if (introDialogues.Length > 0)
+                yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1], showIndicator: false));
+        }
+
+        IEnumerator Answer2Sequence()
+        {
+            SetSpeakerUI(showJudge: false);
+            SetSpeakerName(isJudge: false);
+
+            if (answer2MeaningSFX != null) CoreAudioManager.PlaySFX(answer2MeaningSFX);
+
+            yield return StartCoroutine(TypeText(correctFeedbackGreeting, showIndicator: true));
+            yield return StartCoroutine(WaitUntilClick());
+
+            SetSpeakerUI(showJudge: true);
+            SetSpeakerName(isJudge: true);
+
+            yield return StartCoroutine(TypeText(answer2MeaningText, showIndicator: false));
+            yield return StartCoroutine(WaitUntilClick());
+
             if (stoneCutscene != null)
             {
                 stoneCutscene.PlayCutscene();
@@ -183,6 +239,34 @@ namespace BookChoice
             {
                 StartFinalDialogueSequence();
             }
+        }
+
+        // --- UPDATED WRONG SEQUENCE WITH AUDIO ---
+        IEnumerator WrongSequence(Action callback)
+        {
+            inputIsDisabled = true;
+            SetSpeakerName(isJudge: false);
+
+            // --- NEW: Play wrong sound instantly at the exact millisecond Pip pops up ---
+            if (wrongFeedbackSFX != null)
+            {
+                CoreAudioManager.PlaySFX(wrongFeedbackSFX);
+            }
+
+            foreach (string line in wrongDialogues)
+            {
+                yield return StartCoroutine(TypeText(line, showIndicator: false));
+                yield return new WaitForSeconds(wrongDisplayDuration);
+            }
+
+            SetSpeakerUI(showJudge: true);
+            SetSpeakerName(isJudge: true);
+
+            if (introDialogues.Length > 0)
+                yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1], showIndicator: false));
+
+            inputIsDisabled = false;
+            callback?.Invoke();
         }
 
         public void StartFinalDialogueSequence()
@@ -198,72 +282,15 @@ namespace BookChoice
             SetSpeakerUI(showJudge: true);
             SetSpeakerName(isJudge: true);
 
-            foreach (string line in finalDialogues)
+            for (int i = 0; i < finalDialogues.Length; i++)
             {
-                yield return StartCoroutine(TypeText(line));
+                bool hasMoreLines = i < finalDialogues.Length - 1;
+                yield return StartCoroutine(TypeText(finalDialogues[i], hasMoreLines));
                 yield return StartCoroutine(WaitUntilClick());
             }
 
-            yield return StartCoroutine(TypeText("..."));
+            yield return StartCoroutine(TypeText("...", showIndicator: false));
             if (continuebutton != null) continuebutton.gameObject.SetActive(true);
-        }
-
-        // --- AUTOMATIC CORRECT SEQUENCE ---
-        IEnumerator CorrectSequence()
-        {
-            inputIsDisabled = true; // Disable click tracking completely for feedback execution
-            SetSpeakerName(isJudge: false);
-
-            foreach (string line in correctDialogues)
-            {
-                yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(dialogueLineDelay); // Back to automatic timing
-            }
-
-            yield return new WaitForSeconds(0.5f);
-
-            foreach (string line in nextStepDialogues)
-            {
-                if (pageWasFlipped) break;
-
-                yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(dialogueLineDelay); // Back to automatic timing
-            }
-
-            inputIsDisabled = false; // Re-enable click requirements for the upcoming page flip block
-
-            yield return new WaitUntil(() => pageWasFlipped);
-
-            if (book != null)
-                book.OnFlip.RemoveListener(flipListener);
-
-            SetSpeakerUI(showJudge: true);
-            SetSpeakerName(isJudge: true);
-
-            if (introDialogues.Length > 0)
-                yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1]));
-        }
-
-        // --- AUTOMATIC WRONG SEQUENCE ---
-        IEnumerator WrongSequence(Action callback)
-        {
-            inputIsDisabled = true; // Disable click tracking completely for feedback execution
-            SetSpeakerName(isJudge: false);
-
-            foreach (string line in wrongDialogues)
-            {
-                yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(wrongDisplayDuration); // Back to automatic timing
-            }
-
-            SetSpeakerUI(showJudge: true);
-            SetSpeakerName(isJudge: true);
-
-            if (introDialogues.Length > 0)
-                yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1]));
-
-            inputIsDisabled = false; // Restore normal click requirements
-            callback?.Invoke();
         }
 
         private void ResetAllActiveDialogues()
@@ -276,6 +303,7 @@ namespace BookChoice
                 dialogueSequenceCoroutine = null;
             }
             StopCharacterPrinter();
+            StopBlinking();
             isTyping = false;
             inputIsDisabled = false;
         }
@@ -289,23 +317,23 @@ namespace BookChoice
             }
         }
 
-        IEnumerator TypeText(string message)
+        IEnumerator TypeText(string message, bool showIndicator)
         {
             StopCharacterPrinter();
+            StopBlinking();
             dialogueText.text = "";
 
             isTyping = true;
             currentLineSkipped = false;
 
-            characterPrinterCoroutine = StartCoroutine(CoroutineObjectReferenceHolder(message));
+            characterPrinterCoroutine = StartCoroutine(CoroutineObjectReferenceHolder(message, showIndicator));
             yield return characterPrinterCoroutine;
         }
 
-        private IEnumerator CoroutineObjectReferenceHolder(string message)
+        private IEnumerator CoroutineObjectReferenceHolder(string message, bool showIndicator)
         {
             foreach (char letter in message)
             {
-                // Only skip via click if click inputs aren't disabled right now
                 if (currentLineSkipped && !inputIsDisabled)
                 {
                     dialogueText.text = message;
@@ -319,6 +347,11 @@ namespace BookChoice
             isTyping = false;
             characterPrinterCoroutine = null;
 
+            if (!inputIsDisabled && showIndicator)
+            {
+                StartBlinking();
+            }
+
             yield return null;
             userClickedNext = false;
         }
@@ -330,6 +363,38 @@ namespace BookChoice
                 yield return null;
             }
             userClickedNext = false;
+            StopBlinking();
+        }
+
+        private void StartBlinking()
+        {
+            if (nextLineIndicator == null) return;
+            StopBlinking();
+            blinkCoroutine = StartCoroutine(BlinkRoutine());
+        }
+
+        private void StopBlinking()
+        {
+            if (blinkCoroutine != null)
+            {
+                StopCoroutine(blinkCoroutine);
+                blinkCoroutine = null;
+            }
+            if (nextLineIndicator != null)
+            {
+                nextLineIndicator.SetActive(false);
+            }
+        }
+
+        private IEnumerator BlinkRoutine()
+        {
+            while (true)
+            {
+                nextLineIndicator.SetActive(true);
+                yield return new WaitForSeconds(indicatorBlinkSpeed);
+                nextLineIndicator.SetActive(false);
+                yield return new WaitForSeconds(indicatorBlinkSpeed);
+            }
         }
 
         private void SetSpeakerUI(bool showJudge)

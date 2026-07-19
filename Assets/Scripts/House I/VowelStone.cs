@@ -26,7 +26,10 @@ public class VowelStone : MonoBehaviour
     public Transform stoneVisual;
     public ParticleSystem shineEffect;
 
-    // --- NEW PROPERTY FOR THE VINES ---
+    [Header("Audio")]
+    [Tooltip("Drag the big 'Puzzle Completed' victory fan-fare sound effect here!")]
+    public AudioClip rewardSFX;
+
     [Header("Blocked Progress Vines")]
     [Tooltip("The vine GameObject that should disappear when this stone is unlocked.")]
     public GameObject blockingVine;
@@ -45,6 +48,9 @@ public class VowelStone : MonoBehaviour
     private Charactercontroller cc;
     private Vector3 startPosition;
 
+    // We track the exact pre-fade volume to safely restore it later
+    public static float PreCutsceneVolume { get; private set; } = 1f;
+
     void Awake()
     {
         startPosition = transform.position;
@@ -57,8 +63,6 @@ public class VowelStone : MonoBehaviour
 
     void Start()
     {
-        // Infinite background behavior: If this object is already active in a saved state,
-        // keep it spinning even when a cutscene isn't actively running.
         StartCoroutine(InfiniteSpinAndFXRoutine());
     }
 
@@ -83,7 +87,7 @@ public class VowelStone : MonoBehaviour
         {
             hintmap.SetActive(false);
         }
-        // 1. Setup Camera and Freeze Player
+
         if (rewardCamera != null)
         {
             previousCamera = Camera.main;
@@ -93,10 +97,8 @@ public class VowelStone : MonoBehaviour
 
         if (freezePlayer && cc != null) cc.canControl = false;
 
-        // Wait for the initial appear delay
         yield return new WaitForSeconds(appearDelay);
 
-        // --- MOVED HERE: The exact moment the stone appears and shines, the vine drops! ---
         if (blockingVine != null)
         {
             blockingVine.SetActive(false);
@@ -104,7 +106,6 @@ public class VowelStone : MonoBehaviour
 
         if (shineEffect != null && !shineEffect.isPlaying) shineEffect.Play();
 
-        // 2. Focused Cutscene Spin Beat
         float elapsed = 0f;
         while (elapsed < pauseDuration)
         {
@@ -114,10 +115,22 @@ public class VowelStone : MonoBehaviour
             yield return null;
         }
 
-        // 3. Grant the Stone Tracking
         GrantStone();
 
-        // 4. Fade Up Win Text Banner
+        // --- NEW: Dynamic Smooth Fade Out ---
+        AudioSource bgmSource = FindFirstObjectByType<CoreAudioManager>()?.GetComponentInChildren<AudioSource>();
+        if (bgmSource != null)
+        {
+            PreCutsceneVolume = bgmSource.volume; // Record player volume layout baseline
+        }
+
+        CoreAudioManager.FadeOutBGM(0.5f); // Smoothly fade to silence over 0.5s!
+
+        if (rewardSFX != null)
+        {
+            CoreAudioManager.PlaySFX(rewardSFX);
+        }
+
         if (questCompletedPanel != null)
         {
             yield return StartCoroutine(FadeCanvas(questCompletedPanel, 0f, 1f, uiFadeDuration));
@@ -125,7 +138,6 @@ public class VowelStone : MonoBehaviour
             yield return StartCoroutine(FadeCanvas(questCompletedPanel, 1f, 0f, uiFadeDuration));
         }
 
-        // 5. Restore normal player control and camera view
         if (rewardCamera != null)
         {
             rewardCamera.gameObject.SetActive(false);
@@ -137,14 +149,12 @@ public class VowelStone : MonoBehaviour
         OnRewardFinished?.Invoke();
     }
 
-    // This loop guarantees the stone keeps spinning and particles keep emitting forever after the cutscene ends
     IEnumerator InfiniteSpinAndFXRoutine()
     {
         while (true)
         {
             SpinObject();
 
-            // If the script is running, make sure particles stay on
             if (shineEffect != null && !shineEffect.isPlaying && gameObject.activeInHierarchy)
             {
                 shineEffect.Play();

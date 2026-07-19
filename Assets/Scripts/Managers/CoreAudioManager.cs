@@ -128,7 +128,106 @@ public class CoreAudioManager : MonoBehaviour
     {
         if (Instance != null && Instance.sfxSource != null && clip != null)
         {
+            // If the clip is long (like a song), pause the background music
+            if (clip.length > 5.0f)
+            {
+                PauseBGM();
+            }
+
             Instance.sfxSource.PlayOneShot(clip, volumeScale);
+        }
+    }
+
+    public static void StopSFX()
+    {
+        if (Instance != null && Instance.sfxSource != null)
+        {
+            Instance.sfxSource.Stop();
+        }
+    }
+
+    public static void FadeOutSFX(float duration)
+    {
+        if (Instance != null && Instance.sfxSource != null)
+        {
+            Instance.StartCoroutine(Instance.FadeSFXVolume(Instance.sfxSource.volume, 0f, duration));
+        }
+    }
+
+    private IEnumerator FadeSFXVolume(float startVol, float endVol, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            sfxSource.volume = Mathf.Lerp(startVol, endVol, elapsed / duration);
+            yield return null;
+        }
+        sfxSource.volume = endVol;
+
+        // Reset the audio engine back to standard full volume parameters after cutting sound off
+        sfxSource.Stop();
+        sfxSource.volume = startVol;
+
+        // --- RESUME BACKGROUND MUSIC HERE ---
+        ResumeBGM();
+    }
+
+    public static void PauseBGM()
+    {
+        if (Instance != null && Instance.bgmSource != null)
+        {
+            Instance.bgmSource.Pause();
+        }
+    }
+
+    public static void ResumeBGM()
+    {
+        if (Instance != null && Instance.bgmSource != null)
+        {
+            Instance.bgmSource.UnPause();
+        }
+    }
+
+    public static void FadeOutBGM(float duration)
+    {
+        if (Instance != null && Instance.bgmSource != null)
+        {
+            if (Instance.fadeCoroutine != null) Instance.StopCoroutine(Instance.fadeCoroutine);
+            Instance.fadeCoroutine = Instance.StartCoroutine(Instance.FadeBGMVolume(Instance.bgmSource.volume, 0f, duration));
+        }
+    }
+
+    public static void FadeInBGM(float targetVolume, float duration)
+    {
+        if (Instance != null && Instance.bgmSource != null)
+        {
+            if (Instance.fadeCoroutine != null) Instance.StopCoroutine(Instance.fadeCoroutine);
+            Instance.fadeCoroutine = Instance.StartCoroutine(Instance.FadeBGMVolume(0f, targetVolume, duration));
+        }
+    }
+
+    private IEnumerator FadeBGMVolume(float startVol, float endVol, float duration)
+    {
+        // If fading back UP, unpause the track right away so we can hear it change!
+        if (endVol > 0.001f && !bgmSource.isPlaying)
+        {
+            bgmSource.UnPause();
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            bgmSource.volume = Mathf.Lerp(startVol, endVol, elapsed / duration);
+            yield return null;
+        }
+        bgmSource.volume = endVol;
+
+        // Pause it at absolute zero to save overhead processing resources
+        if (endVol <= 0.001f)
+        {
+            bgmSource.Pause();
         }
     }
 }

@@ -1,8 +1,5 @@
 using UnityEngine;
 
-// One socket on the broken object (e.g. a spot on the vase). It only accepts the
-// piece whose pieceID matches expectedPieceID. Correct -> snap + lock + tell the
-// PuzzleManagerA. Wrong -> the piece vibrates and slowly floats back to its start.
 public class PieceSlot : MonoBehaviour
 {
     public string expectedPieceID;
@@ -20,12 +17,18 @@ public class PieceSlot : MonoBehaviour
     [Tooltip("Object that glows after enough wrong tries (e.g. the correct piece).")]
     public HintGlow correctAnswerGlow;
 
+    // --- NEW VALIDATION AUDIO SLOTS ---
+    [Header("Audio")]
+    [Tooltip("Plays when the matching piece snaps into place successfully.")]
+    public AudioClip correctSFX;
+    [Tooltip("Plays when a mismatched wrong piece is offered.")]
+    public AudioClip wrongSFX;
+
     void Awake()
     {
         if (slotPoint == null) slotPoint = transform;
     }
 
-    // Called by WandPickUpRay when the player clicks this slot while carrying a piece.
     public void PlacePiece(PieceHold hold)
     {
         if (hold == null || hold.held == null) return;
@@ -38,17 +41,21 @@ public class PieceSlot : MonoBehaviour
         {
             hold.ClearHeld();
 
-            // SetParent(..., true) keeps the piece's world size so a scaled slot
-            // doesn't squeeze/stretch it; then snap to the slot pose.
             piece.transform.SetParent(slotPoint, true);
             piece.transform.position = slotPoint.position;
             piece.transform.rotation = slotPoint.rotation;
 
             Collider col = piece.GetComponent<Collider>();
-            if (col != null) col.enabled = false; // locked in place
+            if (col != null) col.enabled = false;
 
             isFilled = true;
             Debug.Log("Correct piece placed: " + expectedPieceID);
+
+            // --- PLAY CORRECT SFX ---
+            if (correctSFX != null)
+            {
+                CoreAudioManager.PlaySFX(correctSFX);
+            }
 
             if (puzzle != null) puzzle.PiecePlaced();
         }
@@ -57,6 +64,12 @@ public class PieceSlot : MonoBehaviour
             Debug.Log("Wrong piece for slot: " + expectedPieceID);
             hold.ClearHeld();
             piece.VibrateAndReturn();
+
+            // --- PLAY WRONG SFX ---
+            if (wrongSFX != null)
+            {
+                CoreAudioManager.PlaySFX(wrongSFX);
+            }
 
             if (PuzzleHint.Instance != null)
                 PuzzleHint.Instance.WrongAnswer(wrongHints, correctAnswerGlow);

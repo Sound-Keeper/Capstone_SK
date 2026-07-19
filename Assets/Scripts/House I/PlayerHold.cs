@@ -10,9 +10,13 @@ public class PlayerHold : MonoBehaviour
     public LayerMask groundLayer = ~0;
     public float itemRadiusOffset = 0.4f;
 
-    // --- PARTICLE ADDITIONS ---
     [Header("Visual Effects")]
     public ParticleSystem holdParticle;
+
+    // --- NEW PICKUP AUDIO SLOT ---
+    [Header("Audio")]
+    [Tooltip("Drag the sound effect that plays when picking up a vowel/letter block.")]
+    public AudioClip pickupSFX;
 
     private Camera playerCam;
 
@@ -26,7 +30,13 @@ public class PlayerHold : MonoBehaviour
     {
         if (held == null || holdPoint == null) return;
 
-        // --- FIXED PARENT SCALE BREAK ---
+        // --- NEW: Sync the particle system to the hold point position while carrying an object ---
+        if (holdParticle != null && holdParticle.isPlaying)
+        {
+            holdParticle.transform.position = holdPoint.position;
+            holdParticle.transform.rotation = holdPoint.rotation;
+        }
+
         if (held.transform.parent != null)
         {
             held.transform.SetParent(null);
@@ -65,11 +75,15 @@ public class PlayerHold : MonoBehaviour
         if (col != null)
             col.enabled = false;
 
-        // --- PARTICLE ADDITIONS ---
-        // Turn the magic on!
         if (holdParticle != null)
         {
             holdParticle.Play();
+        }
+
+        // --- PLAY PICKUP SFX ---
+        if (pickupSFX != null)
+        {
+            CoreAudioManager.PlaySFX(pickupSFX);
         }
     }
 
@@ -77,8 +91,6 @@ public class PlayerHold : MonoBehaviour
     {
         held = null;
 
-        // --- PARTICLE ADDITIONS ---
-        // Turn the magic off smoothly
         if (holdParticle != null)
         {
             holdParticle.Stop();

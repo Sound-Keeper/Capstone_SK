@@ -110,7 +110,7 @@ public class DialogueManager : MonoBehaviour
             hasPlayedPipIntro = true;
             SetPlayerControlState(false);
             string[] introLines = new string[] {
-                "Hoo! Oh, thank goodness you're finally here, little one!",
+                "Hoo! Oh, thank goodness you're finally awake, little one!",
                 "Don't be afraid. My name is Pip. Welcome to Word Valley.",
                 "This valley lives inside The Sound Book. It used to be the brightest, happiest place full of singing letters and laughing words.",
                 "But a witch named Miss Spell grew jealous of our magic. She cast the mush-mush curse over the whole valley.",
@@ -238,6 +238,34 @@ public class DialogueManager : MonoBehaviour
         ShowLine();
     }
 
+    public void StartDialogueWithoutPortraits(string speakerName, string definitionText, Action onComplete = null)
+    {
+        if (dialoguePanel != null) dialoguePanel.SetActive(true); 
+
+    // Turn off the portraits AND their background parents so they vanish completely
+    if (leftPortrait != null)
+        {
+            leftPortrait.gameObject.SetActive(false); 
+        leftPortrait.transform.parent.gameObject.SetActive(false);
+        }
+        if (rightPortrait != null)
+        {
+            rightPortrait.gameObject.SetActive(false); 
+        rightPortrait.transform.parent.gameObject.SetActive(false);
+        }
+
+        if (onComplete != null) this.OnDialogueEnd = onComplete; 
+
+    currentLines = new DialogueLine[1] { new DialogueLine { speaker = Speaker.NPC, text = definitionText } }; 
+    currentLineIndex = 0; 
+    nameText.text = speakerName; 
+    inputCooldownTimer = 0.2f; 
+
+    if (typingCoroutine != null) StopCoroutine(typingCoroutine); 
+    typingCoroutine = StartCoroutine(TypeLine(definitionText)); 
+}
+
+
     void ShowLine()
     {
         if (currentLines == null || currentLineIndex >= currentLines.Length) return;
@@ -274,6 +302,9 @@ public class DialogueManager : MonoBehaviour
     void SetupPortrait(Image img, Sprite face)
     {
         if (img == null) return;
+
+        // FIX: Turn the parent background object back on for normal dialogues!
+        img.transform.parent.gameObject.SetActive(true);
 
         if (face != null)
         {

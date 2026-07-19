@@ -1,2 +1,16 @@
 fileFormatVersion: 2
 guid: e33b056cf15b54242bdd6d5e42df9321
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - slotPoint: {instanceID: 0}
+  - puzzle: {instanceID: 0}
+  - correctAnswerGlow: {instanceID: 0}
+  - correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  - wrongSFX: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

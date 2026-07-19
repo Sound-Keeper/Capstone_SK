@@ -1915,6 +1915,8 @@ MonoBehaviour:
   puzzle: {fileID: 362985971}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!65 &132424961
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1945,7 +1947,7 @@ Transform:
   m_GameObject: {fileID: 132424959}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.5135242, z: -0, w: 0.85807514}
-  m_LocalPosition: {x: 97.353004, y: 5.898, z: 45.569}
+  m_LocalPosition: {x: 97.08301, y: 5.898, z: 46.499}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7202,6 +7204,8 @@ MonoBehaviour:
   puzzle: {fileID: 362985971}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!65 &314926765
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7232,7 +7236,7 @@ Transform:
   m_GameObject: {fileID: 314926763}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.50888884, z: -0, w: 0.8608322}
-  m_LocalPosition: {x: 97.71, y: 6.281, z: 46.34}
+  m_LocalPosition: {x: 97.44, y: 6.281, z: 47.27}
   m_LocalScale: {x: 0.5, y: 1, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17851,7 +17855,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 96.91
+      value: 96.71
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalPosition.y
@@ -17859,11 +17863,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 49.64
+      value: 49.61
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.50174856
+      value: 0.54036593
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalRotation.x
@@ -17871,7 +17875,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.8650135
+      value: 0.8414301
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalRotation.z
@@ -17883,7 +17887,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 119.769
+      value: 114.583
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 450db8849ee67854eb6e6d842f7fac39, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -22350,6 +22354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 893350748}
   - component: {fileID: 893350749}
+  - component: {fileID: 893350750}
   m_Layer: 0
   m_Name: VowelStone
   m_TagString: Untagged
@@ -22395,6 +22400,7 @@ MonoBehaviour:
   spinSpeed: 180
   stoneVisual: {fileID: 1793545235}
   shineEffect: {fileID: 199382265}
+  rewardSFX: {fileID: 8300000, guid: 2a38749fab0c6914eb2db3a92e1ae8d9, type: 3}
   blockingVine: {fileID: 1461799840}
   hintmap: {fileID: 0}
   questCompletedPanel: {fileID: 319611552}
@@ -22402,7 +22408,35 @@ MonoBehaviour:
   uiHoldDuration: 2.5
   OnRewardFinished:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 893350750}
+        m_TargetAssemblyTypeName: WordMeaning, Assembly-CSharp
+        m_MethodName: PlayRewardDialogue
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &893350750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 893350747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b86606dc3457c04690d58364892635a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WordMeaning
+  definitions:
+  - wordName: AID
+    wordMeaning: /ayd/ - help given to someone who needs it
+    definitionSFX: {fileID: 8300000, guid: c219937b6c70d67468d95dbe607744fe, type: 3}
 --- !u!1 &893382620
 GameObject:
   m_ObjectHideFlags: 0
@@ -24978,7 +25012,7 @@ Transform:
   m_GameObject: {fileID: 1060936619}
   serializedVersion: 2
   m_LocalRotation: {x: 0.021348279, y: -0.5234141, z: 0.009246059, w: 0.8517608}
-  m_LocalPosition: {x: 99.535, y: 7.301, z: 49.552}
+  m_LocalPosition: {x: 99.14001, y: 7.301, z: 50.575}
   m_LocalScale: {x: 0.6, y: 0.59999985, z: 0.60000014}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -25002,6 +25036,8 @@ MonoBehaviour:
   puzzle: {fileID: 362985971}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!65 &1060936622
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -26356,7 +26392,6 @@ MonoBehaviour:
   associatedHouse: 0
   autoPlayWhenSolved: 1
   autoPlayDelay: 1.5
-  houseLetter: A
 --- !u!136 &1155355567
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -26850,6 +26885,8 @@ MonoBehaviour:
   puzzle: {fileID: 362985971}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!65 &1195070797
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -26879,13 +26916,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1195070795}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.5, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: 98.572, y: 5.876, z: 47.822}
+  m_LocalRotation: {x: -0, y: -0.5355692, z: -0, w: 0.8444914}
+  m_LocalPosition: {x: 98.395996, y: 5.876, z: 48.938}
   m_LocalScale: {x: 0.49999988, y: 0.5, z: 0.49999988}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -60, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -64.765, z: 0}
 --- !u!1001 &1195714424
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30322,6 +30359,8 @@ MonoBehaviour:
   puzzle: {fileID: 362985971}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!4 &1425783627
 Transform:
   m_ObjectHideFlags: 0
@@ -30331,7 +30370,7 @@ Transform:
   m_GameObject: {fileID: 1425783624}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.5322533, z: -0, w: 0.8465852}
-  m_LocalPosition: {x: 99.217, y: 5.675, z: 48.872}
+  m_LocalPosition: {x: 98.82201, y: 5.675, z: 49.895004}
   m_LocalScale: {x: 0.4999999, y: 0.5, z: 0.4999999}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -31246,6 +31285,8 @@ MonoBehaviour:
   puzzle: {fileID: 362985971}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!65 &1486064746
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -31276,7 +31317,7 @@ Transform:
   m_GameObject: {fileID: 1486064744}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.5160699, z: -0, w: 0.8565465}
-  m_LocalPosition: {x: 97.43, y: 7.357, z: 45.719}
+  m_LocalPosition: {x: 97.16, y: 7.357, z: 46.649002}
   m_LocalScale: {x: 0.50000006, y: 0.5, z: 0.50000006}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -38394,6 +38435,8 @@ MonoBehaviour:
   puzzle: {fileID: 362985971}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!65 &1700446737
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -38423,13 +38466,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1700446735}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.003383466, y: -0.50734985, z: 0.021350754, w: 0.86146903}
-  m_LocalPosition: {x: 98.496, y: 7.299, z: 47.704}
+  m_LocalRotation: {x: -0.0024929794, y: -0.5427229, z: 0.021472955, w: 0.83963364}
+  m_LocalPosition: {x: 98.32, y: 7.299, z: 48.82}
   m_LocalScale: {x: 0.5000001, y: 0.49999997, z: 0.5000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0.907, y: -60.972, z: 2.305}
+  m_LocalEulerAnglesHint: {x: 1.096, y: -65.734, z: 2.222}
 --- !u!1001 &1700814714
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41419,6 +41462,8 @@ MonoBehaviour:
   puzzle: {fileID: 362985971}
   wrongHints: []
   correctAnswerGlow: {fileID: 0}
+  correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
 --- !u!65 &1899333424
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -41449,7 +41494,7 @@ Transform:
   m_GameObject: {fileID: 1899333422}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.52842164, z: -0, w: 0.8489821}
-  m_LocalPosition: {x: 99.805, y: 6.188, z: 50.127}
+  m_LocalPosition: {x: 99.379, y: 6.188, z: 51.141}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42487,7 +42532,7 @@ Transform:
   m_GameObject: {fileID: 1982727876}
   serializedVersion: 2
   m_LocalRotation: {x: -0.00030413142, y: -0.5159689, z: 0.0003633714, w: 0.8566072}
-  m_LocalPosition: {x: 98.590004, y: 5.38, z: 50.45}
+  m_LocalPosition: {x: 97.84, y: 5.38, z: 50.2}
   m_LocalScale: {x: 0.5, y: 0.49999997, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -44893,7 +44938,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ead0e713a8f68428277dc08605a788, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 99.3
+      value: 99.12001
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ead0e713a8f68428277dc08605a788, type: 3}
       propertyPath: m_LocalPosition.y
@@ -44901,7 +44946,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ead0e713a8f68428277dc08605a788, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 50.08
+      value: 50.550003
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ead0e713a8f68428277dc08605a788, type: 3}
       propertyPath: m_LocalRotation.w

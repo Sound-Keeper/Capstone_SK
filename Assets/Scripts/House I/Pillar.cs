@@ -15,6 +15,13 @@ public class Pillar : MonoBehaviour
     [Tooltip("Object that glows after enough wrong tries (e.g. the correct letter).")]
     public HintGlow correctAnswerGlow;
 
+    // --- NEW VALIDATION AUDIO SLOTS ---
+    [Header("Audio")]
+    [Tooltip("Plays when the matching letter block snaps into place successfully.")]
+    public AudioClip correctSFX;
+    [Tooltip("Plays when a mismatched wrong letter block is offered.")]
+    public AudioClip wrongSFX;
+
     public void PlaceLetter(PlayerHold hold)
     {
         if (hold == null || hold.held == null) return;
@@ -30,8 +37,6 @@ public class Pillar : MonoBehaviour
             t.position = slotPoint.position;
             t.rotation = slotPoint.rotation;
 
-            //keep the piece's ORIGINAL world size so a scaled pillar
-            //doesn't squeeze/stretch it
             SetWorldScale(t, carriedLetter.startScale);
 
             Collider col = carriedLetter.GetComponent<Collider>();
@@ -41,10 +46,14 @@ public class Pillar : MonoBehaviour
             hold.ClearHeld();
             isFilled = true;
 
-
             Debug.Log("Correct piece placed!");
 
-            //tell the puzzle manager so it can check for completion
+            // --- PLAY CORRECT SFX ---
+            if (correctSFX != null)
+            {
+                CoreAudioManager.PlaySFX(correctSFX);
+            }
+
             if (puzzleManager != null)
                 puzzleManager.LetterPlaced();
         }
@@ -54,16 +63,21 @@ public class Pillar : MonoBehaviour
             hold.ClearHeld();
             carriedLetter.ReturnToStart();
 
+            // --- PLAY WRONG SFX ---
+            if (wrongSFX != null)
+            {
+                CoreAudioManager.PlaySFX(wrongSFX);
+            }
+
             if (PuzzleHint.Instance != null)
                 PuzzleHint.Instance.WrongAnswer(wrongHints, correctAnswerGlow);
         }
     }
 
-    //sets an object's world (lossy) scale no matter how its parent is scaled
     static void SetWorldScale(Transform t, Vector3 worldScale)
     {
         t.localScale = Vector3.one;
-        Vector3 lossy = t.lossyScale; //now equals the parent's effective scale
+        Vector3 lossy = t.lossyScale;
         t.localScale = new Vector3(
             lossy.x != 0f ? worldScale.x / lossy.x : worldScale.x,
             lossy.y != 0f ? worldScale.y / lossy.y : worldScale.y,
@@ -71,5 +85,3 @@ public class Pillar : MonoBehaviour
         );
     }
 }
-
-

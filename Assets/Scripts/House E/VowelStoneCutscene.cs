@@ -21,6 +21,18 @@ public class VowelStoneCutscene : MonoBehaviour
     [Tooltip("Drag 'Dialoguebox' here if using House O.")]
     public DialogueBoxManagerHouseO dialogueBoxManagerHouseO;
 
+    // ─── NEW ONE-SHOT SFX & FADE SETTINGS ─────────────────────────────────────────
+    [Header("Cutscene Audio Setup")]
+    [Tooltip("Drag the one-shot victory sound effect here.")]
+    public AudioClip cutsceneSFX;
+
+    [Tooltip("How long it takes for the background music to fade to silence.")]
+    public float bgmFadeOutDuration = 0.5f;
+
+    [Tooltip("How long it takes for the background music to fade back in at the end.")]
+    public float bgmFadeInDuration = 1.0f;
+    // ─────────────────────────────────────────────────────────────────────────────
+
     [Header("Animation Settings")]
     public float rotationSpeed = 150f;
     public float spinDuration = 3f;
@@ -42,17 +54,26 @@ public class VowelStoneCutscene : MonoBehaviour
 
     private IEnumerator CutsceneSequence()
     {
-        // 1. Turn off the entire UI canvas completely
+        // --- STEP 1: Fade out the background music smoothly ---
+        CoreAudioManager.FadeOutBGM(bgmFadeOutDuration);
+
+        // Turn off the entire UI canvas completely
         if (puzzleCanvas != null)
             puzzleCanvas.SetActive(false);
 
-        // --- NEW: Start fading the Win Panel up immediately AS the spin begins ---
+        // --- STEP 2: Play your one-shot sound effect in the clear space ---
+        if (cutsceneSFX != null)
+        {
+            CoreAudioManager.PlaySFX(cutsceneSFX);
+        }
+
+        // Start fading the Win Panel up immediately AS the spin begins
         if (winPanelCanvas != null)
         {
             StartCoroutine(FadeCanvas(winPanelCanvas, 0f, 1f, winPanelFadeDuration));
         }
 
-        // 2. Spin the stone over time
+        // Spin the stone over time
         float timer = 0f;
         while (timer < spinDuration)
         {
@@ -64,14 +85,14 @@ public class VowelStoneCutscene : MonoBehaviour
             yield return null;
         }
 
-        // 3. Poof particles & disable the mesh asset
+        // Poof particles & disable the mesh asset
         if (poofParticles != null)
             poofParticles.Play();
 
-        // --- NEW: Fade out the Win Panel dynamically while particles vanish ---
+        // Fade out the Win Panel dynamically while particles vanish
         if (winPanelCanvas != null)
         {
-            StartCoroutine(FadeCanvas(winPanelCanvas, 1f, 0f, 1.0f)); // Fades out completely over the 1-second particle duration
+            StartCoroutine(FadeCanvas(winPanelCanvas, 1f, 0f, 1.0f));
         }
 
         if (stonePrefab != null)
@@ -86,11 +107,18 @@ public class VowelStoneCutscene : MonoBehaviour
             poofParticles.gameObject.SetActive(false);
         }
 
-        // 4. Cutscene finished! Safely re-enable the Canvas
+        // Cutscene finished! Safely re-enable the Canvas
         if (puzzleCanvas != null)
             puzzleCanvas.SetActive(true);
 
-        // 5. Wake up whichever dialogue manager is assigned and tell it to display victory text!
+        // --- STEP 3: Fade the background music back in cleanly ---
+        // Grab the baseline volume tracked by the stone collection, defaulting to 1f if unassigned
+        float targetVol = VowelStone.PreCutsceneVolume;
+        if (targetVol <= 0.01f) targetVol = 1f;
+
+        CoreAudioManager.FadeInBGM(targetVol, bgmFadeInDuration);
+
+        // Wake up whichever dialogue manager is assigned and tell it to display victory text!
         if (dialogueBoxManager != null)
         {
             dialogueBoxManager.StartFinalDialogueSequence();
@@ -105,7 +133,7 @@ public class VowelStoneCutscene : MonoBehaviour
         }
     }
 
-    // Shared smooth fading formula imported directly from VowelStone.cs
+    // Shared smooth fading formula for the canvas banner
     private IEnumerator FadeCanvas(CanvasGroup cg, float from, float to, float duration)
     {
         float e = 0f;

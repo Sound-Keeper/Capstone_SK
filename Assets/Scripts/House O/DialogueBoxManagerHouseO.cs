@@ -14,20 +14,69 @@ namespace BookChoice
         public TextMeshProUGUI speakerNameText;
         public GameObject pip;
         public GameObject grandmaPhonics;
+
+        [Header("Dialogue Flow Indicator")]
+        [Tooltip("Drag and drop your blinking icon/dot GameObject indicator here.")]
+        public GameObject blinkerObject;
+        public float indicatorBlinkSpeed = 0.4f;
+
         public Button continuebutton;
+
+        [Header("Song Interaction Controls")]
+        [Tooltip("Drag the UI Button component for 'Song1' here (Active on Paper Index 1).")]
+        public Button song1Button;
+        [Tooltip("Drag the UI Button component for 'Song2' here (Active on Paper Index 2).")]
+        public Button song2Button;
+        [Tooltip("Drag the UI Button component for 'Song3' here (Active on Paper Index 3).")]
+        public Button song3Button;
+
+        [Header("Song Audio Clips")]
+        [Tooltip("Audio clip for Song 1.")]
+        public AudioClip song1Audio;
+        [Tooltip("Audio clip for Song 2.")]
+        public AudioClip song2Audio;
+        [Tooltip("Audio clip for Song 3.")]
+        public AudioClip song3Audio;
 
         [Header("Vowel Stone Reference")]
         [Tooltip("Drag the House O VowelStone GameObject containing the VowelStoneCutscene script here.")]
         public VowelStoneCutscene stoneCutscene;
 
         [Header("NPC Dialogue Arrays")]
-        public string[] introDialogues = { "Welcome to the trial of vowels.", "Choose the correct verb to proceed." };
-        public string[] correctDialogues = { "That's correct! Great job!", "Your linguistic skills are sharp." };
-        public string[] wrongDialogues = { "Oops! Try again.", "That syntax doesn't seem quite right..." };
-        public string[] nextStepDialogues = { "Splendid.", "Now flip the page." };
+        public string[] introDialogues = {
+            "Welcome to the trial of vowels.",
+            "One word is missing at the end. Use your...",
+            "We have three songs to mend, so listen...",
+            "Choose the right rhyming word!"
+        };
+
+        [Tooltip("Pip's initial reaction text before explaining the definition.")]
+        public string correctFeedbackGreeting = "That's correct! Great job!";
+
+        public string[] wrongDialogues = { "Oops! Try again." };
+        public string[] nextStepDialogues = { "Now flip the page to continue." };
 
         [Header("Extra Messages")]
-        public string[] finalDialogues = { "Good job, you have finished my puzzle.", "You have proven your worth." };
+        public string[] finalDialogues = {
+            "There we are! All three songs, good as...",
+            "Bless your heart, Sound Keeper. Miss Sp..."
+        };
+
+        [Header("House O Shared Audio")]
+        [Tooltip("The shared sound effect played every time an answer is correct.")]
+        public AudioClip correctSFX;
+
+        [Tooltip("The shared sound effect played every time an answer is wrong.")]
+        public AudioClip wrongSFX;
+
+        [Header("House O Word Meanings (Text Only)")]
+        [TextArea(2, 4)] public string answer1MeaningText = "Definition for the first correct verb goes here...";
+
+        [Space]
+        [TextArea(2, 4)] public string answer2MeaningText = "Definition for the second correct verb goes here...";
+
+        [Space]
+        [TextArea(2, 4)] public string answer3MeaningText = "Definition for the third correct verb goes here...";
 
         [Header("Timing")]
         public float wrongDisplayDuration = 1.5f;
@@ -41,6 +90,8 @@ namespace BookChoice
 
         private Coroutine dialogueSequenceCoroutine;
         private Coroutine characterPrinterCoroutine;
+        private Coroutine blinkCoroutine;
+        private Coroutine songMonitorCoroutine; // Tracks natural completion of the short clips
 
         public bool puzzleCompleted = false;
         private int correctCount = 0;
@@ -48,78 +99,156 @@ namespace BookChoice
         [Header("House O Puzzle Rules")]
         public int totalRequiredCorrect = 3;
 
-        // --- TRACK EARLY FLIPS ---
         private bool pageWasFlipped = false;
         private UnityEngine.Events.UnityAction flipListener;
+        private UnityEngine.Events.UnityAction songPageTrackerListener;
 
-        // --- CLICK TO SKIP & ADVANCE STATES ---
         private bool isTyping = false;
         private bool currentLineSkipped = false;
         private bool userClickedNext = false;
-        private bool inputIsDisabled = false; // Prevents clicking during auto feedback sequences
+        private bool inputIsDisabled = false;
 
         void Start()
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
-            // Cache the flip listener setup
             flipListener = () => { pageWasFlipped = true; };
+
+            songPageTrackerListener = () => { UpdateSongInteractivityByPage(); };
+            if (book != null)
+            {
+                book.OnFlip.AddListener(songPageTrackerListener);
+            }
+
+            if (blinkerObject != null) blinkerObject.SetActive(false);
 
             SetSpeakerUI(showGrandma: true);
             PlayDialogueGroup(introDialogues, isGrandma: true);
+
+            UpdateSongInteractivityByPage();
+
+            if (song1Button != null) song1Button.onClick.AddListener(() => PlaySongAudio(1));
+            if (song2Button != null) song2Button.onClick.AddListener(() => PlaySongAudio(2));
+            if (song3Button != null) song3Button.onClick.AddListener(() => PlaySongAudio(3));
         }
 
         void Update()
         {
             if (inputIsDisabled) return;
 
-            // Listen for a left-mouse click or interaction button input
             if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Space))
             {
                 if (isTyping)
                 {
-                    currentLineSkipped = true; // Skip typing to reveal whole text block
+                    currentLineSkipped = true;
                 }
                 else
                 {
-                    userClickedNext = true; // Advance to the next line of dialogue
+                    userClickedNext = true;
                 }
             }
         }
 
+        public void PlaySongAudio(int songNumber)
+        {
+            AudioClip clipToPlay = null;
+
+            if (songNumber == 1) clipToPlay = song1Audio;
+            else if (songNumber == 2) clipToPlay = song2Audio;
+            else if (songNumber == 3) clipToPlay = song3Audio;
+
+            if (clipToPlay != null)
+            {
+                // Kill any tracking loop currently counting down a previous song finish
+                if (songMonitorCoroutine != null)
+                {
+                    StopCoroutine(songMonitorCoroutine);
+                }
+
+                // Instantly cut any running audio from a previous clip to prevent layering
+                CoreAudioManager.StopSFX();
+
+                // Manually pause background music for the song track
+                CoreAudioManager.PauseBGM();
+
+                CoreAudioManager.PlaySFX(clipToPlay);
+
+                // Start tracking how long the song is to bring back the background music when it ends
+                songMonitorCoroutine = StartCoroutine(WaitForSongToEnd(clipToPlay.length));
+            }
+            else
+            {
+                Debug.LogWarning($"Song {songNumber} Audio Clip is missing in the Inspector!");
+            }
+        }
+
+        /// <summary>
+        /// Monitors running short clips. Fades ambient track back up if the track runs out naturally.
+        /// </summary>
+        private IEnumerator WaitForSongToEnd(float clipLength)
+        {
+            yield return new WaitForSeconds(clipLength);
+
+            // Bring back background music automatically since it finished playing completely
+            CoreAudioManager.ResumeBGM();
+            songMonitorCoroutine = null;
+        }
+
+        private void UpdateSongInteractivityByPage()
+        {
+            if (book == null) return;
+
+            int currentPaperIndex = book.currentPaper;
+
+            if (song1Button != null) song1Button.interactable = (currentPaperIndex == 1);
+            if (song2Button != null) song2Button.interactable = (currentPaperIndex == 2);
+            if (song3Button != null) song3Button.interactable = (currentPaperIndex == 3);
+        }
+
         public void ShowFeedback(bool isCorrect, Action onWrongFinished = null)
         {
+            // Stop the countdown tracker since a user action explicitly interrupted the audio state
+            if (songMonitorCoroutine != null)
+            {
+                StopCoroutine(songMonitorCoroutine);
+                songMonitorCoroutine = null;
+            }
+
+            // Smoothly fade out the remaining clip fragments over 0.5 seconds and bring back BGM
+            CoreAudioManager.FadeOutSFX(0.5f);
+
             ResetAllActiveDialogues();
 
             if (isCorrect)
             {
-                SetSpeakerUI(showGrandma: false); // Pip takes over
+                SetSpeakerUI(showGrandma: false);
                 correctCount++;
 
                 if (correctCount >= totalRequiredCorrect)
                 {
                     puzzleCompleted = true;
 
-                    // --- EXCLUSIVE HOUSE O GLOBAL PROGRESS FLAGS ---
                     PuzzleProgress.HouseOSolved = true;
                     PuzzleProgress.HouseOComplete = true;
                     PuzzleProgress.HasVowelOStone = true;
 
-                    FinalSequence();
+                    dialogueSequenceCoroutine = StartCoroutine(Answer3Sequence());
                 }
                 else
                 {
-                    // Start listening for a page flip immediately!
                     pageWasFlipped = false;
                     if (book != null) book.OnFlip.AddListener(flipListener);
 
-                    dialogueSequenceCoroutine = StartCoroutine(CorrectSequence());
+                    if (correctCount == 1)
+                        dialogueSequenceCoroutine = StartCoroutine(CorrectSequence(answer1MeaningText));
+                    else if (correctCount == 2)
+                        dialogueSequenceCoroutine = StartCoroutine(CorrectSequence(answer2MeaningText));
                 }
             }
             else
             {
-                SetSpeakerUI(showGrandma: false); // Pip takes over
+                SetSpeakerUI(showGrandma: false);
                 dialogueSequenceCoroutine = StartCoroutine(WrongSequence(onWrongFinished));
             }
         }
@@ -137,15 +266,73 @@ namespace BookChoice
         {
             if (lines == null || lines.Length == 0) yield break;
 
-            foreach (string line in lines)
+            for (int i = 0; i < lines.Length; i++)
             {
-                yield return StartCoroutine(TypeText(line));
+                bool shouldBlink = (lines == introDialogues && i >= 0 && i <= 2);
+
+                yield return StartCoroutine(TypeText(lines[i], shouldBlink));
                 yield return StartCoroutine(WaitUntilClick());
             }
         }
 
-        private void FinalSequence()
+        IEnumerator CorrectSequence(string meaningText)
         {
+            SetSpeakerName(isGrandma: false);
+
+            if (correctSFX != null) CoreAudioManager.PlaySFX(correctSFX);
+
+            yield return StartCoroutine(TypeText(correctFeedbackGreeting, showIndicator: true));
+            yield return StartCoroutine(WaitUntilClick());
+
+            if (!string.IsNullOrEmpty(meaningText))
+            {
+                SetSpeakerUI(showGrandma: true);
+                SetSpeakerName(isGrandma: true);
+
+                yield return StartCoroutine(TypeText(meaningText, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+            }
+
+            SetSpeakerUI(showGrandma: false);
+            SetSpeakerName(isGrandma: false);
+
+            foreach (string line in nextStepDialogues)
+            {
+                if (pageWasFlipped) break;
+
+                yield return StartCoroutine(TypeText(line, showIndicator: false));
+                yield return StartCoroutine(WaitUntilClick());
+            }
+
+            yield return new WaitUntil(() => pageWasFlipped);
+
+            if (book != null)
+                book.OnFlip.RemoveListener(flipListener);
+
+            SetSpeakerUI(showGrandma: true);
+            SetSpeakerName(isGrandma: true);
+
+            if (introDialogues.Length > 0)
+            {
+                yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1], showIndicator: false));
+            }
+        }
+
+        IEnumerator Answer3Sequence()
+        {
+            SetSpeakerName(isGrandma: false);
+
+            if (correctSFX != null) CoreAudioManager.PlaySFX(correctSFX);
+
+            yield return StartCoroutine(TypeText(correctFeedbackGreeting, showIndicator: true));
+            yield return StartCoroutine(WaitUntilClick());
+
+            SetSpeakerUI(showGrandma: true);
+            SetSpeakerName(isGrandma: true);
+
+            yield return StartCoroutine(TypeText(answer3MeaningText, showIndicator: true));
+            yield return StartCoroutine(WaitUntilClick());
+
             if (stoneCutscene != null)
             {
                 stoneCutscene.PlayCutscene();
@@ -154,6 +341,31 @@ namespace BookChoice
             {
                 StartFinalDialogueSequence();
             }
+        }
+
+        IEnumerator WrongSequence(Action callback)
+        {
+            inputIsDisabled = true;
+            SetSpeakerName(isGrandma: false);
+
+            if (wrongSFX != null) CoreAudioManager.PlaySFX(wrongSFX);
+
+            foreach (string line in wrongDialogues)
+            {
+                yield return StartCoroutine(TypeText(line, showIndicator: true));
+                yield return new WaitForSeconds(wrongDisplayDuration);
+            }
+
+            SetSpeakerUI(showGrandma: true);
+            SetSpeakerName(isGrandma: true);
+
+            if (introDialogues.Length > 0)
+            {
+                yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1], showIndicator: false));
+            }
+
+            inputIsDisabled = false;
+            callback?.Invoke();
         }
 
         public void StartFinalDialogueSequence()
@@ -169,81 +381,19 @@ namespace BookChoice
             SetSpeakerUI(showGrandma: true);
             SetSpeakerName(isGrandma: true);
 
-            foreach (string line in finalDialogues)
+            for (int i = 0; i < finalDialogues.Length; i++)
             {
-                yield return StartCoroutine(TypeText(line));
+                bool shouldBlink = (i == 0);
+                yield return StartCoroutine(TypeText(finalDialogues[i], shouldBlink));
                 yield return StartCoroutine(WaitUntilClick());
             }
 
-            yield return StartCoroutine(TypeText("..."));
-            yield return StartCoroutine(WaitUntilClick());
-
+            yield return StartCoroutine(TypeText("...", showIndicator: false));
             if (continuebutton != null) continuebutton.gameObject.SetActive(true);
-        }
-
-        // --- AUTOMATIC CORRECT SEQUENCE ---
-        IEnumerator CorrectSequence()
-        {
-            inputIsDisabled = true; // Disable click tracking completely for feedback execution
-            SetSpeakerName(isGrandma: false);
-
-            foreach (string line in correctDialogues)
-            {
-                yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(dialogueLineDelay); // Automatic delay
-            }
-
-            yield return new WaitForSeconds(0.5f);
-
-            foreach (string line in nextStepDialogues)
-            {
-                // If they've already flipped early, don't force them to read "Now flip the page."
-                if (pageWasFlipped) break;
-
-                yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(dialogueLineDelay); // Automatic delay
-            }
-
-            inputIsDisabled = false; // Restore click requirements for the active page flip block
-
-            // --- FIX: Safely wait for the flag instead of an active event window ---
-            yield return new WaitUntil(() => pageWasFlipped);
-
-            if (book != null)
-                book.OnFlip.RemoveListener(flipListener);
-
-            SetSpeakerUI(showGrandma: true);
-            SetSpeakerName(isGrandma: true);
-
-            if (introDialogues.Length > 0)
-                yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1]));
-        }
-
-        // --- AUTOMATIC WRONG SEQUENCE ---
-        IEnumerator WrongSequence(Action callback)
-        {
-            inputIsDisabled = true; // Disable click tracking completely for feedback execution
-            SetSpeakerName(isGrandma: false);
-
-            foreach (string line in wrongDialogues)
-            {
-                yield return StartCoroutine(TypeText(line));
-                yield return new WaitForSeconds(wrongDisplayDuration); // Automatic delay
-            }
-
-            SetSpeakerUI(showGrandma: true);
-            SetSpeakerName(isGrandma: true);
-
-            if (introDialogues.Length > 0)
-                yield return StartCoroutine(TypeText(introDialogues[introDialogues.Length - 1]));
-
-            inputIsDisabled = false; // Restore normal click requirements
-            callback?.Invoke();
         }
 
         private void ResetAllActiveDialogues()
         {
-            // Clean up the book listener tracking if a sequence resets mid-action
             if (book != null) book.OnFlip.RemoveListener(flipListener);
 
             if (dialogueSequenceCoroutine != null)
@@ -252,6 +402,7 @@ namespace BookChoice
                 dialogueSequenceCoroutine = null;
             }
             StopCharacterPrinter();
+            StopBlinking();
             isTyping = false;
             inputIsDisabled = false;
         }
@@ -265,23 +416,23 @@ namespace BookChoice
             }
         }
 
-        IEnumerator TypeText(string message)
+        IEnumerator TypeText(string message, bool showIndicator)
         {
             StopCharacterPrinter();
+            StopBlinking();
             dialogueText.text = "";
 
             isTyping = true;
             currentLineSkipped = false;
 
-            characterPrinterCoroutine = StartCoroutine(CoroutineObjectReferenceHolder(message));
+            characterPrinterCoroutine = StartCoroutine(CoroutineObjectReferenceHolder(message, showIndicator));
             yield return characterPrinterCoroutine;
         }
 
-        private IEnumerator CoroutineObjectReferenceHolder(string message)
+        private IEnumerator CoroutineObjectReferenceHolder(string message, bool showIndicator)
         {
             foreach (char letter in message)
             {
-                // Only skip via click if click inputs aren't disabled right now
                 if (currentLineSkipped && !inputIsDisabled)
                 {
                     dialogueText.text = message;
@@ -295,6 +446,11 @@ namespace BookChoice
             isTyping = false;
             characterPrinterCoroutine = null;
 
+            if (!inputIsDisabled && showIndicator)
+            {
+                StartBlinking();
+            }
+
             yield return null;
             userClickedNext = false;
         }
@@ -306,12 +462,54 @@ namespace BookChoice
                 yield return null;
             }
             userClickedNext = false;
+            StopBlinking();
+        }
+
+        private void StartBlinking()
+        {
+            if (blinkerObject == null) return;
+            StopBlinking();
+            blinkCoroutine = StartCoroutine(BlinkRoutine());
+        }
+
+        private void StopBlinking()
+        {
+            if (blinkCoroutine != null)
+            {
+                StopCoroutine(blinkCoroutine);
+                blinkCoroutine = null;
+            }
+            if (blinkerObject != null)
+            {
+                blinkerObject.SetActive(false);
+            }
+        }
+
+        private IEnumerator BlinkRoutine()
+        {
+            while (true)
+            {
+                blinkerObject.SetActive(true);
+                yield return new WaitForSeconds(indicatorBlinkSpeed);
+                blinkerObject.SetActive(false);
+                yield return new WaitForSeconds(indicatorBlinkSpeed);
+            }
         }
 
         private void SetSpeakerUI(bool showGrandma)
         {
             if (grandmaPhonics != null) grandmaPhonics.gameObject.SetActive(showGrandma);
             if (pip != null) pip.gameObject.SetActive(!showGrandma);
+        }
+
+        private void OnDisable()
+        {
+            // Clean up running countdowns if the UI component gets disabled or closed
+            if (songMonitorCoroutine != null)
+            {
+                StopCoroutine(songMonitorCoroutine);
+                songMonitorCoroutine = null;
+            }
         }
 
         private void SetSpeakerName(bool isGrandma)
@@ -324,7 +522,11 @@ namespace BookChoice
 
         private void OnDestroy()
         {
-            if (book != null) book.OnFlip.RemoveListener(flipListener);
+            if (book != null)
+            {
+                book.OnFlip.RemoveListener(flipListener);
+                book.OnFlip.RemoveListener(songPageTrackerListener);
+            }
         }
     }
 }

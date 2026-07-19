@@ -3,6 +3,22 @@ using UnityEngine;
 
 namespace BookChoice
 {
+    // The structured data class accessible directly inside the book's Inspector
+    [System.Serializable]
+    public class HouseUWordDefinition
+    {
+        [Tooltip("The word name displayed in the name text slot (e.g., 'MUG').")]
+        public string wordName;
+
+        [TextArea(3, 5)]
+        [Tooltip("The actual meaning/definition text for this word.")]
+        public string wordMeaning;
+
+        [Header("Audio")]
+        [Tooltip("Drag the custom audio/voiceover clip for this specific word here (Optional).")]
+        public AudioClip definitionSFX;
+    }
+
     public class HouseUInteractiveBook : MonoBehaviour
     {
         [Header("UI Indicator Reference")]
@@ -24,6 +40,10 @@ namespace BookChoice
         public string correctLetter = "U";
         [Tooltip("Drag the specific sign/mesh target slot where THIS book's letter should fly to.")]
         public Transform customSignTargetSlot;
+
+        [Header("House U Word Meaning Settings")]
+        [Tooltip("Add as many words and definitions as this specific book needs!")]
+        public HouseUWordDefinition[] definitions;
 
         private Vector3 originalPosition;
         private Quaternion originalRotation;
@@ -68,6 +88,66 @@ namespace BookChoice
             if (choicesContainer != null)
                 choicesContainer.SetActive(false);
 
+            // If definitions are assigned, loop through them portraitless before flying back
+            if (DialogueManager.Instance != null && definitions != null && definitions.Length > 0)
+            {
+                StartCoroutine(PlaySequentialDefinitionsNoPortraits());
+            }
+            else
+            {
+                // Fallback direct return if no definitions are added
+                ReturnBookToShelf();
+            }
+        }
+
+        private IEnumerator PlaySequentialDefinitionsNoPortraits()
+        {
+            // 1. Block player controls safely while talking
+            DialogueManager.Instance.SetPlayerControlState(false); 
+
+            // 2. Fade out BGM at the start of the sequence
+            CoreAudioManager.FadeOutBGM(1.0f);
+
+            // 3. Loop through every single definition assigned to this book in the inspector
+            for (int i = 0; i < definitions.Length; i++)
+            {
+                bool isCurrentLineActive = true;
+                HouseUWordDefinition currentDef = definitions[i];
+
+                // Force portraits off, update custom text fields, and type out the message
+                DialogueManager.Instance.StartDialogueWithoutPortraits(
+                    currentDef.wordName,
+                    currentDef.wordMeaning,
+                    () => { isCurrentLineActive = false; } // Callback moves to next word on interaction input
+                );
+
+                // --- Wait 0.5 seconds before playing the definition audio track ---
+                yield return new WaitForSeconds(1f); 
+
+                // Play the unique sound effect matched with this specific word
+                if (currentDef.definitionSFX != null)
+                {
+                    CoreAudioManager.PlaySFX(currentDef.definitionSFX);
+                }
+
+                // Wait until player presses input to advance the current text frame
+                while (isCurrentLineActive)
+                {
+                    yield return null;
+                }
+
+                // Short grace delay before pulling up the next slot
+                yield return new WaitForSeconds(0.1f); 
+            }
+
+            // 4. Definitions complete! Fade BGM back in, turn controls on, and return book
+            CoreAudioManager.FadeInBGM(1.0f, 1.0f);
+            DialogueManager.Instance.SetPlayerControlState(true);
+            ReturnBookToShelf(); 
+        }
+
+        private void ReturnBookToShelf()
+        {
             // Float back to shelf position while scaling DOWN to originalScale
             StartCoroutine(FloatToTarget(originalPosition, originalRotation, originalScale, () =>
             {

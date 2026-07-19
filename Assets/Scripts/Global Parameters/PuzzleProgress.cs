@@ -2,6 +2,8 @@
 // Survives the scene swap because it's static.
 public static class PuzzleProgress
 {
+    public static float GlobalCurrentHealth = 100f;
+
     // 1. One-shot thank-you triggers (Cleared immediately after talking)
     public static bool HouseASolved = false;
     public static bool HouseESolved = false;
