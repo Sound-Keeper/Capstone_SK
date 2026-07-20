@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 86f2ed9f07d076c4faed484ac5231126
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - correctSFX: {fileID: 8300000, guid: 15156fd619866194caca698a328c838c, type: 3}
+  - incorrectSFX: {fileID: 8300000, guid: 8332bd03e98afcc46a33e4e21cfa1483, type: 3}
+  - pageManager: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

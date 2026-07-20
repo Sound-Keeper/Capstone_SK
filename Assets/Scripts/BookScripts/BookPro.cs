@@ -385,7 +385,9 @@ namespace BookCurlPro
         }
         public void UpdateBook()
         {
-            f = Vector3.Lerp(f, transformPointMousePosition(Input.mousePosition), Time.deltaTime * 10);
+            // ─── CHANGED FROM Time.deltaTime TO Time.unscaledDeltaTime ───
+            f = Vector3.Lerp(f, transformPointMousePosition(Input.mousePosition), Time.unscaledDeltaTime * 10);
+
             if (mode == FlipMode.RightToLeft)
                 UpdateBookRTLToPoint(f);
             else

@@ -26,6 +26,16 @@ public class Charactercontroller : MonoBehaviour
     [Tooltip("How far away from walls the camera should stay to prevent near-clip plane seeing inside walls.")]
     public float cameraCollisionBuffer = 0.2f;
 
+    [Header("Audio Setup")]
+    [Tooltip("Sound clip played when the player jumps.")]
+    public AudioClip jumpSFX;
+    [Tooltip("Sound clip played when the player takes a step.")]
+    public AudioClip footstepSFX;
+    [Tooltip("How fast footsteps play while walking (lower numbers = faster steps).")]
+    public float walkStepInterval = 0.5f;
+    [Tooltip("How fast footsteps play while sprinting (lower numbers = faster steps).")]
+    public float sprintStepInterval = 0.3f;
+
     // --- Control switch toggled by DialogueManager ---
     [HideInInspector] public bool canControl = true;
     public static float MouseSensitivityMultiplier = 1.0f;
@@ -40,6 +50,7 @@ public class Charactercontroller : MonoBehaviour
     float rot = 0f;
 
     private float cameraYaw = 0f;
+    private float footstepTimer = 0f; // Track footstep pacing
 
     void Start()
     {
@@ -111,6 +122,12 @@ public class Charactercontroller : MonoBehaviour
         if (InputSystem.actions.FindAction("Jump").triggered && player.isGrounded)
         {
             yVelocity = jumpForce;
+
+            // --- AUDIO TRIGGER: Play Jump SFX ---
+            if (jumpSFX != null)
+            {
+                CoreAudioManager.PlaySFX(jumpSFX);
+            }
         }
 
         // Gravity
@@ -127,30 +144,23 @@ public class Charactercontroller : MonoBehaviour
 
             Quaternion cameraRotation = Quaternion.Euler(rot, cameraYaw, 0f);
 
-            // Calculate the pivot point (player center) and the ideal max position of the camera
             Vector3 targetPivotPoint = transform.position + Vector3.up * cameraHeightOffset;
             Vector3 idealCameraDirection = cameraRotation * Vector3.forward;
 
-            // This is where the camera wants to sit if no walls are in the way
             Vector3 maxCameraPosition = targetPivotPoint - (idealCameraDirection * cameraDistance);
 
-            // Current distance default to max
             float adjustedDistance = cameraDistance;
 
-            // Shoot a ray from the player pivot out to the maximum camera range to check for obstacles
             RaycastHit hit;
             Vector3 rayDirection = (maxCameraPosition - targetPivotPoint).normalized;
 
             if (Physics.Raycast(targetPivotPoint, rayDirection, out hit, cameraDistance, collisionLayers))
             {
-                // If we hit something, pull the camera closer, leaving a buffer space away from the wall surface
                 adjustedDistance = Mathf.Clamp(hit.distance - cameraCollisionBuffer, minCameraDistance, cameraDistance);
             }
 
-            // Calculate final safe position
             Vector3 finalCameraPosition = targetPivotPoint - (idealCameraDirection * adjustedDistance);
 
-            // Apply global positions and rotations explicitly
             charModel.position = finalCameraPosition;
             charModel.rotation = cameraRotation;
         }
@@ -178,6 +188,27 @@ public class Charactercontroller : MonoBehaviour
                 Quaternion targetRotation = Quaternion.LookRotation(targetMovementDirection);
                 characterVisualMesh.rotation = Quaternion.Slerp(characterVisualMesh.rotation, targetRotation, Time.deltaTime * 15f);
             }
+
+            // --- AUDIO TRIGGER: Handle Footstep Timing ---
+            if (player.isGrounded)
+            {
+                footstepTimer -= Time.deltaTime;
+                if (footstepTimer <= 0f)
+                {
+                    if (footstepSFX != null)
+                    {
+                        CoreAudioManager.PlaySFX(footstepSFX, isSprinting ? 1.0f : 0.7f); // Slightly quieter when walking
+                    }
+
+                    // Reset timer based on current pacing
+                    footstepTimer = isSprinting ? sprintStepInterval : walkStepInterval;
+                }
+            }
+        }
+        else
+        {
+            // Reset the timer instantly if they stop moving, so their next first step plays immediately
+            footstepTimer = 0f;
         }
 
         finalMove.y = yVelocity;

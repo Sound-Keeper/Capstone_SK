@@ -9,6 +9,25 @@ namespace BookChoice
 {
     public class DialogueBoxManagerHouseO : MonoBehaviour
     {
+        // New structure to allow effortless customization inside the Unity Inspector
+        [System.Serializable]
+        public struct HomophoneChoiceData
+        {
+            public string wordName;
+            public AudioClip ttsAudioClip;
+        }
+
+        [System.Serializable]
+        public struct HomophoneExplanationData
+        {
+            [Header("Song Definition Context")]
+            [TextArea(2, 3)] public string initialIntroductionText;
+            public HomophoneChoiceData choice1;
+            public HomophoneChoiceData choice2;
+            public HomophoneChoiceData choice3;
+            public HomophoneChoiceData choice4;
+        }
+
         [Header("UI References")]
         public TextMeshProUGUI dialogueText;
         public TextMeshProUGUI speakerNameText;
@@ -23,23 +42,16 @@ namespace BookChoice
         public Button continuebutton;
 
         [Header("Song Interaction Controls")]
-        [Tooltip("Drag the UI Button component for 'Song1' here (Active on Paper Index 1).")]
         public Button song1Button;
-        [Tooltip("Drag the UI Button component for 'Song2' here (Active on Paper Index 2).")]
         public Button song2Button;
-        [Tooltip("Drag the UI Button component for 'Song3' here (Active on Paper Index 3).")]
         public Button song3Button;
 
         [Header("Song Audio Clips")]
-        [Tooltip("Audio clip for Song 1.")]
         public AudioClip song1Audio;
-        [Tooltip("Audio clip for Song 2.")]
         public AudioClip song2Audio;
-        [Tooltip("Audio clip for Song 3.")]
         public AudioClip song3Audio;
 
         [Header("Vowel Stone Reference")]
-        [Tooltip("Drag the House O VowelStone GameObject containing the VowelStoneCutscene script here.")]
         public VowelStoneCutscene stoneCutscene;
 
         [Header("NPC Dialogue Arrays")]
@@ -63,20 +75,12 @@ namespace BookChoice
         };
 
         [Header("House O Shared Audio")]
-        [Tooltip("The shared sound effect played every time an answer is correct.")]
         public AudioClip correctSFX;
-
-        [Tooltip("The shared sound effect played every time an answer is wrong.")]
         public AudioClip wrongSFX;
 
-        [Header("House O Word Meanings (Text Only)")]
-        [TextArea(2, 4)] public string answer1MeaningText = "Definition for the first correct verb goes here...";
-
-        [Space]
-        [TextArea(2, 4)] public string answer2MeaningText = "Definition for the second correct verb goes here...";
-
-        [Space]
-        [TextArea(2, 4)] public string answer3MeaningText = "Definition for the third correct verb goes here...";
+        [Header("House O - New Inspector Customizable Explanations")]
+        [Tooltip("Configure the definitions for each of the 3 song milestones here. Element 0 is for Song 1, Element 1 is for Song 2, etc.")]
+        public HomophoneExplanationData[] songExplanationData = new HomophoneExplanationData[3];
 
         [Header("Timing")]
         public float wrongDisplayDuration = 1.5f;
@@ -91,7 +95,7 @@ namespace BookChoice
         private Coroutine dialogueSequenceCoroutine;
         private Coroutine characterPrinterCoroutine;
         private Coroutine blinkCoroutine;
-        private Coroutine songMonitorCoroutine; // Tracks natural completion of the short clips
+        private Coroutine songMonitorCoroutine;
 
         public bool puzzleCompleted = false;
         private int correctCount = 0;
@@ -160,37 +164,22 @@ namespace BookChoice
 
             if (clipToPlay != null)
             {
-                // Kill any tracking loop currently counting down a previous song finish
                 if (songMonitorCoroutine != null)
                 {
                     StopCoroutine(songMonitorCoroutine);
                 }
 
-                // Instantly cut any running audio from a previous clip to prevent layering
                 CoreAudioManager.StopSFX();
-
-                // Manually pause background music for the song track
                 CoreAudioManager.PauseBGM();
-
                 CoreAudioManager.PlaySFX(clipToPlay);
 
-                // Start tracking how long the song is to bring back the background music when it ends
                 songMonitorCoroutine = StartCoroutine(WaitForSongToEnd(clipToPlay.length));
-            }
-            else
-            {
-                Debug.LogWarning($"Song {songNumber} Audio Clip is missing in the Inspector!");
             }
         }
 
-        /// <summary>
-        /// Monitors running short clips. Fades ambient track back up if the track runs out naturally.
-        /// </summary>
         private IEnumerator WaitForSongToEnd(float clipLength)
         {
             yield return new WaitForSeconds(clipLength);
-
-            // Bring back background music automatically since it finished playing completely
             CoreAudioManager.ResumeBGM();
             songMonitorCoroutine = null;
         }
@@ -208,16 +197,13 @@ namespace BookChoice
 
         public void ShowFeedback(bool isCorrect, Action onWrongFinished = null)
         {
-            // Stop the countdown tracker since a user action explicitly interrupted the audio state
             if (songMonitorCoroutine != null)
             {
                 StopCoroutine(songMonitorCoroutine);
                 songMonitorCoroutine = null;
             }
 
-            // Smoothly fade out the remaining clip fragments over 0.5 seconds and bring back BGM
             CoreAudioManager.FadeOutSFX(0.5f);
-
             ResetAllActiveDialogues();
 
             if (isCorrect)
@@ -240,10 +226,7 @@ namespace BookChoice
                     pageWasFlipped = false;
                     if (book != null) book.OnFlip.AddListener(flipListener);
 
-                    if (correctCount == 1)
-                        dialogueSequenceCoroutine = StartCoroutine(CorrectSequence(answer1MeaningText));
-                    else if (correctCount == 2)
-                        dialogueSequenceCoroutine = StartCoroutine(CorrectSequence(answer2MeaningText));
+                    dialogueSequenceCoroutine = StartCoroutine(CorrectSequence(correctCount - 1));
                 }
             }
             else
@@ -275,7 +258,8 @@ namespace BookChoice
             }
         }
 
-        IEnumerator CorrectSequence(string meaningText)
+        // Handles the interactive homophone explanation mechanics smoothly
+        IEnumerator CorrectSequence(int explanationIndex)
         {
             SetSpeakerName(isGrandma: false);
 
@@ -284,12 +268,40 @@ namespace BookChoice
             yield return StartCoroutine(TypeText(correctFeedbackGreeting, showIndicator: true));
             yield return StartCoroutine(WaitUntilClick());
 
-            if (!string.IsNullOrEmpty(meaningText))
+            // Run interactive breakdown sequence
+            if (explanationIndex >= 0 && explanationIndex < songExplanationData.Length)
             {
                 SetSpeakerUI(showGrandma: true);
                 SetSpeakerName(isGrandma: true);
 
-                yield return StartCoroutine(TypeText(meaningText, showIndicator: true));
+                HomophoneExplanationData data = songExplanationData[explanationIndex];
+
+                // Section 1: Introduction text block
+                yield return StartCoroutine(TypeText(data.initialIntroductionText, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                // Section 2: "Lets read it together."
+                yield return StartCoroutine(TypeText("Let's read it together.", showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                // Section 3: Word 1 choice
+                if (data.choice1.ttsAudioClip != null) CoreAudioManager.PlaySFX(data.choice1.ttsAudioClip);
+                yield return StartCoroutine(TypeText(data.choice1.wordName, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                // Section 4: Word 2 choice
+                if (data.choice2.ttsAudioClip != null) CoreAudioManager.PlaySFX(data.choice2.ttsAudioClip);
+                yield return StartCoroutine(TypeText(data.choice2.wordName, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                // Section 5: Word 3 choice
+                if (data.choice3.ttsAudioClip != null) CoreAudioManager.PlaySFX(data.choice3.ttsAudioClip);
+                yield return StartCoroutine(TypeText(data.choice3.wordName, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                // Section 6: Word 4 choice
+                if (data.choice4.ttsAudioClip != null) CoreAudioManager.PlaySFX(data.choice4.ttsAudioClip);
+                yield return StartCoroutine(TypeText(data.choice4.wordName, showIndicator: true));
                 yield return StartCoroutine(WaitUntilClick());
             }
 
@@ -327,11 +339,36 @@ namespace BookChoice
             yield return StartCoroutine(TypeText(correctFeedbackGreeting, showIndicator: true));
             yield return StartCoroutine(WaitUntilClick());
 
-            SetSpeakerUI(showGrandma: true);
-            SetSpeakerName(isGrandma: true);
+            // Run explanation for Song 3 milestone safely
+            if (songExplanationData.Length >= 3)
+            {
+                SetSpeakerUI(showGrandma: true);
+                SetSpeakerName(isGrandma: true);
 
-            yield return StartCoroutine(TypeText(answer3MeaningText, showIndicator: true));
-            yield return StartCoroutine(WaitUntilClick());
+                HomophoneExplanationData data = songExplanationData[2];
+
+                yield return StartCoroutine(TypeText(data.initialIntroductionText, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                yield return StartCoroutine(TypeText("Let's read it together.", showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                if (data.choice1.ttsAudioClip != null) CoreAudioManager.PlaySFX(data.choice1.ttsAudioClip);
+                yield return StartCoroutine(TypeText(data.choice1.wordName, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                if (data.choice2.ttsAudioClip != null) CoreAudioManager.PlaySFX(data.choice2.ttsAudioClip);
+                yield return StartCoroutine(TypeText(data.choice2.wordName, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                if (data.choice3.ttsAudioClip != null) CoreAudioManager.PlaySFX(data.choice3.ttsAudioClip);
+                yield return StartCoroutine(TypeText(data.choice3.wordName, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+
+                if (data.choice4.ttsAudioClip != null) CoreAudioManager.PlaySFX(data.choice4.ttsAudioClip);
+                yield return StartCoroutine(TypeText(data.choice4.wordName, showIndicator: true));
+                yield return StartCoroutine(WaitUntilClick());
+            }
 
             if (stoneCutscene != null)
             {
@@ -504,7 +541,6 @@ namespace BookChoice
 
         private void OnDisable()
         {
-            // Clean up running countdowns if the UI component gets disabled or closed
             if (songMonitorCoroutine != null)
             {
                 StopCoroutine(songMonitorCoroutine);

@@ -44,7 +44,7 @@ namespace BookCurlPro
         {
             if (working)
             {
-                elapsedtime += Time.deltaTime;
+                elapsedtime += Time.unscaledDeltaTime;
                 Vector3 value = QuadOut(from, to, duration, elapsedtime);
                 if (update != null) update(value);
                 if (elapsedtime >= duration)

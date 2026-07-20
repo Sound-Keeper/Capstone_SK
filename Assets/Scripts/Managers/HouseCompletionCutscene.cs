@@ -159,11 +159,11 @@ public class HouseCompletionCutscene : MonoBehaviour
                 damageText.transform.localPosition = initialTextPos + new Vector3(0, t * 1.5f, 0);
                 damageText.color = new Color(damageText.color.r, damageText.color.g, damageText.color.b, 1f - t);
 
-                if (cutsceneCamera != null)
-                {
-                    damageText.transform.LookAt(damageText.transform.position + cutsceneCamera.transform.rotation * Vector3.forward,
-                        cutsceneCamera.transform.rotation * Vector3.up);
-                }
+                //if (cutsceneCamera != null)
+                //{
+                //    damageText.transform.LookAt(damageText.transform.position + cutsceneCamera.transform.rotation * Vector3.forward,
+                //        cutsceneCamera.transform.rotation * Vector3.up);
+                //}
             }
             PuzzleProgress.GlobalCurrentHealth = targetHealth;
             yield return null;

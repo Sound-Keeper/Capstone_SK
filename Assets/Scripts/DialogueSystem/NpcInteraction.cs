@@ -25,6 +25,8 @@ public class NpcInteraction : MonoBehaviour, IInteractable
     public Sprite npcPortrait;
     [Tooltip("Face shown when the Player is speaking. Optional.")]
     public Sprite playerPortrait;
+    [Tooltip("The unique Animal Crossing voice sound asset for this character.")]
+    public AudioClip npcVoiceSFX;
 
     [Tooltip("Standard lines before the puzzle is finished.")]
     public List<DialogueLine> dialogueLines = new List<DialogueLine>();
@@ -45,9 +47,7 @@ public class NpcInteraction : MonoBehaviour, IInteractable
     public bool autoPlayWhenSolved = false;
     public float autoPlayDelay = 1.5f;
 
-    // --- LINEAR PROGRESSION GATING ---
     private bool isGatedOutOfOrder = false;
-
     bool hasTriggered = false;
     bool playerInRange = false;
     private bool waitingForSolvedExit = false;
@@ -62,13 +62,11 @@ public class NpcInteraction : MonoBehaviour, IInteractable
 
         FindPlayerFallback();
 
-        // ONLY auto-play the thank-you text if we are out in MapTest (NOT inside the puzzle house)
         if (!isInPuzzleHouse && autoPlayWhenSolved && IsHouseSolved() && dialogueLinesAfterSolved.Count > 0)
         {
             StartCoroutine(AutoPlayAfterSolved());
         }
 
-        // Swap dialogue lines to post-completion if complete
         if (IsHouseComplete())
         {
             if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
@@ -87,7 +85,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         }
     }
 
-    // Direct Enum Evaluation for "Solved" (one-shot thank you)
     bool IsHouseSolved()
     {
         switch (associatedHouse)
@@ -101,7 +98,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         }
     }
 
-    // Direct Enum Evaluation for "Complete" (permanent lock)
     bool IsHouseComplete()
     {
         switch (associatedHouse)
@@ -115,27 +111,19 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         }
     }
 
-    // Checks linear progression: To do current house, previous must be Complete
     bool IsAllowedToAccess()
     {
         switch (associatedHouse)
         {
-            case PuzzleFlag.HouseA:
-                return true; // House A is always open first
-            case PuzzleFlag.HouseE:
-                return PuzzleProgress.HouseAComplete;
-            case PuzzleFlag.HouseI:
-                return PuzzleProgress.HouseEComplete;
-            case PuzzleFlag.HouseO:
-                return PuzzleProgress.HouseIComplete;
-            case PuzzleFlag.HouseU:
-                return PuzzleProgress.HouseOComplete;
-            default:
-                return true;
+            case PuzzleFlag.HouseA: return true;
+            case PuzzleFlag.HouseE: return PuzzleProgress.HouseAComplete;
+            case PuzzleFlag.HouseI: return PuzzleProgress.HouseEComplete;
+            case PuzzleFlag.HouseO: return PuzzleProgress.HouseIComplete;
+            case PuzzleFlag.HouseU: return PuzzleProgress.HouseOComplete;
+            default: return true;
         }
     }
 
-    // Helper to print out the correct missing letter inside the alert dialogue box
     string GetRequiredPreviousHouseLetter()
     {
         switch (associatedHouse)
@@ -192,15 +180,11 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         List<DialogueLine> activeLines = new List<DialogueLine>(dialogueLines);
         isGatedOutOfOrder = false;
 
-        // Sequence Gating: Verify linear order using direct logic checks
         if (!IsAllowedToAccess() && !IsHouseComplete())
         {
             isGatedOutOfOrder = true;
-
-            // FIXED: Only assign the text property to a new DialogueLine instance
             DialogueLine gatingLine = new DialogueLine();
             gatingLine.text = $"You are not ready for this challenge yet, Sound Keeper! Go back and finish House {GetRequiredPreviousHouseLetter()} first.";
-
             activeLines = new List<DialogueLine> { gatingLine };
         }
         else if (IsHouseComplete())
@@ -209,26 +193,26 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             {
                 activeLines = dialogueLinesAfterSolved;
             }
-
             waitingForSolvedExit = true;
         }
 
         if (DialogueManager.Instance != null)
         {
+            // Pass unique NPC audio asset seamlessly into core runtime manager hook
             DialogueManager.Instance.StartDialogue(
                 activeLines.ToArray(),
                 npcName,
                 npcPortrait,
                 playerPortrait,
                 dialogueCamera,
-                OnDialogueComplete
+                OnDialogueComplete,
+                npcVoiceSFX
             );
         }
     }
 
     void OnDialogueComplete()
     {
-        // Out-of-order block exits safely to prevent scene entry warping
         if (isGatedOutOfOrder)
         {
             isGatedOutOfOrder = false;
@@ -236,21 +220,18 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             return;
         }
 
-        // 1. IF INSIDE HOUSE: Warp player to MapTest on completion
         if (isInPuzzleHouse && (IsHouseSolved() || IsHouseComplete() || (waitingForSolvedExit && IsHouseSolved())))
         {
             StartCoroutine(WaitAndWarpRoutine());
             return;
         }
 
-        // 2. IF OUT IN MAPTEST BEFORE PUZZLE IS DONE: Entry warp to enter the house
         if (!isInPuzzleHouse && !IsHouseComplete() && !string.IsNullOrEmpty(sceneToLoad) && sceneToLoad != "MapTest")
         {
             ExecuteSceneWarp(sceneToLoad);
             return;
         }
 
-        // 3. IF OUT IN MAPTEST AFTER PUZZLE IS DONE: Just say lines, end dialogue, and do not warp anywhere!
         StartCoroutine(ReEnableInteractNextFrame());
     }
 

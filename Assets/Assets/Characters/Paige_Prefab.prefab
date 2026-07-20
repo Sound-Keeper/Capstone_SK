@@ -285,7 +285,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7965161897702096489}
   - component: {fileID: 1105861801159836929}
-  - component: {fileID: 6188788920117044056}
   - component: {fileID: 8942259742122310932}
   - component: {fileID: 4083854219787460200}
   m_Layer: 0
@@ -362,14 +361,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &6188788920117044056
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1507871769633621742}
-  m_Enabled: 1
 --- !u!114 &8942259742122310932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2282,6 +2273,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3915309280730820436}
   - component: {fileID: 5910984317574590293}
+  - component: {fileID: 3781107223497524944}
   - component: {fileID: 5833316834633331972}
   - component: {fileID: 3241797248199107878}
   - component: {fileID: 1016214235890230089}
@@ -2335,6 +2327,14 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!81 &3781107223497524944
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6128571197267527217}
+  m_Enabled: 1
 --- !u!114 &5833316834633331972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2356,6 +2356,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   cameraCollisionBuffer: 0.2
+  jumpSFX: {fileID: 8300000, guid: efb78a650bb307740b12234a86a390a8, type: 3}
+  footstepSFX: {fileID: 8300000, guid: 15c2ddb4a5bb54248b40b42487465dca, type: 3}
+  walkStepInterval: 0.5
+  sprintStepInterval: 0.3
   canControl: 1
 --- !u!114 &3241797248199107878
 MonoBehaviour:
@@ -3439,6 +3443,10 @@ PrefabInstance:
     - target: {fileID: 671088846781554361, guid: f91e6687525c8da4e8fa9774471a9da7, type: 3}
       propertyPath: TrailModule.enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 671088846781554361, guid: f91e6687525c8da4e8fa9774471a9da7, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 671088846781554361, guid: f91e6687525c8da4e8fa9774471a9da7, type: 3}
       propertyPath: TrailModule.colorOverTrail.maxColor.b

@@ -14,6 +14,9 @@ public class WandPickUpRay : MonoBehaviour
 
     private Camera cachedCam;
 
+    private BookChoice.HouseUChoiceButton lastHoveredChoice;
+    private BookChoice.HouseUInteractiveBook lastHoveredBook;
+
     void Start()
     {
         cachedCam = GetComponent<Camera>();
@@ -34,30 +37,130 @@ public class WandPickUpRay : MonoBehaviour
     {
         if (cachedCam == null) return;
 
+        ProcessHoverCheck();
+
+        // 'E' Key pressed -> Exclusively passes parameters indicating an E press
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
-            PerformInteraction(true);
+            PerformInteraction(isPressingE: true, isLeftClick: false);
         }
 
+        // Left Mouse Click pressed -> Exclusively passes parameters indicating a Mouse click
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
-            PerformInteraction(false);
+            PerformInteraction(isPressingE: false, isLeftClick: true);
         }
     }
 
-    void PerformInteraction(bool isPressingE)
+    void ProcessHoverCheck()
+    {
+        Ray ray = new Ray(cachedCam.transform.position, cachedCam.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, range, interactableLayer))
+        {
+            // --- 1. HOVERING OVER A CHOICE PAPER/BUTTON ---
+            BookChoice.HouseUChoiceButton currentChoice = hit.collider.GetComponent<BookChoice.HouseUChoiceButton>();
+            if (currentChoice == null)
+            {
+                currentChoice = hit.collider.GetComponentInParent<BookChoice.HouseUChoiceButton>();
+            }
+
+            if (currentChoice != null)
+            {
+                ResetBookHoverState();
+
+                // If it's a new choice look, or if we re-entered it after looking away
+                if (currentChoice != lastHoveredChoice)
+                {
+                    lastHoveredChoice = currentChoice;
+
+                    // Request clip (the button script will return null if its cooldown is still active)
+                    AudioClip clipToPlay = currentChoice.GetHoverSFX();
+                    if (clipToPlay != null)
+                    {
+                        CoreAudioManager.PlaySFX(clipToPlay);
+                    }
+                }
+                return;
+            }
+
+            // --- 2. HOVERING OVER AN INTERACTIVE SHELF BOOK ---
+            BookChoice.HouseUInteractiveBook currentBook = hit.collider.GetComponent<BookChoice.HouseUInteractiveBook>();
+            if (currentBook == null)
+            {
+                currentBook = hit.collider.GetComponentInParent<BookChoice.HouseUInteractiveBook>();
+            }
+
+            if (currentBook != null)
+            {
+                lastHoveredChoice = null; // Clear choice memory
+
+                if (currentBook != lastHoveredBook)
+                {
+                    ResetBookHoverState();
+                    lastHoveredBook = currentBook;
+                    lastHoveredBook.SetOutlineHover(true);
+                }
+                return;
+            }
+
+            ClearAllHoverStates();
+        }
+        else
+        {
+            ClearAllHoverStates();
+        }
+    }
+
+    void ClearAllHoverStates()
+    {
+        lastHoveredChoice = null;
+        ResetBookHoverState();
+    }
+
+    void ResetBookHoverState()
+    {
+        if (lastHoveredBook != null)
+        {
+            lastHoveredBook.SetOutlineHover(false);
+            lastHoveredBook = null;
+        }
+    }
+
+    void PerformInteraction(bool isPressingE, bool isLeftClick)
     {
         if (cachedCam == null) return;
 
         Ray ray = new Ray(cachedCam.transform.position, cachedCam.transform.forward);
-        Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 2f);
 
         if (Physics.Raycast(ray, out RaycastHit hit, range, interactableLayer))
         {
-            Debug.Log("Ray hit: " + hit.collider.name);
+            // =============================================================
+            // HOUSE U (Choices & Books) -> MOUSE CLICK ONLY
+            // =============================================================
+            if (isLeftClick)
+            {
+                BookChoice.HouseUChoiceButton targetChoice = hit.collider.GetComponent<BookChoice.HouseUChoiceButton>();
+                if (targetChoice == null) targetChoice = hit.collider.GetComponentInParent<BookChoice.HouseUChoiceButton>();
+
+                if (targetChoice != null)
+                {
+                    targetChoice.SelectChoice();
+                    return;
+                }
+
+                BookChoice.HouseUInteractiveBook targetBook = hit.collider.GetComponent<BookChoice.HouseUInteractiveBook>();
+                if (targetBook == null) targetBook = hit.collider.GetComponentInParent<BookChoice.HouseUInteractiveBook>();
+
+                if (targetBook != null)
+                {
+                    targetBook.StartInspectionViaRaycast();
+                    return;
+                }
+            }
 
             // =============================================================
-            // UNIVERSAL INTERACTABLE CHECK (NPCs, Pip, items)
+            // UNIVERSAL INTERACTABLE CHECK (NPCs, Pip) -> E KEY ONLY
             // =============================================================
             if (isPressingE)
             {
@@ -65,79 +168,38 @@ public class WandPickUpRay : MonoBehaviour
                 if (interactable != null)
                 {
                     interactable.Interact();
-                    return; // Break execution immediately so child blocks aren't skipped or double evaluated
-                }
-            }
-
-            // =============================================================
-            // HOUSE U
-            // =============================================================
-            if (isPressingE)
-            {
-                BookChoice.HouseUInteractiveBook targetBook = hit.collider.GetComponentInParent<BookChoice.HouseUInteractiveBook>();
-                if (targetBook != null)
-                {
-                    targetBook.StartInspectionViaRaycast();
-                    return;
-                }
-            }
-            else
-            {
-                BookChoice.HouseUChoiceButton targetChoice = hit.collider.GetComponentInParent<BookChoice.HouseUChoiceButton>();
-                if (targetChoice != null)
-                {
-                    targetChoice.SelectChoice();
                     return;
                 }
             }
 
             // =============================================================
-            // HOUSE I
+            // HOUSE I & A PICKUPS -> MOUSE CLICK ONLY
             // =============================================================
-            if (carry != null)
+            if (isLeftClick && carry != null)
             {
                 if (!carry.IsHolding())
                 {
                     LetterPickup letter = hit.collider.GetComponentInParent<LetterPickup>();
-                    if (letter != null)
-                    {
-                        carry.PickUp(letter);
-                        return;
-                    }
+                    if (letter != null) { carry.PickUp(letter); return; }
                 }
                 else
                 {
                     Pillar slot = hit.collider.GetComponentInParent<Pillar>();
-                    if (slot != null)
-                    {
-                        slot.PlaceLetter(carry);
-                        return;
-                    }
+                    if (slot != null) { slot.PlaceLetter(carry); return; }
                 }
             }
 
-            // =============================================================
-            // HOUSE A
-            // =============================================================
-            if (pieceCarry != null)
+            if (isLeftClick && pieceCarry != null)
             {
                 if (!pieceCarry.IsHolding())
                 {
                     BrokenPiece piece = hit.collider.GetComponentInParent<BrokenPiece>();
-                    if (piece != null)
-                    {
-                        pieceCarry.PickUp(piece);
-                        return;
-                    }
+                    if (piece != null) { pieceCarry.PickUp(piece); return; }
                 }
                 else
                 {
                     PieceSlot slot = hit.collider.GetComponentInParent<PieceSlot>();
-                    if (slot != null)
-                    {
-                        slot.PlacePiece(pieceCarry);
-                        return;
-                    }
+                    if (slot != null) { slot.PlacePiece(pieceCarry); return; }
                 }
             }
         }

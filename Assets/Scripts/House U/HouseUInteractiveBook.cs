@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace BookChoice
 {
-    // The structured data class accessible directly inside the book's Inspector
     [System.Serializable]
     public class HouseUWordDefinition
     {
@@ -21,9 +20,9 @@ namespace BookChoice
 
     public class HouseUInteractiveBook : MonoBehaviour
     {
-        [Header("UI Indicator Reference")]
-        [Tooltip("Drag the indicator canvas asset belonging to this specific book here.")]
-        public HouseUInteractionIndicator proximityIndicator;
+        [Header("Glow Outline Settings")]
+        [Tooltip("Drag the Outline script component attached to this book's mesh here.")]
+        public MonoBehaviour outlineComponent;
 
         [Header("Animation Positions & Scale")]
         [Tooltip("Create an empty child or target transform in front of the shelf where the book floats.")]
@@ -41,13 +40,19 @@ namespace BookChoice
         [Tooltip("Drag the specific sign/mesh target slot where THIS book's letter should fly to.")]
         public Transform customSignTargetSlot;
 
+        [Header("Book Movement SFX")]
+        [Tooltip("Sound played when the book moves out toward the player.")]
+        public AudioClip bookOpenSFX;
+        [Tooltip("Sound played when the book floats back onto the shelf.")]
+        public AudioClip bookCloseSFX;
+
         [Header("House U Word Meaning Settings")]
         [Tooltip("Add as many words and definitions as this specific book needs!")]
         public HouseUWordDefinition[] definitions;
 
         private Vector3 originalPosition;
         private Quaternion originalRotation;
-        private Vector3 originalScale; // Tracks your initial bookshelf scale layout
+        private Vector3 originalScale;
         private bool isInspecting = false;
         private bool isSolved = false;
 
@@ -55,10 +60,24 @@ namespace BookChoice
         {
             originalPosition = transform.position;
             originalRotation = transform.rotation;
-            originalScale = transform.localScale; // Remember how big it was originally
+            originalScale = transform.localScale;
 
             if (choicesContainer != null)
                 choicesContainer.SetActive(false);
+        }
+
+        public void SetOutlineHover(bool isHovered)
+        {
+            if (isSolved || isInspecting)
+            {
+                if (outlineComponent != null) outlineComponent.enabled = false;
+                return;
+            }
+
+            if (outlineComponent != null)
+            {
+                outlineComponent.enabled = isHovered;
+            }
         }
 
         public void StartInspectionViaRaycast()
@@ -67,12 +86,14 @@ namespace BookChoice
 
             isInspecting = true;
 
-            if (proximityIndicator != null)
+            SetOutlineHover(false);
+
+            // --- AUDIO TRIGGER: Play open sound when floating out ---
+            if (bookOpenSFX != null)
             {
-                proximityIndicator.DisablePermanently();
+                CoreAudioManager.PlaySFX(bookOpenSFX);
             }
 
-            // Float to target position while scaling UP to inspectScale
             StartCoroutine(FloatToTarget(floatingInspectTarget.position, floatingInspectTarget.rotation, inspectScale, () =>
             {
                 if (choicesContainer != null)
@@ -88,67 +109,60 @@ namespace BookChoice
             if (choicesContainer != null)
                 choicesContainer.SetActive(false);
 
-            // If definitions are assigned, loop through them portraitless before flying back
             if (DialogueManager.Instance != null && definitions != null && definitions.Length > 0)
             {
                 StartCoroutine(PlaySequentialDefinitionsNoPortraits());
             }
             else
             {
-                // Fallback direct return if no definitions are added
                 ReturnBookToShelf();
             }
         }
 
         private IEnumerator PlaySequentialDefinitionsNoPortraits()
         {
-            // 1. Block player controls safely while talking
-            DialogueManager.Instance.SetPlayerControlState(false); 
-
-            // 2. Fade out BGM at the start of the sequence
+            DialogueManager.Instance.SetPlayerControlState(false);
             CoreAudioManager.FadeOutBGM(1.0f);
 
-            // 3. Loop through every single definition assigned to this book in the inspector
             for (int i = 0; i < definitions.Length; i++)
             {
                 bool isCurrentLineActive = true;
                 HouseUWordDefinition currentDef = definitions[i];
 
-                // Force portraits off, update custom text fields, and type out the message
                 DialogueManager.Instance.StartDialogueWithoutPortraits(
                     currentDef.wordName,
                     currentDef.wordMeaning,
-                    () => { isCurrentLineActive = false; } // Callback moves to next word on interaction input
+                    () => { isCurrentLineActive = false; }
                 );
 
-                // --- Wait 0.5 seconds before playing the definition audio track ---
-                yield return new WaitForSeconds(1f); 
+                yield return new WaitForSeconds(1f);
 
-                // Play the unique sound effect matched with this specific word
                 if (currentDef.definitionSFX != null)
                 {
                     CoreAudioManager.PlaySFX(currentDef.definitionSFX);
                 }
 
-                // Wait until player presses input to advance the current text frame
                 while (isCurrentLineActive)
                 {
                     yield return null;
                 }
 
-                // Short grace delay before pulling up the next slot
-                yield return new WaitForSeconds(0.1f); 
+                yield return new WaitForSeconds(0.1f);
             }
 
-            // 4. Definitions complete! Fade BGM back in, turn controls on, and return book
             CoreAudioManager.FadeInBGM(1.0f, 1.0f);
             DialogueManager.Instance.SetPlayerControlState(true);
-            ReturnBookToShelf(); 
+            ReturnBookToShelf();
         }
 
         private void ReturnBookToShelf()
         {
-            // Float back to shelf position while scaling DOWN to originalScale
+            // --- AUDIO TRIGGER: Play close sound when returning to shelf ---
+            if (bookCloseSFX != null)
+            {
+                CoreAudioManager.PlaySFX(bookCloseSFX);
+            }
+
             StartCoroutine(FloatToTarget(originalPosition, originalRotation, originalScale, () =>
             {
                 Debug.Log("Book securely returned to shelf.");
@@ -170,7 +184,7 @@ namespace BookChoice
 
                 transform.position = Vector3.Lerp(startPos, targetPos, t);
                 transform.rotation = Quaternion.Lerp(startRot, targetRot, t);
-                transform.localScale = Vector3.Lerp(startScale, targetScale, t); // Smoothly scales over time
+                transform.localScale = Vector3.Lerp(startScale, targetScale, t);
                 yield return null;
             }
 
@@ -180,4 +194,4 @@ namespace BookChoice
             onComplete?.Invoke();
         }
     }
-}
+}   

@@ -41,9 +41,6 @@ public class EndGameCutscene : MonoBehaviour
     [Tooltip("How long to stay on Miss Spell's camera to watch the particles blow away before switching to the Archmage.")]
     public float missSpellCutsceneDelay = 2.0f;
 
-    // ============================================================
-    // NEW: MISS SPELL LIGHT CONTROLS
-    // ============================================================
     [Header("Miss Spell Light Controls")]
     [Tooltip("First light to change color during Miss Spell's vanish sequence.")]
     public Light missSpellLight1;
@@ -51,6 +48,14 @@ public class EndGameCutscene : MonoBehaviour
     public Light missSpellLight2;
     [Tooltip("The color the lights will change to when Miss Spell vanishes.")]
     public Color missSpellTargetColor = Color.magenta;
+
+    [Header("Audio Customization Setup")]
+    [Tooltip("The audio clip track played when the divine intervention spotlight hits the fountain.")]
+    public AudioClip divineLightSFX;
+    [Tooltip("Add the 5 audio tracks for the ritual chant lines in order here (Element 0 to 4).")]
+    public AudioClip fullChantAudioTrack;
+    [Tooltip("How long (in seconds) the background music should take to fade away at the start.")]
+    public float bgmFadeOutTime = 1.0f;
 
     [Header("Inspector Editable Dialogues")]
     [Tooltip("The lines of the ritual chant spoken by the Player.")]
@@ -96,7 +101,16 @@ public class EndGameCutscene : MonoBehaviour
 
     private IEnumerator RitualSequenceRoutine()
     {
+        // --- AUDIO TRIGGER: Fade out the current background music immediately ---
+        CoreAudioManager.FadeOutBGM(bgmFadeOutTime);
+
         yield return new WaitForSeconds(0.2f);
+
+        // --- AUDIO TRIGGER: Play the full chant background audio track on LOOP ---
+        if (fullChantAudioTrack != null)
+        {
+            CoreAudioManager.PlayLoopingSFX(fullChantAudioTrack);
+        }
 
         // ============================================================
         // PHASE 1: The Ritual Chant & Vowel Stone Camera Cuts
@@ -137,10 +151,19 @@ public class EndGameCutscene : MonoBehaviour
             vowelStoneCameras[vowelStoneCameras.Count - 1].gameObject.SetActive(false);
         }
 
+        // --- AUDIO TRIGGER: Stop the looping chant track before Phase 2 starts ---
+        CoreAudioManager.StopLoopingSFX();
+
         // ============================================================
         // PHASE 2: Divine Spotlight Camera & Intensity Ramp (Divine Light)
         // ============================================================
         if (spotlightCamera != null) spotlightCamera.gameObject.SetActive(true);
+
+        // --- AUDIO TRIGGER: Play the divine intervention / alternative music track ---
+        if (divineLightSFX != null)
+        {
+            CoreAudioManager.PlaySFX(divineLightSFX);
+        }
 
         if (fountainSpotlight != null)
         {
@@ -169,30 +192,24 @@ public class EndGameCutscene : MonoBehaviour
         // ============================================================
         // PHASE 4: Miss Spell Vanish Sequence (With Camera & Light Change)
         // ============================================================
-        // 1. Turn on Miss Spell's camera
         if (missSpellCamera != null) missSpellCamera.gameObject.SetActive(true);
 
-        // 2. NEW: Change the color of the two designated lights
         if (missSpellLight1 != null) missSpellLight1.color = missSpellTargetColor;
         if (missSpellLight2 != null) missSpellLight2.color = missSpellTargetColor;
 
         if (missSpellGameObject != null)
         {
-            // 3. Play particles
             if (missSpellDisappearParticles != null)
             {
                 missSpellDisappearParticles.transform.position = missSpellGameObject.transform.position;
                 missSpellDisappearParticles.Play();
             }
 
-            // 4. Brief hold so the camera sees her right as particles flash
             yield return new WaitForSeconds(0.1f);
 
-            // 5. Turn Miss Spell off
             missSpellGameObject.SetActive(false);
             Debug.Log("[EndGameCutscene] Miss Spell vanished! Lights updated to new color.");
 
-            // Hold camera frame for the remainder of the timer
             yield return new WaitForSeconds(Mathf.Max(0.1f, missSpellCutsceneDelay - 0.1f));
         }
         else
@@ -200,10 +217,8 @@ public class EndGameCutscene : MonoBehaviour
             yield return new WaitForSeconds(missSpellCutsceneDelay);
         }
 
-        // Turn off Miss Spell's camera before shifting to dialogue
         if (missSpellCamera != null) missSpellCamera.gameObject.SetActive(false);
 
-        // Bring back the cutscene camera view focused on the Archmage
         if (DialogueManager.Instance.pipCutsceneCamera != null)
         {
             DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(true);
@@ -228,6 +243,9 @@ public class EndGameCutscene : MonoBehaviour
         // ============================================================
         if (DialogueManager.Instance.pipCutsceneCamera != null) DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(false);
         if (Camera.main != null) Camera.main.gameObject.SetActive(true);
+
+        // --- AUDIO TRIGGER: Fade the main background music safely back on! ---
+        CoreAudioManager.FadeInBGM(1.0f, 1.5f);
 
         DialogueManager.Instance.SetPlayerControlState(true);
         Debug.Log("[EndGameCutscene] Game Complete! World is saved.");

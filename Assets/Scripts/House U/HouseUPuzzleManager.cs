@@ -61,6 +61,10 @@ namespace BookChoice
             PuzzleProgress.HouseUComplete = true;
             PuzzleProgress.HasVowelUStone = true;
 
+            float targetVolume = VowelStone.PreCutsceneVolume;
+            if (targetVolume <= 0.01f) targetVolume = 1f;
+            CoreAudioManager.FadeInBGM(targetVolume, 1.0f);
+
             Debug.Log("[HouseUPuzzleManager] Flags set successfully. Waiting for player to talk to the NPC.");
         }
     }

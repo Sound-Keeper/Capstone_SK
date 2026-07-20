@@ -21,7 +21,7 @@ namespace BookCurlPro
             flipper.enabled = true;
             flipper.book = book;
             flipper.isFlipping = true;
-            flipper.duration = duration - Time.deltaTime;
+            flipper.duration = duration - Time.unscaledDeltaTime;
             flipper.finish = OnComplete;
             flipper.xc = (book.EndBottomLeft.x + book.EndBottomRight.x) / 2;
             flipper.pageWidth = (book.EndBottomRight.x - book.EndBottomLeft.x) / 2;
@@ -47,7 +47,7 @@ namespace BookCurlPro
         {
             if (isFlipping)
             {
-                elapsedTime += Time.deltaTime;
+                elapsedTime += Time.unscaledDeltaTime;
                 if (elapsedTime < duration)
                 {
                     if (flipMode == FlipMode.RightToLeft)

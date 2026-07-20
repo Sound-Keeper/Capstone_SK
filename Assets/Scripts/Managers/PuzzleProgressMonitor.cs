@@ -50,7 +50,7 @@ public class PuzzleProgressMonitor : MonoBehaviour
 }
 #endregion
 
-//#region //changeable
+#region //changeable
 
 //using UnityEngine;
 
@@ -125,4 +125,4 @@ public class PuzzleProgressMonitor : MonoBehaviour
 //        PuzzleProgress.HasVowelUStone = HasVowelUStone;
 //    }
 //}
-//#endregion
+#endregion

@@ -13,26 +13,42 @@ namespace BookChoice
         public float shakeMagnitude = 0.1f;
         public float flyDuration = 1.2f;
 
+        [Header("Audio Settings")]
+        [Tooltip("Drag the hover sound effect for this choice letter here.")]
+        public AudioClip hoverSFX;
+        [Tooltip("Minimum time (in seconds) that must pass before this choice can trigger its hover sound again.")]
+        public float hoverCooldown = 0.6f;
+
         private HouseUInteractiveBook parentBook;
         private bool isProcessing = false;
         private Vector3 originalLocalPosition;
+        private float nextPlayTime = 0f;
 
         void Start()
         {
             originalLocalPosition = transform.localPosition;
-
-            // Automatically find the book this choice belongs to in the hierarchy
             parentBook = GetComponentInParent<HouseUInteractiveBook>();
+        }
+
+        public AudioClip GetHoverSFX()
+        {
+            // If the cooldown hasn't finished yet, return null (no sound)
+            if (Time.time < nextPlayTime)
+            {
+                return null;
+            }
+
+            // Otherwise, update the timestamp and return the clip
+            nextPlayTime = Time.time + hoverCooldown;
+            return hoverSFX;
         }
 
         public void SelectChoice()
         {
-            // Lock interaction if it's already shaking or flying away
             if (isProcessing) return;
 
             if (parentBook != null)
             {
-                // Check if this letter matches the correct letter string on the book
                 if (choiceLetter.ToUpper() == parentBook.correctLetter.ToUpper())
                 {
                     StartCoroutine(FlyToSignRoutine());
@@ -52,8 +68,6 @@ namespace BookChoice
             while (elapsed < shakeDuration)
             {
                 elapsed += Time.deltaTime;
-
-                // Calculate a random offset on the X and Y plane relative to its starting point
                 float randomX = Random.Range(-1f, 1f) * shakeMagnitude;
                 float randomY = Random.Range(-1f, 1f) * shakeMagnitude;
 
@@ -61,7 +75,6 @@ namespace BookChoice
                 yield return null;
             }
 
-            // Snap back cleanly to original local layout position
             transform.localPosition = originalLocalPosition;
             isProcessing = false;
         }
@@ -69,15 +82,13 @@ namespace BookChoice
         private IEnumerator FlyToSignRoutine()
         {
             isProcessing = true;
-
-            // --- CHANGED: Get the target slot directly from the parent book script component ---
             Transform targetSignSlot = null;
+
             if (parentBook != null)
             {
                 targetSignSlot = parentBook.customSignTargetSlot;
             }
 
-            // Fallback safety safety net: if forgot to assign in inspector, check manager index
             if (targetSignSlot == null)
             {
                 targetSignSlot = HouseUPuzzleManager.Instance.GetActiveSignTargetSlot();
@@ -100,18 +111,14 @@ namespace BookChoice
                 yield return null;
             }
 
-            // Ensure precise placement on final frame
             if (targetSignSlot != null)
             {
                 transform.position = targetSignSlot.position;
                 transform.rotation = targetSignSlot.rotation;
                 transform.localScale = targetSignSlot.localScale;
-
-                // Make the letter physically part of the world sign mesh canvas now
                 transform.SetParent(targetSignSlot);
             }
 
-            // Let the book clean itself up and fly back onto the shelf
             if (parentBook != null)
             {
                 parentBook.CompleteBook(targetSignSlot);

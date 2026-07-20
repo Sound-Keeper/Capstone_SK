@@ -31,8 +31,13 @@ public class DialogueManager : MonoBehaviour
     public Color activeTint = Color.white;
     public Color inactiveTint = new Color(0.45f, 0.45f, 0.45f, 1f);
 
-    [Header("Typing Effect")]
+    [Header("Typing Effect & Animal Crossing Voice")]
     public float typingSpeed = 0.03f;
+    [Tooltip("Default fallback voice blip if an NPC doesn't have one assigned.")]
+    public AudioClip defaultTypeSFX;
+    [Range(0.1f, 0.5f)]
+    [Tooltip("How drastically the voice pitch shifts up and down. Higher values create more chaotic, chirpy voices.")]
+    public float pitchRandomness = 0.25f;
 
     [Header("Pip Intro Sequence Setup")]
     public PipFly pipFly;
@@ -57,6 +62,7 @@ public class DialogueManager : MonoBehaviour
     private Coroutine typingCoroutine;
 
     private float inputCooldownTimer = 0f;
+    private AudioClip activeVoiceClip; // Tracks the current active speaker's clip
 
     void Awake()
     {
@@ -69,6 +75,8 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
+        CoreAudioManager.ResetSFXPitch();
+
         if (pipFly == null) pipFly = FindFirstObjectByType<PipFly>();
         PipHint pipHintSystem = FindFirstObjectByType<PipHint>();
         GameObject player = GameObject.FindWithTag("Player");
@@ -122,7 +130,6 @@ public class DialogueManager : MonoBehaviour
                 "Keep up, Sound Keeper!"
             };
 
-            // --- FIXED: Define the callback BEFORE starting the dialogue ---
             OnDialogueEnd = () => {
                 SetPlayerControlState(false);
                 Camera mainCam = Camera.main;
@@ -139,19 +146,16 @@ public class DialogueManager : MonoBehaviour
                         pipCutsceneCamera.gameObject.SetActive(false);
                         if (mainCam != null) mainCam.gameObject.SetActive(true);
                     }
-
-                    // REMOVED: hasPlayedPipIntroFinished = true; <-- REMOVE THIS LINE!
-                    // We let PipInteraction flip this flag AFTER you talk to him at the fountain.
-
                     SetPlayerControlState(true);
                 });
             };
 
-            StartDialogue("Pip", introLines, pipIntroPortrait);
+            // Grab voice from Pip's object if it can be found in the scene right away as a fallback
+            AudioClip introVoice = (pipFly != null) ? pipFly.GetComponent<PipInteraction>()?.pipVoiceSFX : null;
+            StartDialogue("Pip", introLines, pipIntroPortrait, introVoice);
         }
         else
         {
-            // Logging if the conditions failed to initialize the cutscene
             Debug.LogWarning($"[DIAL_MGR START] Bypassed actual intro sequence trigger block. " +
                              $"pipFly missing? {pipFly == null} | fountainTarget missing? {fountainTarget == null}");
         }
@@ -185,7 +189,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void StartDialogue(string speaker, string[] newLines, Sprite speakerPortrait = null)
+    public void StartDialogue(string speaker, string[] newLines, Sprite speakerPortrait = null, AudioClip voiceSFX = null)
     {
         if (newLines == null || newLines.Length == 0) return;
 
@@ -204,11 +208,11 @@ public class DialogueManager : MonoBehaviour
             };
         }
 
-        StartDialogue(convertedLines, speaker, speakerPortrait, null, dialogueCamera, OnDialogueEnd);
+        StartDialogue(convertedLines, speaker, speakerPortrait, null, dialogueCamera, OnDialogueEnd, voiceSFX);
     }
 
     public void StartDialogue(DialogueLine[] lines, string npcName, Sprite npcPortrait,
-        Sprite ignoredPlayerPortrait, Camera cam, Action onComplete = null)
+        Sprite ignoredPlayerPortrait, Camera cam, Action onComplete = null, AudioClip voiceSFX = null)
     {
         if (lines == null || lines.Length == 0) return;
 
@@ -216,6 +220,9 @@ public class DialogueManager : MonoBehaviour
 
         this.npcName = npcName;
         this.npcPortrait = npcPortrait;
+
+        // Dynamically shift voice source asset based on current active script context
+        this.activeVoiceClip = (voiceSFX != null) ? voiceSFX : defaultTypeSFX;
 
         if (onComplete != null)
         {
@@ -240,31 +247,31 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogueWithoutPortraits(string speakerName, string definitionText, Action onComplete = null)
     {
-        if (dialoguePanel != null) dialoguePanel.SetActive(true); 
+        if (dialoguePanel != null) dialoguePanel.SetActive(true);
 
-    // Turn off the portraits AND their background parents so they vanish completely
-    if (leftPortrait != null)
+        if (leftPortrait != null)
         {
-            leftPortrait.gameObject.SetActive(false); 
-        leftPortrait.transform.parent.gameObject.SetActive(false);
+            leftPortrait.gameObject.SetActive(false);
+            leftPortrait.transform.parent.gameObject.SetActive(false);
         }
         if (rightPortrait != null)
         {
-            rightPortrait.gameObject.SetActive(false); 
-        rightPortrait.transform.parent.gameObject.SetActive(false);
+            rightPortrait.gameObject.SetActive(false);
+            rightPortrait.transform.parent.gameObject.SetActive(false);
         }
 
-        if (onComplete != null) this.OnDialogueEnd = onComplete; 
+        if (onComplete != null) this.OnDialogueEnd = onComplete;
 
-    currentLines = new DialogueLine[1] { new DialogueLine { speaker = Speaker.NPC, text = definitionText } }; 
-    currentLineIndex = 0; 
-    nameText.text = speakerName; 
-    inputCooldownTimer = 0.2f; 
+        currentLines = new DialogueLine[1] { new DialogueLine { speaker = Speaker.NPC, text = definitionText } };
+        currentLineIndex = 0;
+        nameText.text = speakerName;
+        inputCooldownTimer = 0.2f;
 
-    if (typingCoroutine != null) StopCoroutine(typingCoroutine); 
-    typingCoroutine = StartCoroutine(TypeLine(definitionText)); 
-}
+        this.activeVoiceClip = defaultTypeSFX; // Fallback to safe asset context
 
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+        typingCoroutine = StartCoroutine(TypeLine(definitionText));
+    }
 
     void ShowLine()
     {
@@ -303,7 +310,6 @@ public class DialogueManager : MonoBehaviour
     {
         if (img == null) return;
 
-        // FIX: Turn the parent background object back on for normal dialogues!
         img.transform.parent.gameObject.SetActive(true);
 
         if (face != null)
@@ -336,12 +342,35 @@ public class DialogueManager : MonoBehaviour
         currentFullLine = line;
         dialogueText.text = "";
 
+        int charCount = 0;
+
         foreach (char c in line)
         {
             dialogueText.text += c;
+
+            // Use your global CoreAudioManager instead of a local source!
+            if (activeVoiceClip != null && !char.IsWhiteSpace(c))
+            {
+                // Play every 2nd letter to keep the text chatter sounding clean
+                if (charCount % 3 == 0)
+                {
+                    // Calculate a dynamic random pitch based on your preset randomness
+                    float randomPitch = UnityEngine.Random.Range(
+                        1.0f - pitchRandomness,
+                        1.0f + pitchRandomness
+                    );
+
+                    // Pass the clip and the pitch to your CoreAudioManager static method
+                    CoreAudioManager.PlayDialogueBlip(activeVoiceClip, randomPitch); 
+                }
+                charCount++;
+            }
+
             yield return new WaitForSeconds(typingSpeed);
         }
 
+        // Reset the pitch back to normal when typing finishes
+        CoreAudioManager.ResetSFXPitch(); 
         isTyping = false;
     }
 
@@ -391,22 +420,26 @@ public class DialogueManager : MonoBehaviour
 
     void EndDialogue()
     {
-        dialoguePanel.SetActive(false);
+        dialoguePanel.SetActive(false); 
 
-        if (dialogueCamera != null)
+        // --- ADD THIS HERE ---
+        // Forces the pitch back to 1.0f immediately when the UI closes!
+        CoreAudioManager.ResetSFXPitch();
+
+        if (dialogueCamera != null) 
         {
-            dialogueCamera.gameObject.SetActive(false);
-            if (previousCamera != null) previousCamera.gameObject.SetActive(true);
+            dialogueCamera.gameObject.SetActive(false); 
+            if (previousCamera != null) previousCamera.gameObject.SetActive(true); 
         }
 
-        if (OnDialogueEnd == null)
+        if (OnDialogueEnd == null) 
         {
-            SetPlayerControlState(true);
+            SetPlayerControlState(true); 
         }
 
-        Action cb = OnDialogueEnd;
-        OnDialogueEnd = null;
-        cb?.Invoke();
+        Action cb = OnDialogueEnd; 
+        OnDialogueEnd = null; 
+        cb?.Invoke(); 
     }
 
     public void SetPlayerControlState(bool enable)

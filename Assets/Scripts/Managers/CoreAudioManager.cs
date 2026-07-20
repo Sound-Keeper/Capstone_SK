@@ -67,7 +67,6 @@ public class CoreAudioManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-
         if (bgmMapping.TryGetValue(scene.name, out AudioClip newClip))
         {
             if (newClip == null) return;
@@ -128,6 +127,9 @@ public class CoreAudioManager : MonoBehaviour
     {
         if (Instance != null && Instance.sfxSource != null && clip != null)
         {
+            // FORCE PITCH RESET: Stops dialogue system pitches from corrupting standard SFX
+            Instance.sfxSource.pitch = 1.0f;
+
             // If the clip is long (like a song), pause the background music
             if (clip.length > 5.0f)
             {
@@ -172,6 +174,69 @@ public class CoreAudioManager : MonoBehaviour
         // --- RESUME BACKGROUND MUSIC HERE ---
         ResumeBGM();
     }
+
+    public static void PlayDialogueBlip(AudioClip clip, float pitch)
+    {
+        if (Instance != null && Instance.sfxSource != null && clip != null)
+        {
+            // Set the custom pitch for this specific letter pop
+            Instance.sfxSource.pitch = pitch;
+            Instance.sfxSource.PlayOneShot(clip);
+        }
+    }
+    public static void ResetSFXPitch()
+    {
+        if (Instance != null && Instance.sfxSource != null)
+        {
+            Instance.sfxSource.pitch = 1.0f;
+        }
+    }
+
+    // ============================================================
+    // NEW LOOPING AUDIO FUNCTIONS 
+    // ============================================================
+
+    /// <summary>
+    /// Overwrites the BGM player to loop a specific clip indefinitely. Perfect for cutscene tracks!
+    /// </summary>
+    public static void PlayLoopingSFX(AudioClip clip, float volumeScale = 1f)
+    {
+        if (Instance != null && Instance.bgmSource != null && clip != null)
+        {
+            if (Instance.fadeCoroutine != null) Instance.StopCoroutine(Instance.fadeCoroutine);
+
+            Instance.bgmSource.clip = clip;
+            Instance.bgmSource.loop = true;
+            Instance.bgmSource.volume = volumeScale;
+            Instance.bgmSource.Play();
+        }
+    }
+
+    /// <summary>
+    /// Instantly halts the active looping cutscene sound effect.
+    /// </summary>
+    public static void StopLoopingSFX()
+    {
+        if (Instance != null && Instance.bgmSource != null)
+        {
+            Instance.bgmSource.Stop();
+            Instance.bgmSource.loop = false;
+        }
+    }
+
+    /// <summary>
+    /// Smoothly fades out the looping sound effect over a specified duration.
+    /// </summary>
+    public static void FadeOutLoopingSFX(float duration)
+    {
+        if (Instance != null && Instance.bgmSource != null)
+        {
+            if (Instance.fadeCoroutine != null) Instance.StopCoroutine(Instance.fadeCoroutine);
+            Instance.fadeCoroutine = Instance.StartCoroutine(Instance.FadeBGMVolume(Instance.bgmSource.volume, 0f, duration));
+        }
+    }
+
+    // ============================================================
 
     public static void PauseBGM()
     {

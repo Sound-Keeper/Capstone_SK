@@ -1,7 +1,11 @@
 // Tiny shared flags so the puzzle scene can tell MainWorld what happened.
 // Survives the scene swap because it's static.
+
+using System.Collections.Generic;
 public static class PuzzleProgress
 {
+    public static HashSet<string> DiscoveredSignIDs = new HashSet<string>();
+    public static int DiscoveredSignsCount => DiscoveredSignIDs.Count;
     public static float GlobalCurrentHealth = 100f;
 
     // 1. One-shot thank-you triggers (Cleared immediately after talking)
@@ -46,6 +50,8 @@ public static class PuzzleProgress
     // --- CALL THIS TO WIPE ALL PROGRESS DATA ON NEW GAME ---
     public static void ResetAllProgress()
     {
+        DiscoveredSignIDs.Clear();
+
         // 1. Reset Solved Triggers
         HouseASolved = false;
         HouseESolved = false;
