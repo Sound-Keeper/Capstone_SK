@@ -180,6 +180,7 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         List<DialogueLine> activeLines = new List<DialogueLine>(dialogueLines);
         isGatedOutOfOrder = false;
 
+        // 1. Check if sequence gated (out of order)
         if (!IsAllowedToAccess() && !IsHouseComplete())
         {
             isGatedOutOfOrder = true;
@@ -187,7 +188,18 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             gatingLine.text = $"You are not ready for this challenge yet, Sound Keeper! Go back and finish House {GetRequiredPreviousHouseLetter()} first.";
             activeLines = new List<DialogueLine> { gatingLine };
         }
-        else if (IsHouseComplete())
+        else
+        {
+            // 2. ONLY complete/check mark if the CURRENT active quest is targeting THIS NPC!
+            if (ObjectiveManager.Instance != null &&
+                ObjectiveManager.Instance.CurrentState == QuestState.TalkToNPC &&
+                ObjectiveManager.Instance.CurrentTargetNPC == npcName)
+            {
+                ObjectiveManager.Instance.CompleteCurrentObjective();
+            }
+        }
+
+        if (IsHouseComplete())
         {
             if (dialogueLinesAfterSolved != null && dialogueLinesAfterSolved.Count > 0)
             {
@@ -196,9 +208,9 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             waitingForSolvedExit = true;
         }
 
+        // Start dialogue...
         if (DialogueManager.Instance != null)
         {
-            // Pass unique NPC audio asset seamlessly into core runtime manager hook
             DialogueManager.Instance.StartDialogue(
                 activeLines.ToArray(),
                 npcName,
@@ -219,6 +231,7 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             StartCoroutine(ReEnableInteractNextFrame());
             return;
         }
+
 
         if (isInPuzzleHouse && (IsHouseSolved() || IsHouseComplete() || (waitingForSolvedExit && IsHouseSolved())))
         {

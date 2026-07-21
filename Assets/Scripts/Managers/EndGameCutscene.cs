@@ -6,6 +6,14 @@ public class EndGameCutscene : MonoBehaviour
 {
     public static EndGameCutscene Instance { get; private set; }
 
+    [Header("UI Controls To Hide During Cutscene")]
+    [Tooltip("Drag the Objective / Quest Panel GameObject here.")]
+    public GameObject questBoxUI;
+    [Tooltip("Drag the Minimap UI GameObject here.")]
+    public GameObject minimapUI;
+    [Tooltip("Drag the Vowel Stones UI Canvas/Panel GameObject here.")]
+    public GameObject vowelStonesUI;
+
     [Header("Environment Controls")]
     [Tooltip("Drag your sunny/default Day Skybox Material here.")]
     public Material daySkybox;
@@ -121,6 +129,10 @@ public class EndGameCutscene : MonoBehaviour
 
     private IEnumerator RitualSequenceRoutine()
     {
+        if (questBoxUI != null) questBoxUI.SetActive(false);
+        if (minimapUI != null) minimapUI.SetActive(false);
+        if (vowelStonesUI != null) vowelStonesUI.SetActive(false);
+
         // --- AUDIO TRIGGER: Fade out the current background music immediately ---
         CoreAudioManager.FadeOutBGM(bgmFadeOutTime);
 
@@ -266,6 +278,16 @@ public class EndGameCutscene : MonoBehaviour
 
         PlayerPrefs.SetInt("IsEndGameCompleted", 1);
         PlayerPrefs.Save();
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.CompleteCurrentObjective();
+            ObjectiveManager.Instance.SetObjective(QuestState.Completed);
+        }
+
+        if (questBoxUI != null) questBoxUI.SetActive(true);
+        if (minimapUI != null) minimapUI.SetActive(true);
+        if (vowelStonesUI != null) vowelStonesUI.SetActive(true);
 
         // --- AUDIO TRIGGER: Fade the main background music safely back on! ---
         CoreAudioManager.FadeInBGM(1.0f, 1.5f);

@@ -1,5 +1,6 @@
 using NUnit.Framework.Constraints;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PipInteraction : MonoBehaviour, IInteractable
 {
@@ -30,6 +31,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
     private PipHint pipHintSystem;
     private bool hasSaidHouseUCompletionInMapTest = false;
     private bool arrivedAtFountainFinale = false;
+    private bool hasHeardFinaleInstructions = false;
     private bool hasTriggered = false;
     private bool playerInRange = false;
 
@@ -100,26 +102,117 @@ public class PipInteraction : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (DialogueManager.Instance == null || pipHintSystem == null) return;
-
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MapTest")
+        // --- 1. TURN CHECKMARK GREEN IMMEDIATELY ON INTERACT ---
+        if (ObjectiveManager.Instance != null)
         {
-            return;
+            ObjectiveManager.Instance.CompleteCurrentObjective();
         }
 
-        hasTriggered = true;
-
-        if (arrivedAtFountainFinale && hasSaidHouseUCompletionInMapTest)
+        // --- 2. AFTER-CUTSCENE INTERACTION WITH ARCHMAGE ---
+        if (PlayerPrefs.GetInt("IsEndGameCompleted", 0) == 1)
         {
             DialogueManager.Instance.SetPlayerControlState(false);
-            if (EndGameCutscene.Instance != null)
+
+            DialogueLine thankYouLine = new DialogueLine
             {
-                EndGameCutscene.Instance.StartFountainRitual();
-            }
+                speaker = Speaker.NPC,
+                text = "Thank you again, Sound Keeper! You have saved Word Valley. It is time for you to rest."
+            };
+
+            Sprite archmagePortrait = EndGameCutscene.Instance != null ? EndGameCutscene.Instance.archmagePortrait : null;
+
+            DialogueManager.Instance.StartDialogue(
+                new DialogueLine[] { thankYouLine },
+                "Archmage",
+                archmagePortrait,
+                DialogueManager.Instance.pennPortrait,
+                null,
+                OnArchmageFarewellComplete
+            );
+
             return;
         }
 
-        PipHint.HintObjective nextObjective = pipHintSystem.GetActiveObjective();
+        // Check if Pip is at the finale fountain target or all house objectives are clear
+        PipHint.HintObjective nextObjective = pipHintSystem != null ? pipHintSystem.GetActiveObjective() : null;
+        bool isAtFinale = arrivedAtFountainFinale || (nextObjective == null && hasSaidHouseUCompletionInMapTest);
+
+        // --- 3. FOUNTAIN FINALE DIALOGUE & CUTSCENE LAUNCH ---
+        if (isAtFinale)
+        {
+            DialogueManager.Instance.SetPlayerControlState(false);
+
+            // 3A. SECOND TALK AT FOUNTAIN: Start the Chant Cutscene!
+            if (hasHeardFinaleInstructions)
+            {
+                DialogueLine readyLine = new DialogueLine
+                {
+                    speaker = Speaker.NPC,
+                    text = "Let the Ancient Valley Sound Chant begin!"
+                };
+
+                DialogueManager.Instance.OnDialogueEnd = () =>
+                {
+                    ResetTriggerState();
+                    if (EndGameCutscene.Instance != null)
+                    {
+                        EndGameCutscene.Instance.StartFountainRitual();
+                    }
+                };
+
+                DialogueManager.Instance.StartDialogue(
+                    new DialogueLine[] { readyLine },
+                    pipName,
+                    pipPortrait,
+                    null,
+                    null,
+                    DialogueManager.Instance.OnDialogueEnd,
+                    pipVoiceSFX
+                );
+
+                return;
+            }
+
+            // 3B. FIRST TALK AT FOUNTAIN: Read instructions first!
+            System.Collections.Generic.List<DialogueLine> finaleLines = new System.Collections.Generic.List<DialogueLine>();
+            foreach (string textLine in pipInstructionsLines)
+            {
+                DialogueLine line = new DialogueLine();
+                line.text = textLine;
+                line.speaker = Speaker.NPC;
+                finaleLines.Add(line);
+            }
+
+            DialogueManager.Instance.OnDialogueEnd = () =>
+            {
+                ResetTriggerState();
+                hasHeardFinaleInstructions = true; // Flag that instructions have been read!
+
+                if (ObjectiveManager.Instance != null)
+                {
+                    ObjectiveManager.Instance.SetObjective(QuestState.TalkToPipAtEnd);
+                }
+
+                if (DialogueManager.Instance != null)
+                {
+                    DialogueManager.Instance.SetPlayerControlState(true);
+                }
+            };
+
+            DialogueManager.Instance.StartDialogue(
+                finaleLines.ToArray(),
+                pipName,
+                pipPortrait,
+                null,
+                null,
+                DialogueManager.Instance.OnDialogueEnd,
+                pipVoiceSFX
+            );
+
+            return;
+        }
+
+        // --- 4. STANDARD GAMEPLAY QUEST DIALOGUE & FLIGHT LOGIC ---
         string[] lines;
         bool shouldTriggerFlight = false;
         bool headingToFountainFinale = false;
@@ -161,30 +254,21 @@ public class PipInteraction : MonoBehaviour, IInteractable
         }
         else
         {
-            if (!hasSaidHouseUCompletionInMapTest)
+            string finalHouseDialogue = "Sensational! House U is clear!";
+
+            if (pipHintSystem.objectives != null && pipHintSystem.objectives.Count > 0)
             {
-                string finalHouseDialogue = "Sensational! House U is clear!";
-
-                if (pipHintSystem.objectives != null && pipHintSystem.objectives.Count > 0)
-                {
-                    finalHouseDialogue = pipHintSystem.objectives[pipHintSystem.objectives.Count - 1].completionDialogue;
-                }
-
-                lines = new string[] {
-                    finalHouseDialogue,
-                    "I'll meet you over at the center fountain right away!"
-                };
-
-                shouldTriggerFlight = true;
-                headingToFountainFinale = true;
-                hasSaidHouseUCompletionInMapTest = true;
+                finalHouseDialogue = pipHintSystem.objectives[pipHintSystem.objectives.Count - 1].completionDialogue;
             }
-            else
-            {
-                lines = pipInstructionsLines.ToArray();
-                shouldTriggerFlight = false;
-                arrivedAtFountainFinale = true;
-            }
+
+            lines = new string[] {
+                finalHouseDialogue,
+                "I'll meet you over at the center fountain right away!"
+            };
+
+            shouldTriggerFlight = true;
+            headingToFountainFinale = true;
+            hasSaidHouseUCompletionInMapTest = true;
         }
 
         if (shouldTriggerFlight)
@@ -206,6 +290,19 @@ public class PipInteraction : MonoBehaviour, IInteractable
         {
             DialogueManager.Instance.OnDialogueEnd = () => {
                 ResetTriggerState();
+
+                if (ObjectiveManager.Instance != null)
+                {
+                    string currentNPC = ObjectiveManager.Instance.GetCurrentActiveNPCName();
+                    if (!string.IsNullOrEmpty(currentNPC))
+                    {
+                        ObjectiveManager.Instance.SetObjective(QuestState.TalkToNPC, currentNPC);
+                    }
+                    else
+                    {
+                        ObjectiveManager.Instance.SetObjective(QuestState.TalkToPipAtEnd);
+                    }
+                }
 
                 if (DialogueManager.Instance != null)
                 {
@@ -230,7 +327,6 @@ public class PipInteraction : MonoBehaviour, IInteractable
                 structuredLines.Add(newline);
             }
 
-            // Pip passes her custom 'pipVoiceSFX' forward right here
             DialogueManager.Instance.StartDialogue(
                 structuredLines.ToArray(),
                 pipName,
@@ -240,6 +336,37 @@ public class PipInteraction : MonoBehaviour, IInteractable
                 DialogueManager.Instance.OnDialogueEnd,
                 pipVoiceSFX
             );
+        }
+    }
+
+    private void OnArchmageFarewellComplete()
+    {
+        Debug.Log("[Archmage] Returning to Main Menu via SceneController...");
+
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.SetPlayerControlState(true);
+        }
+
+        Time.timeScale = 1.0f;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        if (SceneController.Instance != null)
+        {
+            SceneController.Instance
+                .NewTransition()
+                .Load(SceneDatabase.Slots.Menu, SceneDatabase.Scenes.MainMenu)
+                .Unload(SceneDatabase.Slots.Session)
+                .Unload(SceneDatabase.Slots.SessionContent)
+                .WithClearUnusedAssets()
+                .WithOverlay()
+                .Perform();
+        }
+        else
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
         }
     }
 
@@ -265,6 +392,19 @@ public class PipInteraction : MonoBehaviour, IInteractable
         }
 
         pipHintSystem.pip.MoveToTarget(destinationTarget, () => {
+            // Update objective UI AFTER Pip reaches his target location
+            if (ObjectiveManager.Instance != null)
+            {
+                if (isFinale)
+                {
+                    ObjectiveManager.Instance.SetObjective(QuestState.TalkToPipAtEnd);
+                }
+                else
+                {
+                    ObjectiveManager.Instance.SetObjective(QuestState.FollowPipToDestination);
+                }
+            }
+
             if (DialogueManager.Instance.pipCutsceneCamera != null)
             {
                 DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(false);
