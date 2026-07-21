@@ -186,7 +186,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
             DialogueManager.Instance.OnDialogueEnd = () =>
             {
                 ResetTriggerState();
-                hasHeardFinaleInstructions = true; // Flag that instructions have been read!
+                hasHeardFinaleInstructions = true;
 
                 if (ObjectiveManager.Instance != null)
                 {
@@ -228,20 +228,8 @@ public class PipInteraction : MonoBehaviour, IInteractable
 
             if (distanceToObjective > 2.0f)
             {
-                string completedHouseDialogue = "Fantastic work solving that puzzle!";
-
-                for (int i = pipHintSystem.objectives.Count - 1; i >= 0; i--)
-                {
-                    var obj = pipHintSystem.objectives[i];
-                    if (PuzzleProgress.IsHouseComplete(obj.houseLetter))
-                    {
-                        completedHouseDialogue = obj.completionDialogue;
-                        break;
-                    }
-                }
-
+                // Simple standard flight dialogue without forced custom text loops
                 lines = new string[] {
-                    completedHouseDialogue,
                     $"Let's head over to House {nextObjective.houseLetter} next!"
                 };
                 shouldTriggerFlight = true;
@@ -254,15 +242,8 @@ public class PipInteraction : MonoBehaviour, IInteractable
         }
         else
         {
-            string finalHouseDialogue = "Sensational! House U is clear!";
-
-            if (pipHintSystem.objectives != null && pipHintSystem.objectives.Count > 0)
-            {
-                finalHouseDialogue = pipHintSystem.objectives[pipHintSystem.objectives.Count - 1].completionDialogue;
-            }
-
             lines = new string[] {
-                finalHouseDialogue,
+                "Sensational! All house puzzles are clear!",
                 "I'll meet you over at the center fountain right away!"
             };
 
@@ -350,6 +331,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
 
         Time.timeScale = 1.0f;
 
+        // Unlock mouse cursor for Main Menu navigation
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -392,7 +374,6 @@ public class PipInteraction : MonoBehaviour, IInteractable
         }
 
         pipHintSystem.pip.MoveToTarget(destinationTarget, () => {
-            // Update objective UI AFTER Pip reaches his target location
             if (ObjectiveManager.Instance != null)
             {
                 if (isFinale)
