@@ -84,7 +84,7 @@ namespace BookCurlPro.BookEditor
             rightPage.AddComponent<Image>();
             rightPage.AddComponent<Mask>().showMaskGraphic = true;
             rightPage.AddComponent<CanvasGroup>();
-            lastElement.FindPropertyRelative("Front").objectReferenceInstanceIDValue = rightPage.GetInstanceID();
+            lastElement.FindPropertyRelative("Front").objectReferenceValue = rightPage;
 
 
             GameObject leftPage = Instantiate(book.LeftPageTransform.gameObject) as GameObject;
@@ -97,7 +97,7 @@ namespace BookCurlPro.BookEditor
             leftPage.AddComponent<Image>();
             leftPage.AddComponent<Mask>().showMaskGraphic = true;
             leftPage.AddComponent<CanvasGroup>();
-            lastElement.FindPropertyRelative("Back").objectReferenceInstanceIDValue = leftPage.GetInstanceID();
+            lastElement.FindPropertyRelative("Back").objectReferenceValue = leftPage;
             list.index = list.count - 1;
 
 

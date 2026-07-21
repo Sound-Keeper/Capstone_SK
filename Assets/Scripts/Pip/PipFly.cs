@@ -41,7 +41,27 @@ public class PipFly : MonoBehaviour
 
         FindPlayers(); // Find players initially
 
-        PipHint hint = FindFirstObjectByType<PipHint>();
+        if (PlayerPrefs.GetInt("IsEndGameCompleted", 0) == 1)
+        {
+            PipInteraction pipInteract = GetComponent<PipInteraction>();
+
+            // Use the finale position if assigned, otherwise fallback to fountainTarget
+            Transform targetSpot = (pipInteract != null && pipInteract.finaleFountainTarget != null)
+                ? pipInteract.finaleFountainTarget
+                : (FindAnyObjectByType<DialogueManager>()?.fountainTarget);
+
+            if (targetSpot != null)
+            {
+                transform.position = targetSpot.position;
+                transform.rotation = targetSpot.rotation;
+                homeRotation = targetSpot.rotation;
+                startPos = transform.position;
+                hasSnappedToFountain = true;
+                return; // Skip normal hint placement
+            }
+        }
+
+        PipHint hint = FindAnyObjectByType<PipHint>();
         if (hint != null && hint.objectives != null && hint.objectives.Count > 0)
         {
             Transform spawnTarget = null;
@@ -89,7 +109,7 @@ public class PipFly : MonoBehaviour
 
         if (!hasSnappedToFountain && DialogueManager.hasPlayedPipIntroFinished && zeroHousesSolved)
         {
-            DialogueManager dialogueMgr = FindFirstObjectByType<DialogueManager>();
+            DialogueManager dialogueMgr = FindAnyObjectByType<DialogueManager>();
             if (dialogueMgr != null && dialogueMgr.fountainTarget != null)
             {
                 // Snap Pip directly to the fountain!

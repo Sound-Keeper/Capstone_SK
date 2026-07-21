@@ -91,6 +91,26 @@ public class EndGameCutscene : MonoBehaviour
         if (missSpellCamera != null) missSpellCamera.gameObject.SetActive(false);
     }
 
+    void Start()
+    {
+        // If loaded from Main Menu after completion, re-apply visual world state
+        if (PlayerPrefs.GetInt("IsEndGameCompleted", 0) == 1)
+        {
+            ApplyPostCutsceneWorldState();
+        }
+    }
+
+    public void ApplyPostCutsceneWorldState()
+    {
+        TriggerDaylightTransformation(); // Restores skybox and directional light
+
+        if (pipOwlVisual != null) pipOwlVisual.SetActive(false); 
+        if (pipArchmageVisual != null) pipArchmageVisual.SetActive(true); 
+
+        if (missSpellGameObject != null) missSpellGameObject.SetActive(false); 
+        if (fountainSpotlight != null) fountainSpotlight.intensity = 0f; 
+    }
+
     public void StartFountainRitual()
     {
         if (ritualSequenceStarted) return;
@@ -243,6 +263,9 @@ public class EndGameCutscene : MonoBehaviour
         // ============================================================
         if (DialogueManager.Instance.pipCutsceneCamera != null) DialogueManager.Instance.pipCutsceneCamera.gameObject.SetActive(false);
         if (Camera.main != null) Camera.main.gameObject.SetActive(true);
+
+        PlayerPrefs.SetInt("IsEndGameCompleted", 1);
+        PlayerPrefs.Save();
 
         // --- AUDIO TRIGGER: Fade the main background music safely back on! ---
         CoreAudioManager.FadeInBGM(1.0f, 1.5f);

@@ -277,7 +277,7 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         yield return null;
         hasTriggered = false;
 
-        Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+        Charactercontroller activePlayer = FindAnyObjectByType<Charactercontroller>();
         if (activePlayer != null)
         {
             activePlayer.canControl = true;

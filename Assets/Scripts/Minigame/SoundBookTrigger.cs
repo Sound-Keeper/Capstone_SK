@@ -76,7 +76,7 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
         }
 
         // 2. Freeze the player completely using your existing control flag
-        Charactercontroller player = Object.FindFirstObjectByType<Charactercontroller>();
+        Charactercontroller player = Object.FindAnyObjectByType<Charactercontroller>();
         if (player != null)
         {
             player.canControl = false;
@@ -103,7 +103,7 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
             minigameUI.SetActive(false);
         }
 
-        Charactercontroller player = Object.FindFirstObjectByType<Charactercontroller>();
+        Charactercontroller player = Object.FindAnyObjectByType<Charactercontroller>();
         if (player != null)
         {
             player.canControl = true;

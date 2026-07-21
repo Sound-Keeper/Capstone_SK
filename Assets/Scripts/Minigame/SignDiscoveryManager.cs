@@ -20,7 +20,7 @@ public class SignDiscoveryManager : MonoBehaviour
         else { Destroy(gameObject); return; }
 
         // Find how many signs are actually present in this scene layout
-        InteractableSign[] allSigns = FindObjectsByType<InteractableSign>(FindObjectsSortMode.None);
+        InteractableSign[] allSigns = Object.FindObjectsByType<InteractableSign>();
         totalSignsInMap = allSigns.Length;
     }
 

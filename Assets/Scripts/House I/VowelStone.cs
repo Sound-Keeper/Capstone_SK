@@ -118,7 +118,7 @@ public class VowelStone : MonoBehaviour
         GrantStone();
 
         // --- NEW: Dynamic Smooth Fade Out ---
-        AudioSource bgmSource = FindFirstObjectByType<CoreAudioManager>()?.GetComponentInChildren<AudioSource>();
+        AudioSource bgmSource = FindAnyObjectByType<CoreAudioManager>()?.GetComponentInChildren<AudioSource>();
         if (bgmSource != null)
         {
             PreCutsceneVolume = bgmSource.volume; // Record player volume layout baseline

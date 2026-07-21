@@ -68,7 +68,7 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadMenu()
     {
-        Charactercontroller character = FindFirstObjectByType<Charactercontroller>();
+        Charactercontroller character = FindAnyObjectByType<Charactercontroller>();
         if (character != null && CoreManager.Instance != null)
         {
             CoreManager.Instance.SavePlayerPosition(

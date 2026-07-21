@@ -59,7 +59,7 @@ public class MagicWandReward : MonoBehaviour
     IEnumerator CutsceneRoutine(System.Action onSequenceFinished)
     {
         minimapUI.SetActive(false);
-        AudioSource bgmSource = FindFirstObjectByType<CoreAudioManager>()?.GetComponentInChildren<AudioSource>();
+        AudioSource bgmSource = FindAnyObjectByType<CoreAudioManager>()?.GetComponentInChildren<AudioSource>();
         float precutscenevol = bgmSource.volume;
         // 1. Setup Camera and Freeze Player
         if (rewardCamera != null)

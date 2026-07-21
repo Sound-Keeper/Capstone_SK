@@ -78,7 +78,7 @@ public class HouseCompletionCutscene : MonoBehaviour
     private IEnumerator PlayCutsceneSequence()
     {
         float currentHealth = PuzzleProgress.GlobalCurrentHealth;
-        Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+        Charactercontroller activePlayer = FindAnyObjectByType<Charactercontroller>();
         if (activePlayer != null) activePlayer.canControl = false;
 
         yield return new WaitForSeconds(startDelay);

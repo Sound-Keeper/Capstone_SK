@@ -35,7 +35,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
 
     void Start()
     {
-        pipHintSystem = FindFirstObjectByType<PipHint>();
+        pipHintSystem = FindAnyObjectByType<PipHint>();
         FindPlayerFallback();
 
         if (pipPortrait == null && DialogueManager.Instance != null)
@@ -43,7 +43,14 @@ public class PipInteraction : MonoBehaviour, IInteractable
             pipPortrait = DialogueManager.Instance.pipIntroPortrait;
         }
 
-        if (finaleFountainTarget != null && Vector3.Distance(transform.position, finaleFountainTarget.position) < 1f)
+        // 1. Check if the game was already completed in a saved session
+        bool isGameDone = PlayerPrefs.GetInt("IsEndGameCompleted", 0) == 1;
+
+        // 2. Check if Pip is physically close to his finale fountain target
+        bool isAtFinaleTarget = (finaleFountainTarget != null && Vector3.Distance(transform.position, finaleFountainTarget.position) < 1.0f);
+
+        // If either condition is true, set internal flags so Pip doesn't repeat his dialogue/flight
+        if (isGameDone || isAtFinaleTarget)
         {
             hasSaidHouseUCompletionInMapTest = true;
             arrivedAtFountainFinale = true;
@@ -206,7 +213,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
                 }
                 else
                 {
-                    Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+                    Charactercontroller activePlayer = FindAnyObjectByType<Charactercontroller>();
                     if (activePlayer != null) activePlayer.canControl = true;
                 }
             };
@@ -247,7 +254,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
 
         if (destinationTarget == null) return;
 
-        Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+        Charactercontroller activePlayer = FindAnyObjectByType<Charactercontroller>();
         if (activePlayer != null) activePlayer.canControl = false;
 
         Camera mainCam = Camera.main;

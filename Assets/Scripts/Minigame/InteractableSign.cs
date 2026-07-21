@@ -44,7 +44,7 @@ public class InteractableSign : MonoBehaviour
     // New helper method to locate the active character
     private void FindPlayerCharacter()
     {
-        playerController = Object.FindFirstObjectByType<Charactercontroller>();
+        playerController = Object.FindAnyObjectByType<Charactercontroller>();
     }
 
     void Update()

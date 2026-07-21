@@ -77,8 +77,8 @@ public class DialogueManager : MonoBehaviour
     {
         CoreAudioManager.ResetSFXPitch();
 
-        if (pipFly == null) pipFly = FindFirstObjectByType<PipFly>();
-        PipHint pipHintSystem = FindFirstObjectByType<PipHint>();
+        if (pipFly == null) pipFly = FindAnyObjectByType<PipFly>();
+        PipHint pipHintSystem = FindAnyObjectByType<PipHint>();
         GameObject player = GameObject.FindWithTag("Player");
 
         // --- DEBUG LOGS START ---
@@ -460,7 +460,7 @@ public class DialogueManager : MonoBehaviour
         Charactercontroller activePlayer = null;
         while (activePlayer == null)
         {
-            activePlayer = FindFirstObjectByType<Charactercontroller>();
+            activePlayer = FindAnyObjectByType<Charactercontroller>();
             if (activePlayer != null)
             {
                 activePlayer.canControl = false;
@@ -474,7 +474,7 @@ public class DialogueManager : MonoBehaviour
 
     private void ApplyControl(bool enable)
     {
-        Charactercontroller activePlayer = FindFirstObjectByType<Charactercontroller>();
+        Charactercontroller activePlayer = FindAnyObjectByType<Charactercontroller>();
         if (activePlayer != null)
         {
             activePlayer.canControl = enable;
