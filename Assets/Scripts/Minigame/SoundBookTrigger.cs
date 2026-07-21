@@ -3,11 +3,12 @@ using UnityEngine;
 public class SoundBookTrigger : MonoBehaviour, IInteractable
 {
     [Header("Target Configurations")]
-    [Tooltip("Drag the vine_2 GameObject here from the stone stand hierarchy.")]
     public GameObject vineToDisable;
-
-    [Tooltip("Drag the Minigame GameObject here from the DialogueSystem hierarchy.")]
     public GameObject minigameUI;
+
+    [Header("Achievement Reward UI")]
+    [Tooltip("Drag the minigame completion achievement badge/icon from your UI canvas here.")]
+    public GameObject completedAchievementBadge;
 
     [Header("Locked Dialogue Settings")]
     public string speakerName = "The Sound Book";
@@ -19,10 +20,25 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
         "Come back once you have found them all to break the seal."
     };
 
+    [TextArea(2, 5)]
+    public string[] completedBookDialogueLines = new string[] {
+        "You have already completed all the quizzes in the Sound Book!",
+        "The knowledge inside is fully unlocked."
+    };
+
     public static bool IsBookMinigameOpen { get; private set; } = false;
     private bool isGamePaused = false;
 
-    // ─── NEW: Check every frame if the player broke the seal ───
+    void Start()
+    {
+        // ─── UI ACTIVATOR ON SCENE LOAD ───
+        // Whenever the scene loads, sync the badge's visibility with static progress!
+        if (completedAchievementBadge != null)
+        {
+            completedAchievementBadge.SetActive(PuzzleProgress.IsSoundBookCompleted);
+        }
+    }
+
     void Update()
     {
         if (vineToDisable != null && vineToDisable.activeSelf)
@@ -30,7 +46,6 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
             if (SignDiscoveryManager.Instance != null &&
                 SignDiscoveryManager.Instance.discoveredSignsCount >= SignDiscoveryManager.Instance.totalSignsInMap)
             {
-                // The moment the last sign is read, the vines vanish in the world!
                 vineToDisable.SetActive(false);
                 Debug.Log("[SoundBook] All signs found! Vines cleared from the world view.");
             }
@@ -41,7 +56,17 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
     {
         if (isGamePaused) return;
 
-        // Check if the sign milestone is met
+        // 1. BLOCK RE-ENTRY: Check if completed via static flag or cleared count
+        if (PuzzleProgress.IsSoundBookCompleted || BookPageQuizManager.totalClearedPages >= BookPageQuizManager.totalPagesInBook)
+        {
+            if (DialogueManager.Instance != null)
+            {
+                DialogueManager.Instance.StartDialogue(speakerName, completedBookDialogueLines, null, null);
+            }
+            return;
+        }
+
+        // 2. Check if the sign milestone is met
         if (SignDiscoveryManager.Instance != null)
         {
             if (SignDiscoveryManager.Instance.discoveredSignsCount < SignDiscoveryManager.Instance.totalSignsInMap)
@@ -51,8 +76,23 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
             }
         }
 
-        // MILESTONE MET: Open the puzzle book layout
+        // 3. Open minigame UI
         TriggerMinigameSetup();
+    }
+
+    // Called automatically by BookPageQuizManager when all pages are complete
+    public void OnAllPagesCompleted()
+    {
+        // 1. Save static flag so it persists across scene loads
+        PuzzleProgress.IsSoundBookCompleted = true;
+
+        // 2. Turn on the badge image immediately
+        if (completedAchievementBadge != null)
+        {
+            completedAchievementBadge.SetActive(true);
+        }
+
+        Debug.Log("[SoundBook] All pages completed! Static flag saved & Achievement Badge activated.");
     }
 
     private void TriggerLockedDialogue()
@@ -69,23 +109,18 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
         isGamePaused = true;
         IsBookMinigameOpen = true;
 
-        // 1. Open the minigame UI
         if (minigameUI != null)
         {
             minigameUI.SetActive(true);
         }
 
-        // 2. Freeze the player completely using your existing control flag
         Charactercontroller player = Object.FindAnyObjectByType<Charactercontroller>();
         if (player != null)
         {
             player.canControl = false;
         }
 
-        // 3. Freeze world physics/animations
         Time.timeScale = 0f;
-
-        // 4. Free the cursor for the UI
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }

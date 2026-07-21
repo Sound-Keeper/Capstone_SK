@@ -1,12 +1,13 @@
-// Tiny shared flags so the puzzle scene can tell MainWorld what happened.
-// Survives the scene swap because it's static.
-
 using System.Collections.Generic;
+
 public static class PuzzleProgress
 {
     public static HashSet<string> DiscoveredSignIDs = new HashSet<string>();
     public static int DiscoveredSignsCount => DiscoveredSignIDs.Count;
     public static float GlobalCurrentHealth = 100f;
+
+    // --- NEW: Sound Book Minigame Static Flag ---
+    public static bool IsSoundBookCompleted = false;
 
     // 1. One-shot thank-you triggers (Cleared immediately after talking)
     public static bool HouseASolved = false;
@@ -29,11 +30,9 @@ public static class PuzzleProgress
     public static bool HasVowelOStone = false;
     public static bool HasVowelUStone = false;
 
-    // True only when the player has earned all five - unlocks the ending ritual
     public static bool HasAllVowelStones =>
         HasVowelAStone && HasVowelEStone && HasVowelIStone && HasVowelOStone && HasVowelUStone;
 
-    // --- ADD THIS HELPER FUNCTION TO FIX THE ERROR ---
     public static bool IsHouseComplete(string houseLetter)
     {
         switch (houseLetter.ToUpper())
@@ -47,10 +46,12 @@ public static class PuzzleProgress
         }
     }
 
-    // --- CALL THIS TO WIPE ALL PROGRESS DATA ON NEW GAME ---
     public static void ResetAllProgress()
     {
         DiscoveredSignIDs.Clear();
+
+        // Reset Minigame Progress
+        IsSoundBookCompleted = false;
 
         // 1. Reset Solved Triggers
         HouseASolved = false;
@@ -72,6 +73,5 @@ public static class PuzzleProgress
         HasVowelIStone = false;
         HasVowelOStone = false;
         HasVowelUStone = false;
-
     }
 }

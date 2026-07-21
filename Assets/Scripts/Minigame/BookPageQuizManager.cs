@@ -5,7 +5,7 @@ using BookCurlPro;
 public class BookPageQuizManager : MonoBehaviour
 {
     [Header("Page Identity")]
-    [Tooltip("The Paper index of this specific page in BookPro (e.g., if this is Page 3-4, find which Paper index it maps to).")]
+    [Tooltip("The Paper index of this specific page in BookPro.")]
     public int targetPaperIndex;
 
     [Header("Indicator Settings")]
@@ -16,6 +16,10 @@ public class BookPageQuizManager : MonoBehaviour
     [Header("Book Hook")]
     [Tooltip("Assign the main BookPro object from your hierarchy.")]
     public BookPro book;
+
+    // Track total completed pages across all instances
+    public static int totalClearedPages = 0;
+    public static int totalPagesInBook = 5; // Set this to the total number of questions/pages in the book
 
     private Coroutine blinkCoroutine;
     private bool isCleared = false;
@@ -40,11 +44,23 @@ public class BookPageQuizManager : MonoBehaviour
     {
         if (isCleared) return;
         isCleared = true;
+        totalClearedPages++;
 
+        // Start blinking arrow feedback for turning page
         if (blinkingArrowIndicator != null)
         {
             if (blinkCoroutine != null) StopCoroutine(blinkCoroutine);
             blinkCoroutine = StartCoroutine(BlinkRoutine());
+        }
+
+        // Check if all pages in the book are completed!
+        if (totalClearedPages >= totalPagesInBook)
+        {
+            SoundBookTrigger bookTrigger = FindAnyObjectByType<SoundBookTrigger>();
+            if (bookTrigger != null)
+            {
+                bookTrigger.OnAllPagesCompleted();
+            }
         }
     }
 
@@ -52,7 +68,6 @@ public class BookPageQuizManager : MonoBehaviour
     {
         if (!isCleared || book == null) return;
 
-        // If the current active book paper doesn't match our target anymore, the player turned away!
         if (book.CurrentPaper != targetPaperIndex)
         {
             if (blinkCoroutine != null) StopCoroutine(blinkCoroutine);
@@ -65,11 +80,9 @@ public class BookPageQuizManager : MonoBehaviour
         while (true)
         {
             blinkingArrowIndicator.SetActive(true);
-            // ─── CHANGED TO REALTIME TO IGNORE TIME.TIMESCALE = 0 ───
             yield return new WaitForSecondsRealtime(blinkSpeed);
 
             blinkingArrowIndicator.SetActive(false);
-            // ─── CHANGED TO REALTIME TO IGNORE TIME.TIMESCALE = 0 ───
             yield return new WaitForSecondsRealtime(blinkSpeed);
         }
     }

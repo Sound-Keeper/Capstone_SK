@@ -21,7 +21,6 @@ public class CharacterSelectMenu : MonoBehaviour
         localSelectedIdx = 0;
         Debug.Log("Selected Paige (Index 0)");
         if (confirmButton != null) confirmButton.interactable = true;
-        // Optional: Put visual highlight overlay activations here!
     }
 
     // Linked to Penn's Portrait Button (Index 1)
@@ -30,7 +29,6 @@ public class CharacterSelectMenu : MonoBehaviour
         localSelectedIdx = 1;
         Debug.Log("Selected Penn (Index 1)");
         if (confirmButton != null) confirmButton.interactable = true;
-        // Optional: Put visual highlight overlay activations here!
     }
 
     // Linked to the Master CONFIRM Button
@@ -41,6 +39,10 @@ public class CharacterSelectMenu : MonoBehaviour
         // 1. Commit layout variables globally into your static dictionary tracker
         CharacterSelection.Selected = localSelectedIdx;
         Debug.Log($"Final selection locked: {CharacterSelection.SelectedName}");
+
+        // --- NEW: WIPE PLAYERPREFS & CUTSCENE COMPLETION STATES ---
+        PlayerPrefs.DeleteKey("IsEndGameCompleted"); // Resets daytime visual override back to normal game state
+        PlayerPrefs.Save();
 
         // 2. Since this is a fresh New Game run, wipe clean any residual checkpoint locations
         if (CoreManager.Instance != null) CoreManager.Instance.ClearSavedPosition();
