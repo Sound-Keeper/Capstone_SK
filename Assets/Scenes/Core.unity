@@ -280,6 +280,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -623,6 +624,10 @@ MonoBehaviour:
     bgmClip: {fileID: 8300000, guid: ff35ac942fce1054ba672bb15903d43e, type: 3}
   - sceneName: CharacterSelection
     bgmClip: {fileID: 8300000, guid: ff35ac942fce1054ba672bb15903d43e, type: 3}
+  - sceneName: IntroPenn
+    bgmClip: {fileID: 0}
+  - sceneName: IntroPaige
+    bgmClip: {fileID: 0}
   - sceneName: MapTest
     bgmClip: {fileID: 8300000, guid: bc8d09bf5ac01d34090d425ccfba00b6, type: 3}
   - sceneName: HouseA

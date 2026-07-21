@@ -21,6 +21,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Menus/CharacterSelection.unity
     guid: 8644414581fc37746a826a6d58255abb
   - enabled: 1
+    path: Assets/Scenes/IntroPaige.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/IntroPenn.unity
+    guid: 5501b12f7f3806b4086dac14e6cb1200
+  - enabled: 1
     path: Assets/Scenes/MapTest.unity
     guid: f7b994254e2c2944c94b6b5494069146
   - enabled: 1

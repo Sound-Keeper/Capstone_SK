@@ -19,6 +19,9 @@ public static class SceneDatabase
         public const string Session = "Session";
         public const string CharSelect = "CharacterSelection";
 
+        public const string IntroPenn = "IntroPenn";
+        public const string IntroPaige = "IntroPaige";
+
         //Iadd ko lang to for scene management for A & I
         public const string HouseA = "HouseA";
         public const string HouseI = "HouseI";

@@ -36,26 +36,36 @@ public class CharacterSelectMenu : MonoBehaviour
     {
         if (localSelectedIdx == -1) return; // Safeguard guard
 
-        // 1. Commit layout variables globally into your static dictionary tracker
+        // 1. Commit selection globally
         CharacterSelection.Selected = localSelectedIdx;
         Debug.Log($"Final selection locked: {CharacterSelection.SelectedName}");
 
-        // --- NEW: WIPE PLAYERPREFS & CUTSCENE COMPLETION STATES ---
-        PlayerPrefs.DeleteKey("IsEndGameCompleted"); // Resets daytime visual override back to normal game state
+        // Clear previous state and saved data for a fresh run
+        PlayerPrefs.DeleteKey("IsEndGameCompleted");
         PlayerPrefs.Save();
 
-        // 2. Since this is a fresh New Game run, wipe clean any residual checkpoint locations
         if (CoreManager.Instance != null) CoreManager.Instance.ClearSavedPosition();
-
         PuzzleProgress.ResetAllProgress();
 
-        // 3. Complete structural load sequence into gameplay
-        SceneController.Instance.NewTransition()
-            .Load(SceneDatabase.Slots.Session, SceneDatabase.Scenes.Session)
-            .Load(SceneDatabase.Slots.SessionContent, SceneDatabase.Scenes.MainWorld, setActive: true)
-            .Unload(SceneDatabase.Slots.Menu) // Wipe out selection frames entirely
-            .WithOverlay()
-            .Perform();
+        // 2. Load the specific intro scene based on character choice
+        if (CharacterSelection.Selected == 0)
+        {
+            // Load Paige's Intro Scene
+            SceneController.Instance.NewTransition()
+                .Load(SceneDatabase.Slots.SessionContent, SceneDatabase.Scenes.IntroPaige, setActive: true)
+                .Unload(SceneDatabase.Slots.Menu)
+                .WithOverlay()
+                .Perform();
+        }
+        else
+        {
+            // Load Penn's Intro Scene
+            SceneController.Instance.NewTransition()
+                .Load(SceneDatabase.Slots.SessionContent, SceneDatabase.Scenes.IntroPenn, setActive: true)
+                .Unload(SceneDatabase.Slots.Menu)
+                .WithOverlay()
+                .Perform();
+        }
     }
 
     public void GoBack()
