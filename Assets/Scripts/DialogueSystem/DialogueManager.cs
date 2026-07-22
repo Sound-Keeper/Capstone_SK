@@ -18,6 +18,12 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI dialogueText;
 
+    [Header("Dialogue Flow Indicator")]
+    [Tooltip("Assign an icon/image here that blinks ONLY when there is MORE text following it.")]
+    public GameObject nextLineIndicator;
+    public float indicatorBlinkSpeed = 0.4f;
+    private Coroutine blinkCoroutine;
+
     [Header("Portraits")]
     [Tooltip("Left-side face (NPC UI slot).")]
     public Image leftPortrait;
@@ -182,10 +188,44 @@ public class DialogueManager : MonoBehaviour
 
             dialogueText.text = currentFullLine;
             isTyping = false;
+
+            StartBlinking();
         }
         else
         {
+            StopBlinking();
             NextLine();
+        }
+    }
+
+    private void StartBlinking()
+    {
+        if (nextLineIndicator == null) return;
+        StopBlinking();
+        blinkCoroutine = StartCoroutine(BlinkRoutine());
+    }
+
+    private void StopBlinking()
+    {
+        if (blinkCoroutine != null)
+        {
+            StopCoroutine(blinkCoroutine);
+            blinkCoroutine = null;
+        }
+        if (nextLineIndicator != null)
+        {
+            nextLineIndicator.SetActive(false);
+        }
+    }
+
+    private IEnumerator BlinkRoutine()
+    {
+        while (true)
+        {
+            nextLineIndicator.SetActive(true);
+            yield return new WaitForSeconds(indicatorBlinkSpeed);
+            nextLineIndicator.SetActive(false);
+            yield return new WaitForSeconds(indicatorBlinkSpeed);
         }
     }
 
@@ -338,6 +378,8 @@ public class DialogueManager : MonoBehaviour
 
     IEnumerator TypeLine(string line)
     {
+        StopBlinking();
+
         isTyping = true;
         currentFullLine = line;
         dialogueText.text = "";
@@ -348,20 +390,15 @@ public class DialogueManager : MonoBehaviour
         {
             dialogueText.text += c;
 
-            // Use your global CoreAudioManager instead of a local source!
             if (activeVoiceClip != null && !char.IsWhiteSpace(c))
             {
-                // Play every 2nd letter to keep the text chatter sounding clean
                 if (charCount % 3 == 0)
                 {
-                    // Calculate a dynamic random pitch based on your preset randomness
                     float randomPitch = UnityEngine.Random.Range(
                         1.0f - pitchRandomness,
                         1.0f + pitchRandomness
                     );
-
-                    // Pass the clip and the pitch to your CoreAudioManager static method
-                    CoreAudioManager.PlayDialogueBlip(activeVoiceClip, randomPitch); 
+                    CoreAudioManager.PlayDialogueBlip(activeVoiceClip, randomPitch);
                 }
                 charCount++;
             }
@@ -369,13 +406,17 @@ public class DialogueManager : MonoBehaviour
             yield return new WaitForSeconds(typingSpeed);
         }
 
-        // Reset the pitch back to normal when typing finishes
-        CoreAudioManager.ResetSFXPitch(); 
+        CoreAudioManager.ResetSFXPitch();
         isTyping = false;
+
+        // --- ALWAYS START BLINKING WHEN TYPING IS DONE ---
+        StartBlinking();
     }
 
     void NextLine()
     {
+        StopBlinking();
+
         if (currentLines != null && currentLineIndex == 8)
         {
             MagicWandReward[] wands = Resources.FindObjectsOfTypeAll<MagicWandReward>();
@@ -420,6 +461,7 @@ public class DialogueManager : MonoBehaviour
 
     void EndDialogue()
     {
+        StopBlinking();
         dialoguePanel.SetActive(false); 
 
         // --- ADD THIS HERE ---

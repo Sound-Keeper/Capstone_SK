@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 218fcf9ae5945cc4d86ca25da07a7aa2
+guid: 1675f3727f9a1af48ae5065454be7e94
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,23 +97,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: I_tutorial
+      name: questscroll
       rect:
         serializedVersion: 2
-        x: 25
-        y: 359
+        x: 127
+        y: 219
         width: 1283
-        height: 1352
+        height: 623
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 10257c8f7f78f9345b1c0fd1d25ca43e
-      internalID: -1075778442
+      spriteID: ebf4c13cec5a4954a9181b3eed575d88
+      internalID: -1307138956
       vertices: []
       indices: 
       edges: []
@@ -122,7 +122,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 080be2a3d94cf6044a60392c143b52d7
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -132,7 +132,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      I_tutorial: -1075778442
+      questscroll: -1307138956
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

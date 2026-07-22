@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0a890ef3f224bee44947f30d1a210d8f
+guid: f91a0e85dba371c429d86a6e3ff214d3
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,23 +97,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MOUSE
+      name: scroll ver2
       rect:
         serializedVersion: 2
-        x: 25
-        y: 319
-        width: 1283
-        height: 1392
+        x: 130
+        y: 226
+        width: 1276
+        height: 617
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 442c22165b41caa4681dd890a237ae2a
-      internalID: 523085541
+      spriteID: c92df181a4d778f4583445d0e85bfcfa
+      internalID: -517087775
       vertices: []
       indices: 
       edges: []
@@ -122,7 +122,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 49b14b2cc6debdf4998addc953863cb4
+    spriteID: 8ed62d2e7f66ef54d8365b5ffdb18b35
     internalID: 0
     vertices: []
     indices: 
@@ -132,7 +132,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      MOUSE: 523085541
+      scroll ver2: -517087775
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

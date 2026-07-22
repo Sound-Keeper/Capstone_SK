@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 436f5324cae941347a55b20edc399c52
+guid: c95d019bec6c028448f773d0b1c384ed
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: A_tutorial
+      name: U
       rect:
         serializedVersion: 2
         x: 25
-        y: 359
-        width: 1283
-        height: 1352
+        y: 319
+        width: 1282
+        height: 1391
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,8 +112,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 60d18ff60b724ce4d836bac8e94071b8
-      internalID: 2101747313
+      spriteID: 0c32fe86a3c3562418cc1fc30ffb63cc
+      internalID: -1774847513
       vertices: []
       indices: 
       edges: []
@@ -122,7 +122,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: e542ded26fbf3e343ae36daa68d20edf
+    spriteID: a8059b18527ac2f498a20c0aa6d06d26
     internalID: 0
     vertices: []
     indices: 
@@ -132,7 +132,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      A_tutorial: 2101747313
+      U: -1774847513
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
