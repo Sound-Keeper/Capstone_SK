@@ -61,7 +61,7 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
         {
             if (DialogueManager.Instance != null)
             {
-                DialogueManager.Instance.StartDialogue(speakerName, completedBookDialogueLines, null, null);
+                DialogueManager.Instance.StartDialogue(speakerName, completedBookDialogueLines);
             }
             return;
         }
@@ -100,7 +100,7 @@ public class SoundBookTrigger : MonoBehaviour, IInteractable
         if (DialogueManager.Instance != null)
         {
             DialogueManager.Instance.OnDialogueEnd = null;
-            DialogueManager.Instance.StartDialogue(speakerName, lockedDialogueLines, null, null);
+            DialogueManager.Instance.StartDialogue(speakerName, lockedDialogueLines);
         }
     }
 

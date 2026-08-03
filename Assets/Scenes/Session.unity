@@ -355,6 +355,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -707,19 +708,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3b40bfab88b6bb4e945ca6745e17448, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleProgressMonitor
-  HouseASolved: 0
-  HouseESolved: 0
-  HouseISolved: 0
+  HouseASolved: 1
+  HouseESolved: 1
+  HouseISolved: 1
   HouseOSolved: 0
   HouseUSolved: 0
-  HouseAComplete: 0
-  HouseEComplete: 0
-  HouseIComplete: 0
+  HouseAComplete: 1
+  HouseEComplete: 1
+  HouseIComplete: 1
   HouseOComplete: 0
   HouseUComplete: 0
-  HasVowelAStone: 0
-  HasVowelEStone: 0
-  HasVowelIStone: 0
+  HasVowelAStone: 1
+  HasVowelEStone: 1
+  HasVowelIStone: 1
   HasVowelOStone: 0
   HasVowelUStone: 0
 --- !u!1 &360837167
@@ -2363,6 +2364,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0

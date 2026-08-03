@@ -25,8 +25,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
     public Sprite npcPortrait;
     [Tooltip("Face shown when the Player is speaking. Optional.")]
     public Sprite playerPortrait;
-    [Tooltip("The unique Animal Crossing voice sound asset for this character.")]
-    public AudioClip npcVoiceSFX;
 
     [Tooltip("Standard lines before the puzzle is finished.")]
     public List<DialogueLine> dialogueLines = new List<DialogueLine>();
@@ -180,7 +178,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         List<DialogueLine> activeLines = new List<DialogueLine>(dialogueLines);
         isGatedOutOfOrder = false;
 
-        // 1. Check if sequence gated (out of order)
         if (!IsAllowedToAccess() && !IsHouseComplete())
         {
             isGatedOutOfOrder = true;
@@ -190,7 +187,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
         }
         else
         {
-            // 2. ONLY complete/check mark if the CURRENT active quest is targeting THIS NPC!
             if (ObjectiveManager.Instance != null &&
                 ObjectiveManager.Instance.CurrentState == QuestState.TalkToNPC &&
                 ObjectiveManager.Instance.CurrentTargetNPC == npcName)
@@ -208,7 +204,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             waitingForSolvedExit = true;
         }
 
-        // Start dialogue...
         if (DialogueManager.Instance != null)
         {
             DialogueManager.Instance.StartDialogue(
@@ -217,8 +212,7 @@ public class NpcInteraction : MonoBehaviour, IInteractable
                 npcPortrait,
                 playerPortrait,
                 dialogueCamera,
-                OnDialogueComplete,
-                npcVoiceSFX
+                OnDialogueComplete
             );
         }
     }
@@ -231,7 +225,6 @@ public class NpcInteraction : MonoBehaviour, IInteractable
             StartCoroutine(ReEnableInteractNextFrame());
             return;
         }
-
 
         if (isInPuzzleHouse && (IsHouseSolved() || IsHouseComplete() || (waitingForSolvedExit && IsHouseSolved())))
         {

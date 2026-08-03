@@ -37,13 +37,8 @@ public class DialogueManager : MonoBehaviour
     public Color activeTint = Color.white;
     public Color inactiveTint = new Color(0.45f, 0.45f, 0.45f, 1f);
 
-    [Header("Typing Effect & Animal Crossing Voice")]
+    [Header("Typing Effect Speed")]
     public float typingSpeed = 0.03f;
-    [Tooltip("Default fallback voice blip if an NPC doesn't have one assigned.")]
-    public AudioClip defaultTypeSFX;
-    [Range(0.1f, 0.5f)]
-    [Tooltip("How drastically the voice pitch shifts up and down. Higher values create more chaotic, chirpy voices.")]
-    public float pitchRandomness = 0.25f;
 
     [Header("Pip Intro Sequence Setup")]
     public PipFly pipFly;
@@ -68,7 +63,6 @@ public class DialogueManager : MonoBehaviour
     private Coroutine typingCoroutine;
 
     private float inputCooldownTimer = 0f;
-    private AudioClip activeVoiceClip; // Tracks the current active speaker's clip
 
     void Awake()
     {
@@ -81,22 +75,9 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
-        CoreAudioManager.ResetSFXPitch();
-
         if (pipFly == null) pipFly = FindAnyObjectByType<PipFly>();
         PipHint pipHintSystem = FindAnyObjectByType<PipHint>();
         GameObject player = GameObject.FindWithTag("Player");
-
-        // --- DEBUG LOGS START ---
-        Debug.Log($"[DIAL_MGR START] --- Checking Static Variables ---");
-        Debug.Log($"[DIAL_MGR START] DialogueManager.hasPlayedPipIntroFinished = {hasPlayedPipIntroFinished}");
-        Debug.Log($"[DIAL_MGR START] DialogueManager.hasPlayedPipIntro = {hasPlayedPipIntro}");
-        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseASolved = {PuzzleProgress.HouseASolved}");
-        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseESolved = {PuzzleProgress.HouseESolved}");
-        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseISolved = {PuzzleProgress.HouseISolved}");
-        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseOSolved = {PuzzleProgress.HouseOSolved}");
-        Debug.Log($"[DIAL_MGR START] PuzzleProgress.HouseUSolved = {PuzzleProgress.HouseUSolved}");
-        // --- DEBUG LOGS END ---
 
         bool anyHouseSolved = PuzzleProgress.HouseASolved || PuzzleProgress.HouseESolved ||
                               PuzzleProgress.HouseISolved || PuzzleProgress.HouseOSolved ||
@@ -104,7 +85,6 @@ public class DialogueManager : MonoBehaviour
 
         if (anyHouseSolved || hasPlayedPipIntroFinished)
         {
-            Debug.LogWarning("[DIAL_MGR START] Trigger condition met to SKIP intro sequence! Bypassing to finished state.");
             hasPlayedPipIntro = true;
             hasPlayedPipIntroFinished = true;
         }
@@ -120,7 +100,6 @@ public class DialogueManager : MonoBehaviour
 
         if (!hasPlayedPipIntro && pipFly != null && fountainTarget != null)
         {
-            Debug.Log("[DIAL_MGR START] Conditions met successfully! Launching Pip Intro Dialogue.");
             hasPlayedPipIntro = true;
             SetPlayerControlState(false);
             string[] introLines = new string[] {
@@ -156,14 +135,7 @@ public class DialogueManager : MonoBehaviour
                 });
             };
 
-            // Grab voice from Pip's object if it can be found in the scene right away as a fallback
-            AudioClip introVoice = (pipFly != null) ? pipFly.GetComponent<PipInteraction>()?.pipVoiceSFX : null;
-            StartDialogue("Pip", introLines, pipIntroPortrait, introVoice);
-        }
-        else
-        {
-            Debug.LogWarning($"[DIAL_MGR START] Bypassed actual intro sequence trigger block. " +
-                             $"pipFly missing? {pipFly == null} | fountainTarget missing? {fountainTarget == null}");
+            StartDialogue("Pip", introLines, pipIntroPortrait);
         }
     }
 
@@ -188,6 +160,8 @@ public class DialogueManager : MonoBehaviour
 
             dialogueText.text = currentFullLine;
             isTyping = false;
+
+            CoreAudioManager.StopVoiceover();
 
             StartBlinking();
         }
@@ -229,7 +203,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void StartDialogue(string speaker, string[] newLines, Sprite speakerPortrait = null, AudioClip voiceSFX = null)
+    public void StartDialogue(string speaker, string[] newLines, Sprite speakerPortrait = null)
     {
         if (newLines == null || newLines.Length == 0) return;
 
@@ -244,15 +218,16 @@ public class DialogueManager : MonoBehaviour
             convertedLines[i] = new DialogueLine
             {
                 speaker = Speaker.NPC,
-                text = newLines[i]
+                text = newLines[i],
+                voiceoverClip = null
             };
         }
 
-        StartDialogue(convertedLines, speaker, speakerPortrait, null, dialogueCamera, OnDialogueEnd, voiceSFX);
+        StartDialogue(convertedLines, speaker, speakerPortrait, null, dialogueCamera, OnDialogueEnd);
     }
 
     public void StartDialogue(DialogueLine[] lines, string npcName, Sprite npcPortrait,
-        Sprite ignoredPlayerPortrait, Camera cam, Action onComplete = null, AudioClip voiceSFX = null)
+        Sprite ignoredPlayerPortrait, Camera cam, Action onComplete = null)
     {
         if (lines == null || lines.Length == 0) return;
 
@@ -260,9 +235,6 @@ public class DialogueManager : MonoBehaviour
 
         this.npcName = npcName;
         this.npcPortrait = npcPortrait;
-
-        // Dynamically shift voice source asset based on current active script context
-        this.activeVoiceClip = (voiceSFX != null) ? voiceSFX : defaultTypeSFX;
 
         if (onComplete != null)
         {
@@ -307,7 +279,7 @@ public class DialogueManager : MonoBehaviour
         nameText.text = speakerName;
         inputCooldownTimer = 0.2f;
 
-        this.activeVoiceClip = defaultTypeSFX; // Fallback to safe asset context
+        CoreAudioManager.StopVoiceover();
 
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(TypeLine(definitionText));
@@ -317,7 +289,15 @@ public class DialogueManager : MonoBehaviour
     {
         if (currentLines == null || currentLineIndex >= currentLines.Length) return;
 
+        CoreAudioManager.StopVoiceover();
+
         DialogueLine line = currentLines[currentLineIndex];
+
+        if (line.voiceoverClip != null)
+        {
+            CoreAudioManager.PlayVoiceover(line.voiceoverClip);
+        }
+
         bool isPlayer = (line.speaker == Speaker.Player);
 
         nameText.text = isPlayer ? CharacterSelection.SelectedName : npcName;
@@ -384,38 +364,21 @@ public class DialogueManager : MonoBehaviour
         currentFullLine = line;
         dialogueText.text = "";
 
-        int charCount = 0;
-
         foreach (char c in line)
         {
             dialogueText.text += c;
-
-            if (activeVoiceClip != null && !char.IsWhiteSpace(c))
-            {
-                if (charCount % 3 == 0)
-                {
-                    float randomPitch = UnityEngine.Random.Range(
-                        1.0f - pitchRandomness,
-                        1.0f + pitchRandomness
-                    );
-                    CoreAudioManager.PlayDialogueBlip(activeVoiceClip, randomPitch);
-                }
-                charCount++;
-            }
-
             yield return new WaitForSeconds(typingSpeed);
         }
 
-        CoreAudioManager.ResetSFXPitch();
         isTyping = false;
 
-        // --- ALWAYS START BLINKING WHEN TYPING IS DONE ---
         StartBlinking();
     }
 
     void NextLine()
     {
         StopBlinking();
+        CoreAudioManager.StopVoiceover();
 
         if (currentLines != null && currentLineIndex == 8)
         {
@@ -441,10 +404,6 @@ public class DialogueManager : MonoBehaviour
                 });
                 return;
             }
-            else
-            {
-                Debug.LogWarning("Could not find MagicWandReward anywhere in the scene assets!");
-            }
         }
 
         currentLineIndex++;
@@ -462,26 +421,24 @@ public class DialogueManager : MonoBehaviour
     void EndDialogue()
     {
         StopBlinking();
-        dialoguePanel.SetActive(false); 
+        CoreAudioManager.StopVoiceover();
 
-        // --- ADD THIS HERE ---
-        // Forces the pitch back to 1.0f immediately when the UI closes!
-        CoreAudioManager.ResetSFXPitch();
+        dialoguePanel.SetActive(false);
 
-        if (dialogueCamera != null) 
+        if (dialogueCamera != null)
         {
-            dialogueCamera.gameObject.SetActive(false); 
-            if (previousCamera != null) previousCamera.gameObject.SetActive(true); 
+            dialogueCamera.gameObject.SetActive(false);
+            if (previousCamera != null) previousCamera.gameObject.SetActive(true);
         }
 
-        if (OnDialogueEnd == null) 
+        if (OnDialogueEnd == null)
         {
-            SetPlayerControlState(true); 
+            SetPlayerControlState(true);
         }
 
-        Action cb = OnDialogueEnd; 
-        OnDialogueEnd = null; 
-        cb?.Invoke(); 
+        Action cb = OnDialogueEnd;
+        OnDialogueEnd = null;
+        cb?.Invoke();
     }
 
     public void SetPlayerControlState(bool enable)

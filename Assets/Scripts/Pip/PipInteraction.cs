@@ -7,8 +7,6 @@ public class PipInteraction : MonoBehaviour, IInteractable
     [Header("UI Setup")]
     public string pipName = "Pip";
     public Sprite pipPortrait;
-    [Tooltip("Pip's unique high-pitched bird voice sound asset.")]
-    public AudioClip pipVoiceSFX;
 
     [Header("Interaction Prompt UI")]
     [SerializeField] private CanvasGroup promptCanvas;
@@ -166,8 +164,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
                     pipPortrait,
                     null,
                     null,
-                    DialogueManager.Instance.OnDialogueEnd,
-                    pipVoiceSFX
+                    DialogueManager.Instance.OnDialogueEnd
                 );
 
                 return;
@@ -205,8 +202,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
                 pipPortrait,
                 null,
                 null,
-                DialogueManager.Instance.OnDialogueEnd,
-                pipVoiceSFX
+                DialogueManager.Instance.OnDialogueEnd
             );
 
             return;
@@ -314,8 +310,7 @@ public class PipInteraction : MonoBehaviour, IInteractable
                 pipPortrait,
                 null,
                 null,
-                DialogueManager.Instance.OnDialogueEnd,
-                pipVoiceSFX
+                DialogueManager.Instance.OnDialogueEnd
             );
         }
     }

@@ -1,14 +1,11 @@
 using UnityEngine;
 
-// Who is speaking on a given line.
 public enum Speaker
 {
     NPC,
     Player
 }
 
-// One line of dialogue, fully editable in the Inspector.
-// Add a list of these on each NPC and pick the speaker per line.
 [System.Serializable]
 public class DialogueLine
 {
@@ -18,4 +15,7 @@ public class DialogueLine
     [TextArea(2, 4)]
     [Tooltip("What this speaker says on this line.")]
     public string text;
+
+    [Tooltip("Drag and drop the specific voiceover audio clip for this line here.")]
+    public AudioClip voiceoverClip; // <--- ADDED FIELD
 }
